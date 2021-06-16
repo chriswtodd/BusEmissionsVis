@@ -1,0 +1,61 @@
+/**
+ * @author Chris Todd, chriswilltodd@gmail.com
+ * Github: chriswtodd
+ */ 
+
+import React, { useState } from 'react';
+import store from '../redux/store.js';
+
+let modelData = require('./modelData');
+
+export function processStreamData(data) {
+    let filters = store.getState().filters;
+    let keys = ["date"].concat(modelData.engine_types);
+
+    // Filter data according to UI
+    keys = keys.filter(d => filters.class[d] || d === "date")
+
+    let p = "co2";
+
+    let drawData = [];
+    data.forEach((d) => {
+        if (keys.includes(d.engine_type)) {
+            let obj = {};
+            obj.date = d.date;
+            obj[d.engine_type] = d[p];
+            drawData.push(obj);
+        }
+    })
+    let final = [];
+    let reducedDates = Array.from(new Set(drawData.map(d => d.date)));
+    reducedDates.sort((a, b) => {
+        if (new Date(a).getTime() > new Date(b).getTime()) {
+            return 1;
+        }
+        if (new Date(a).getTime() < new Date(b).getTime()) {
+            return -1;
+        }
+        return 0;
+    });
+    for (let d of reducedDates) {
+        let newObj = {};
+        keys.forEach(key => {
+            newObj[key] = 0;
+            if (key === "date") {
+                newObj[key] = d;
+            }
+        })
+        final.push(newObj);
+    }
+    for (let d of final) {
+        for (let e of drawData) {
+            //On the same date
+            if (d.date === e.date) {
+                //Only if keys part of keys
+                let key = Object.keys(e)[1];
+                d[key] = e[key];
+            }
+        }
+    }
+    return final;
+}
