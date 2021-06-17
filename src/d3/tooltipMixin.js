@@ -14,9 +14,11 @@ export let streamTooltipFactoryMixin = {
 
     createBars() {
         let t = this;
-        let widthTooltipBars = this.xScale(new Date(this.data[1].date)) - this.xScale(new Date(this.data[0].date));
+        let currentDay = new Date(this.data[0].date), nextDay = new Date(this.data[0].date);
+        nextDay.setDate(nextDay.getDate() + 1);
+        let widthTooltipBars = this.xScale(nextDay) - this.xScale(currentDay);
         // d3.select(this.focus.node().parentNode)
-        this.ttBars = this.svg
+        this.ttBars = this.focus
             .selectAll(".plot-rect")
             .remove()
             .exit()
@@ -41,7 +43,9 @@ export let streamTooltipFactoryMixin = {
 
     updateBars() {
         let t = this;
-        let widthTooltipBars = this.xScale(new Date(this.data[1].date)) - this.xScale(new Date(this.data[0].date));
+        let currentDay = new Date(this.data[0].date), nextDay = new Date(this.data[0].date);
+        nextDay.setDate(nextDay.getDate() + 1);
+        let widthTooltipBars = this.xScale(nextDay) - this.xScale(currentDay);
         this.ttBars = this.ttBars
             .selectAll(".plot-rect")
             .data(this.streamData, d => d.date)

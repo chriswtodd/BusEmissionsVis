@@ -62,17 +62,18 @@ export let streamGraphMixin = {
             .select("#plot")
             .call(zoom)
 
-        // zoomedGraph.focus
-        //     .select("#plot")
-        //     .append("clipPath")
-        //     .attr("id", "zoom")
-        //     .append("rectangle")
-        //     .attr("x", 0)
-        //     .attr("y", 0)
-        //     .attr("width", zoomedGraph.graphBounds.xaxis)
-        //     .attr("height", zoomedGraph.graphBounds.yaxis)
+        zoomedGraph.focus
+            .select("#plot")
+            .select("")
+            .append("clipPath")
+            .attr("id", "zoom")
+            .append("rectangle")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", zoomedGraph.graphBounds.xaxis)
+            .attr("height", zoomedGraph.graphBounds.yaxis)
 
-        // zoomedGraph.focus = zoomedGraph.focus.select("#zoom")
+        zoomedGraph.focus = zoomedGraph.focus.select("#zoom")
 
         function zoomed(event, d) {
             if (event.sourceEvent == undefined) return; // ignore zoom-by-brush
