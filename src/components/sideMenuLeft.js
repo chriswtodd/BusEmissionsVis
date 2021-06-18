@@ -44,13 +44,13 @@ export const buttons = [
 
                 }
             }, 
-            {
-                "label": "Heat Chart",
-                "onClick": function() {}
-            }, 
-            {
-                "label": "Bubble Chart"
-            }
+            // {
+            //     "label": "Heat Chart",
+            //     "onClick": function() {}
+            // }, 
+            // {
+            //     "label": "Bubble Chart"
+            // }
         ]
     },
     // {

@@ -70,6 +70,7 @@ const MenuBody = styled.div`
     background: white;
     height: 0px;
     width: 100%;
+    display: flex;
     transition: all ease 0.2s;
     display: hidden;
     flex-direction: row;
@@ -87,7 +88,6 @@ const MenuBodyToggle = styled(MenuBody)`
     `
     height: auto;
     opacity: 1;
-    display: flex;
   `}
 `;
 

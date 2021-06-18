@@ -60,20 +60,31 @@ export let streamGraphMixin = {
 
         zoomedGraph.focus
             .select("#plot")
-            .call(zoom)
+            .remove();
 
-        zoomedGraph.focus
-            .select("#plot")
-            .select("")
+        zoomedGraph.focus     
+            // .append("defs")
             .append("clipPath")
             .attr("id", "zoom")
-            .append("rectangle")
-            .attr("x", 0)
-            .attr("y", 0)
+            .append("rect")
+            .attr("x", "0")
+            .attr("y", "0")
             .attr("width", zoomedGraph.graphBounds.xaxis)
             .attr("height", zoomedGraph.graphBounds.yaxis)
 
-        zoomedGraph.focus = zoomedGraph.focus.select("#zoom")
+        //Set new
+        zoomedGraph.g = zoomedGraph.focus
+            .append("g")
+            .attr("id", "plot")
+            .attr("clip-path", "url(#zoom)")
+
+        //Attach zoom
+        zoomedGraph.focus
+            .select("#plot")
+            .call(zoom)
+
+        this.enter();
+        this.render();
 
         function zoomed(event, d) {
             if (event.sourceEvent == undefined) return; // ignore zoom-by-brush
@@ -184,7 +195,8 @@ export let streamGraphMixin = {
             })
             .attr("opacity", 1)
             .style("fill", function (d) { return t.colorScheme[d.key] })
-            .attr("d", this.blankArea)        
+            .attr("d", this.blankArea)
+            .attr("clip-path", "url(#zoom)")
     },
 
     /**
@@ -247,6 +259,7 @@ export let streamGraphMixin = {
             .ease(d3.easeExpInOut)
             .attr("delay", "1000")
             .attr("d", this.area)
-            .style("fill", function (d) { return t.colorScheme[d.key] });
+            .style("fill", function (d) { return t.colorScheme[d.key] })
+            .attr("clip-path", "url(#zoom)");
     }
 }

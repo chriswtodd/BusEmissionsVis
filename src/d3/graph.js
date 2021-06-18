@@ -166,6 +166,7 @@ export class D3Graph {
             xaxis: 0,
             yaxis: 0
         };
+        this.zoomable = false;
     }
 
     getContainer() {
@@ -174,6 +175,10 @@ export class D3Graph {
 
     setContainer(container) {
         this.container = container;
+    }
+
+    setZoomable(zoomable) {
+        this.zoomable = zoomable;
     }
 
     getTitle() {
@@ -298,7 +303,6 @@ export class D3Graph {
     }
 
     setData (data) {
-        console.log(data);
         this.data = data;
     }
 }
