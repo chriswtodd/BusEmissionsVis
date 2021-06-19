@@ -6,7 +6,6 @@ from pymongo.errors import BulkWriteError
 #
 # Development Environment 
 #
-mongo_client = MongoClient('localhost', 56126)
 mongo_online = MongoClient("mongodb+srv://em:56126@cluster0-9mebh.mongodb.net/test?retryWrites=true&w=majority")
 
 class Trips_Network(Resource):    
