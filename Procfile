@@ -1,2 +1,2 @@
-web: gunicorn app:api/api
-web: yarn start
+web: gunicorn app:api
+web: npm start
