@@ -3,7 +3,7 @@ from flask_restful import Api
 from flask_cors import CORS
 from mongo_processor import Trips_Network
 
-app = Flask(__name__, static_folder='../build', static_url_path='/')
+app = Flask(__name__, static_folder='./build', static_url_path='/')
 api = Api(app)
 CORS(app)
 
