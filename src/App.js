@@ -7,6 +7,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 
+import { useSelector, useDispatch } from 'react-redux';
+import { setUrl } from 'redux/envVarsSlice.js';
+
 // Page components for router
 import Visualisations from './views/visualisations.js';
 
@@ -18,6 +21,7 @@ const Logo = styled.img`
   padding-right: 105px;
 `;
 
+require('dotenv').config()
 let styles = require('../src/styles.js');
 
 const buttons = [
@@ -127,7 +131,10 @@ const MainFlex = styled.main`
 `;
 
 export default function App() {
+  let dispatch = useDispatch();
   const [active, setActive] = useState(buttons[0]);
+  console.log(window.location.href);
+  dispatch(setUrl(window.location.href))
   //Set body
   componentWillMount();
   return (

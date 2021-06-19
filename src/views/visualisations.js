@@ -37,6 +37,8 @@ const PageContainerVertical = styled(PageContainer)`
 
 export default function Visualisations(props) {
     let dispatch = useDispatch();
+    //App
+    const url = useSelector(state => state.envVars.url);
     //Page
     const streamData = useSelector(state => state.data.streamData);
     const windows = useSelector(state => state.windows);
@@ -121,7 +123,7 @@ export default function Visualisations(props) {
     useEffect(() => {
         async function fetchData() {
             let d1 = '2019-01-01', d2 = '2019-12-10';
-            let fetchURL = encodeURI(`http://127.0.0.1:5000/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
+            let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
             let res = await fetch(fetchURL);
             const json = await res.json();
             dispatch(setStreamData(json));
@@ -152,7 +154,7 @@ export default function Visualisations(props) {
     useEffect(() => {
         async function fetchData() {
             let d1 = '2019-01-01', d2 = '2019-12-10';
-            let fetchURL = encodeURI(`http://127.0.0.1:5000/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
+            let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
             let res = await fetch(fetchURL);
             const json = await res.json();
             console.log("NEW JSON DATA: ", json)
