@@ -3,13 +3,16 @@ from flask_restful import Api
 from flask_cors import CORS
 from mongo_processor import Trips_Network
 
-app = Flask(__name__, static_folder='./build', static_url_path='/')
+app = Flask(__name__)
+# DEPLOYMENT ENV
+# Flask(__name__, static_folder='./build', static_url_path='/')
 api = Api(app)
 CORS(app)
 
-@app.route('/')
-def index():
-    return app.send_static_file('index.html')
+# DEPLOYMENT ENV
+# @app.route('/')
+# def index():
+#     return app.send_static_file('index.html')
 
 @app.route('/day/<string:city>/<string:startDate>/<string:endDate>/<string:startTime>/<string:endTime>', methods=["GET"])
 def trip(city, startDate, endDate, startTime, endTime):    

@@ -13,7 +13,7 @@ __pycache__
 /coverage
 
 # production
-/api
+/build
 
 # misc
 .DS_Store
