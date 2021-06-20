@@ -47,6 +47,7 @@ export default function Visualisations(props) {
     const classes = useSelector(state => state.filters.class);
     const startTime = useSelector(state => state.filters.startTime);
     const endTime = useSelector(state => state.filters.endTime);
+    const emissionType = useSelector(state => state.filters.emissionType);
 
     function getRenderedComponentFunction(windowId) {
         if (windowId != "overview_window") {
@@ -95,7 +96,7 @@ export default function Visualisations(props) {
             if (window.props.id != "overview_window") {
                 // Create the tooltip
                 vis.setTooltipKeys(modelData.engine_types);
-                vis.addTooltipToSvg("tt-main", "CO2");
+                vis.addTooltipToSvg("tt-main", emissionType);
                 // Create tt bars
                 vis.createBars();
                 // vis.updateBars();
@@ -172,7 +173,6 @@ export default function Visualisations(props) {
             .value
             .map(window => {
                 let vis = window.windowComponent.props.renderedComponent
-                console.log(processStreamData(streamData))
                 vis.setStreamData(processStreamData(streamData));
                 vis.render();
                 // if (vis.id != "overview_window") {
@@ -182,7 +182,7 @@ export default function Visualisations(props) {
                 //     vis.updateBars();
                 // }
             })
-    }, [classes])
+    }, [classes, emissionType])
 
     /** 
      * Call use effect to rerender components in window when windows state changes

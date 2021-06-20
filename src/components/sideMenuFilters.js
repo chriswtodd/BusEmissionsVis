@@ -5,13 +5,14 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from 'react-redux';
 
 import { setClasses, setReqGranularity, 
-    setStartTime, setEndTime } from '../redux/filterSlice.js';
+    setStartTime, setEndTime, setEmissionType } from '../redux/filterSlice.js';
 
 import TimePicker from './materialUi/TimePicker.js';
 
 import SideMenuContainer from "./sideMenuContainer.js";
 import Checkbox from "./html/checkbox.js";
 
+let modelData = require('../models/modelData.js')
 const styles = require("../styles.js")
 
 const CheckboxContainer = styled.div`
@@ -45,6 +46,7 @@ export default function SideMenuFilters(props) {
     const filters = useSelector(state => state.filters)
 
     const [granularity, setGranularity] = useState("day");
+    const [emissionTypeRadio, setEmissionTypeRadio] = useState("CO2");
 
     return (
         <SideMenuContainer label={"Visualisation Filters"}>
@@ -57,11 +59,30 @@ export default function SideMenuFilters(props) {
                         id={property}
                         name={property}
                         label={property}
+                        color={modelData.engine_colours[property]}
                         callback={(e) => {
                             dispatch(setClasses(e.target.name));
                         }}
                     />
                 )) : null}
+            </CheckboxContainer>
+
+            <SectionLabel>
+                Emission Type:
+            </SectionLabel>
+            <CheckboxContainer id={"checkbox_granularity"}>
+                <ReactRadioButtonGroup
+                    options={["CO2", "CO", "Fuel Consumption", "Hydro Carbons", "Nitrogen Oxide", "Particulate Matter", "Passenger Km"]}
+                    name="emissionTypeRadio"
+                    isStateful={false}
+                    onChange={
+                        (checkedValue) => {
+                            setEmissionTypeRadio(checkedValue)
+                            dispatch(setEmissionType(checkedValue))
+                        }
+                    }
+                    value={emissionTypeRadio}
+                />
             </CheckboxContainer>
             
             <SectionLabel>
@@ -69,7 +90,7 @@ export default function SideMenuFilters(props) {
             </SectionLabel>
             <CheckboxContainer id={"checkbox_granularity"}>
                 <ReactRadioButtonGroup
-                    options={["day", "hour"]}
+                    options={["day"]}
                     name="granularity"
                     isStateful={false}
                     onChange={

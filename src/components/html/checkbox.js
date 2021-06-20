@@ -22,7 +22,20 @@ const Container = styled.div`
     display: flex;
     flex-direction: row;
     padding: 2.5px;
+    align-items: center;
 `;
+
+const Dot = styled.span`
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 0.1px solid rgba(50,50,50,.8);
+`;
+
+function VehicleDot(props) {
+    return <Dot style={{"background-color": props.color}} />
+}
 
 export default function Checkbox(props) {
     let [checked, setChecked] = useState(true);
@@ -37,6 +50,7 @@ export default function Checkbox(props) {
                     setChecked(!checked);
                     props.callback(e, checked);
                 }}/>
+            <VehicleDot color={props.color} />
             <Label for={props.id}>{props.label}</Label>
         </Container>
     )

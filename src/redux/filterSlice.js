@@ -22,6 +22,7 @@ export const filterSlice = createSlice({
           "ELECTRIC" : true,
         },
         routes: "",
+        emissionType: "co2",
     },
     reducers: {
         setClasses: (state, payload) => {
@@ -36,9 +37,26 @@ export const filterSlice = createSlice({
         },
         setEndTime: (state, payload) => {
             state.endTime = payload.payload;
+        },
+        setEmissionType: (state, payload) => {
+            if (payload.payload === "CO2") {
+                state.emissionType = "co2";
+            } else if (payload.payload === "CO") {
+                state.emissionType = "co";
+            } else if (payload.payload === "Fuel Consumption") {
+                state.emissionType = "fc";
+            } else if (payload.payload === "Hydro Carbons") {
+                state.emissionType = "hc";
+            } else if (payload.payload === "Nitrogen Oxide") {
+                state.emissionType = "nox";
+            } else if (payload.payload === "Particulate Matter") {
+                state.emissionType = "pm";
+            } else if (payload.payload === "Passenger Km") {
+                state.emissionType = "paxKm";
+            }
         }
     }
 })
 
-export const { setClasses, setReqGranularity, setStartTime, setEndTime } = filterSlice.actions;
+export const { setClasses, setReqGranularity, setStartTime, setEndTime, setEmissionType } = filterSlice.actions;
 export const filterReducer = filterSlice.reducer;

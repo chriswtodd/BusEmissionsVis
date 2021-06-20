@@ -15,7 +15,7 @@ export function processStreamData(data) {
     // Filter data according to UI
     keys = keys.filter(d => filters.class[d] || d === "date")
 
-    let p = "co2";
+    let p = filters.emissionType;
 
     let drawData = [];
     data.forEach((d) => {
