@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setUrl } from 'redux/envVarsSlice.js';
 
 // Page components for router
+import Home from './views/home.js';
 import Visualisations from './views/visualisations.js';
 
 import logo from './components/GW_Logo.png';
@@ -28,28 +29,28 @@ const buttons = [
   {
     "label" : "Home", 
     "to": "/",
-    "component" : ""
+    "component" : Home
   },
+  // {
+  //   "label": "Tutorial - User Interface",
+  //   "to": "/tut1",
+  //   "component" : ""
+  // },
+  // {
+  //   "label" : "Tutorial - Visualisations",
+  //   "to": "/tut2",
+  //   "component" : ""
+  // },
   {
-    "label": "Tutorial - User Interface",
-    "to": "/tut1",
-    "component" : ""
-  },
-  {
-    "label" : "Tutorial - Visualisations",
-    "to": "/tut2",
-    "component" : ""
-  },
-  {
-    "label" : "BEVis Tool",
+    "label" : "BEVFERLE Tool",
     "to": "/visualisations",
     "component" : Visualisations
   },
-  {
-    "label" : "User Study",
-    "to": "/tut1",
-    "component" : ""
-  }
+  // {
+  //   "label" : "User Study",
+  //   "to": "/tut1",
+  //   "component" : ""
+  // }
 ]
   
 const Button = styled.button`

@@ -13,6 +13,9 @@ CORS(app)
 # @app.route('/')
 # def index():
 #     return app.send_static_file('index.html')
+# @app.errorhandler(404)
+# def not_found(e):
+#     return app.send_static_file('index.html')
 
 @app.route('/day/<string:city>/<string:startDate>/<string:endDate>/<string:startTime>/<string:endTime>', methods=["GET"])
 def trip(city, startDate, endDate, startTime, endTime):    

@@ -1,7 +1,9 @@
 let styles = {
-    background_colour: "rgba(0, 120, 138, 0.9);",
+    background_colour: "rgba(0, 120, 138, 1);",
     text_colour: "rgb(248, 248, 248);",
     text_colour_neg: "rgb(50, 50, 50);",
+
+    banner_background: `linear-gradient(to left, rgba(0, 120, 138, 0.9), rgba(0, 120, 138, 0.8))`,
     body : {
         "margin": 0,
         "height": "100%",
