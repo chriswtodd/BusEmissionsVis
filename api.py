@@ -4,20 +4,20 @@ from flask_cors import CORS
 from mongo_processor import Trips_Network
 
 # DEV
-# app = Flask(__name__)
+app = Flask(__name__)
 
 # DEPLOYMENT ENV
-app = Flask(__name__, static_folder='./build', static_url_path='/')
+# app = Flask(__name__, static_folder='./build', static_url_path='/')
 api = Api(app)
 CORS(app)
 
 # DEPLOYMENT ENV
-@app.route('/')
-def index():
-    return app.send_static_file('index.html')
-@app.errorhandler(404)
-def not_found(e):
-    return app.send_static_file('index.html')
+# @app.route('/')
+# def index():
+#     return app.send_static_file('index.html')
+# @app.errorhandler(404)
+# def not_found(e):
+#     return app.send_static_file('index.html')
 
 @app.route('/day/<string:city>/<string:startDate>/<string:endDate>/<string:startTime>/<string:endTime>', methods=["GET"])
 def trip(city, startDate, endDate, startTime, endTime):    

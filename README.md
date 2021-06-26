@@ -13,3 +13,7 @@ The datasets the tool operates on was created from a mixture of several sources 
 
 BEVFERLE (Bus Emissions Visualiser For Emissions Research of Local Environments, pronounced "Beverly") is a redesign and refactor of the original codebase left after these projects. It uses React for UI, Redux for state management,
 and has a Python (Flask) backend
+
+### New Workflow
+
+<img src="./resources/gitworkflow.png"/>
