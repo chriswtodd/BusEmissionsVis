@@ -10,6 +10,7 @@ export const envVarsSlice = createSlice({
     name: 'env',
     initialState: {
         url: {},
+        loading: true,
     },
     reducers: {
         setUrl: (state, payload) => {
@@ -18,8 +19,11 @@ export const envVarsSlice = createSlice({
                 state.url = process.env.REACT_APP_DEPLOYMENT_URL;
             }
         },
+        setLoading: (state, payload) => {
+            state.loading = payload.payload;
+        }
     }
 })
 
-export const { setUrl } = envVarsSlice.actions;
+export const { setUrl, setLoading } = envVarsSlice.actions;
 export const envVarReducer = envVarsSlice.reducer;

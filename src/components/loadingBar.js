@@ -4,9 +4,11 @@
  */ 
 
 import React, { useState } from 'react';
-import styled from "styled-components";
+import { connect, useSelector } from 'react-redux';
+
 import { useLoading, Circles } from '@agney/react-loading';
 
+import styled from "styled-components";
 
 const LoadingBarContainer = styled.div`
     background: white;
@@ -53,29 +55,50 @@ const LoadingContainer = styled.div`
 `;
 
 export default function LoadingBar() {
+    let loadingState = useSelector(state => state.envVars.loading)
     const { containerProps, indicatorEl } = useLoading({
-        loading: true,
+        loading: loadingState,
         loaderProps: {
             // Any props here would be spread on to the indicator element.
-            style: { color: 'rgba(0,120,138,100)', padding: '10px' },
+            style: { 
+                color: 'rgba(0,120,138,100)', 
+                padding: '10px',
+                position: 'absolute',
+                left: "50%",
+                top: "35%",
+                "z-index": "10000",
+            },
             valueText: "Fetching data..."
           },
-        indicator: <Circles width="150" />,
+        indicator: <Circles width="15%" />,
       });
 
     return (
-        <LoadingWrapper>
-            <LoadingContainer>
+        // <LoadingWrapper>
+        //     <LoadingContainer>
                 <section {...containerProps}>
                     {indicatorEl} {/* renders only while loading */}
                 </section>
-                <LoadingBarContainer>
-                    <LoadingBarProgress>
-                    </LoadingBarProgress>
-                    <LoadingBarPercent>
-                    </LoadingBarPercent>
-                </LoadingBarContainer>
-            </LoadingContainer>
-        </LoadingWrapper>
+        //         {/* <LoadingBarContainer>
+        //             <LoadingBarProgress>
+        //             </LoadingBarProgress>
+        //             <LoadingBarPercent>
+        //             </LoadingBarPercent>
+        //         </LoadingBarContainer>
+        //     </LoadingContainer>
+        // </LoadingWrapper> */}
     )
 }
+
+// const mapStateToProps = (state) => {
+//     let loadingState = true;
+//     if (state.windows.windowRenderComponent === "Stream Graph" && Array.isArray(state.data.streamData)) {
+//         loadingState = false;
+//     } else if (state.windows.windowRenderComponent === "Stream Graph" && state.streamData != {}) {
+
+//     }
+//     return {
+//         loading: loadingState,
+//     }
+// }
+// export default connect(mapStateToProps)(LoadingBar);

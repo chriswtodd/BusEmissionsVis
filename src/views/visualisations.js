@@ -9,11 +9,12 @@ import store from 'redux/store.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { addWindow, extractWindow } from '../redux/windowSlice.js';
 import { setStreamData } from '../redux/dataSlice.js';
+import { setLoading } from '../redux/envVarsSlice';
 
 import styled from "styled-components";
-import LoadingBar from '../components/loadingBar.js';
 import SideMenuLeft from '../components/sideMenuLeft.js';
 import WindowComponent from '../components/window-component.js';
+import LoadingBar from '../components/loadingBar.js';
 
 import * as d3Graph from '../d3/graph.js';
 import * as d3StreamGraph from '../d3/streamGraphMixin.js';
@@ -124,12 +125,16 @@ export default function Visualisations(props) {
     // Call use effect only once to fetch data required for visualisations
     useEffect(() => {
         async function fetchData() {
+            // Fetch base set of data
             let d1 = '2019-01-01', d2 = '2019-12-10';
             let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
             let res = await fetch(fetchURL);
             const json = await res.json();
+            // Set to global draw data
             dispatch(setStreamData(json));
-
+            // Turn off loader
+            dispatch(setLoading(false));
+            // Add windows to draw
             let firstWindow = (
                 <WindowComponent key={"vis-window_0"}
                     id={"vis-window_0"}
@@ -143,6 +148,7 @@ export default function Visualisations(props) {
                     renderedComponent={getRenderedComponentFunction("overview_window")}
                 />
             )
+            // Set state with windows
             dispatch(addWindow(firstWindow));
             dispatch(addWindow(overview));
         }
@@ -157,14 +163,20 @@ export default function Visualisations(props) {
      */
     useEffect(() => {
         async function fetchData() {
+            // Fetch new data
             let d1 = '2019-01-01', d2 = '2019-12-10';
             let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
             let res = await fetch(fetchURL);
             const json = await res.json();
-            console.log("NEW JSON DATA: ", json)
+            // Set data
             dispatch(setStreamData(json));
+            // Turn off loader
+            dispatch(setLoading(false));
+            // Redraw existing visualisations
             redrawGraphs(json);
         }
+        // Turn on loader before fetch
+        dispatch(setLoading(true));
         fetchData();
     }, [granularity, startTime, endTime])
 
@@ -197,14 +209,13 @@ export default function Visualisations(props) {
 
     return (
         <>
-            <PageContainer>
-                {/* Loading bar */}
-                <LoadingBar />
+            <PageContainer>    
                 {/* Side menu left */}
-                <SideMenuLeft />
                 {/* Visualisation selection options */}
-                {/* Side menu right? */}
-                {/* Visualisation filters */}
+                <SideMenuLeft />
+                {/* Loading bar */}
+                <LoadingBar loading={true} />
+                
                 {/* Visualisation container */}
                 <PageContainerVertical>
                     {useSelector(state => state.windows)
