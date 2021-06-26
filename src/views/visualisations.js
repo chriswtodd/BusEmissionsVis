@@ -86,10 +86,10 @@ export default function Visualisations(props) {
 
             // vis.setData(streamData);
             //Set visualisation xaxis incase it needs to be redrawn
-            vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Yes"));
+            vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Date"));
             vis.drawXAxis(vis.getXAxis(), 0, [new Date(2019, 0, 1), new Date(2019, 11, 10)]);
     
-            vis.setYAxis(vis.createYAxis([0, 0], "Yes"));
+            vis.setYAxis(vis.createYAxis([0, 0], "UNIT / L"));
 
             vis.enter();
             vis.render();
@@ -101,6 +101,7 @@ export default function Visualisations(props) {
                 vis.createBars();
                 // vis.updateBars();
             } else {
+                // TO BE FIXED : WINDOW UPDATE
                 let w1 = store.getState().windows.value[0].windowComponent.props.renderedComponent,
                 w2 = store.getState().windows.value[1].windowComponent.props.renderedComponent;
                 w1.addBrushAndZoom(w2, w1);
@@ -128,19 +129,21 @@ export default function Visualisations(props) {
             let res = await fetch(fetchURL);
             const json = await res.json();
             dispatch(setStreamData(json));
+
             let firstWindow = (
                 <WindowComponent key={"vis-window_0"}
                     id={"vis-window_0"}
                     renderedComponent={getRenderedComponentFunction("vis-window_0")}
-                />
+                >
+                </WindowComponent>
             )
-            dispatch(addWindow(firstWindow));
             let overview = (
                 <WindowComponent id={"overview_window"}
                     id={"overview_window"}
                     renderedComponent={getRenderedComponentFunction("overview_window")}
                 />
             )
+            dispatch(addWindow(firstWindow));
             dispatch(addWindow(overview));
         }
 
@@ -210,7 +213,6 @@ export default function Visualisations(props) {
                             let r = (<WindowComponent key={window.windowComponent.props.id}
                                 id={window.windowComponent.props.id}
                                 renderedComponent={window.windowComponent.props.renderedComponent}
-                                // componentDidMountFunction={() => drawGraphs(r)}
                             />)
                             return r;
                         })

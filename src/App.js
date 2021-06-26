@@ -134,7 +134,6 @@ const MainFlex = styled.main`
 export default function App() {
   let dispatch = useDispatch();
   const [active, setActive] = useState(buttons[0]);
-  console.log(window.location.href);
   dispatch(setUrl(window.location.href))
   //Set body
   componentWillMount();

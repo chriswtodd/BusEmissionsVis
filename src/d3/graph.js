@@ -54,18 +54,20 @@ export let axisDateMixin = {
         this.gX
             .selectAll('text')
             .attr("transform", "rotate(45deg)")
-            .attr("text-anchor", "start")
-            .attr("font-size", "16px")
+            .attr("text-anchor", "middle")
+            .attr("font-size", "1.2em")
             .attr("font-weight", "bold")
             .attr("y", 10);
     
         this.focus.select(".x")
             .append("text")
             .attr("class", "x-label")
-            .attr("font-size", "16px")
+            .attr("font-size", "1.4em")
             .attr("font-weight", "bold")
             .style("text-anchor", "start")
             .style("fill", "black")
+            .attr("x", this.graphBounds.xaxis / 2)
+            .attr("y", 35)
             .text(label);
     
         return d3.axisBottom(this.xScale);
@@ -86,18 +88,12 @@ export let axisDateMixin = {
             .attr("class", "x-ticks")
             .attr("y", 25);
 
-            //Label
-        this.focus.select(".x")
-            .selectAll("text")
-            // .style("transform", "rotate(45deg)")
-            .attr("text-anchor", "start")
-            .attr("font-size", "16px")
-            .attr("font-weight", "bold")
-            .attr("y", 10);
-
         this.focus.select(".x")
             .append("text")
             .attr("class", "x-label")
+            .attr("font-size", "1.4em")
+            .attr("x", this.graphBounds.xaxis / 2)
+            .attr("y", 35)
             .text(label);
     }
 }
@@ -105,7 +101,7 @@ export let axisDateMixin = {
 export let axisContinuousMixin = {
     createYAxis (yRange, label) {
         this.yScale = d3.scaleLinear()
-            .range([this.graphBounds.yaxis, this.margin.top + this.margin.bottom]);
+            .range([this.graphBounds.yaxis, this.margin.bottom]);
 
         this.gY = this.focus.append("g")
             .attr("class", "y")
@@ -116,13 +112,12 @@ export let axisContinuousMixin = {
             .selectAll("text")
             .attr("text-anchor", "start")
             .attr("transform", "translate(-35, 0)")
-            .attr("font-size", "14px")
+            .attr("font-size", "1.2em")
             .attr("font-weight", "bold");
     
         // Y label
         this.focus.select(".y")
             .append("text")
-            .attr("transform", "translate(-" + 15 + ", -" + 5 + ")")
             .style("text-anchor", "middle")
             .text(label);
     
@@ -139,7 +134,7 @@ export let axisContinuousMixin = {
             .selectAll("text")
             .attr("text-anchor", "start")
             .attr("transform", "translate(-35, 0)")
-            .attr("font-size", "14px")
+            .attr("font-size", "1.2em")
             .attr("font-weight", "bold")
     
         this.focus
@@ -240,7 +235,7 @@ export class D3Graph {
         this.focus = this.svg
             .append("g")
             .attr("class", "focus")
-            .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+            .attr("transform", "translate(" + this.margin.left + ",0)");
         //Set the group of the plot, used to zoom the plot separately
         //to the focus
         this.setG();

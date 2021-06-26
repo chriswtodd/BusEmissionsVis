@@ -41,9 +41,10 @@ export let streamGraphMixin = {
      * @param {D3Graph} zoomedGraph 
      */
     addBrushAndZoom(brushedGraph, zoomedGraph) {
+        let headerHeight = styles.convertToInt(styles.window_header_height);
         //Brush
         let brush = d3.brushX()
-            .extent([[0, 0], [brushedGraph.graphBounds.xaxis, brushedGraph.graphBounds.yaxis]])
+            .extent([[0, headerHeight], [brushedGraph.graphBounds.xaxis, brushedGraph.graphBounds.yaxis]])
             .on("brush", brushed)
         //Zoom
         let zoom = d3.zoom()
@@ -109,7 +110,7 @@ export let streamGraphMixin = {
                 .selectAll("text")
                 .attr("text-anchor", "start")
                 .attr("transform", "translate(-35, 0)")
-                .attr("font-size", "14px")
+                .attr("font-size", "1.2em")
                 .attr("font-weight", "bold");
         }
 
@@ -139,7 +140,7 @@ export let streamGraphMixin = {
                 .selectAll("text")
                 .attr("text-anchor", "start")
                 .attr("transform", "translate(-35, 0)")
-                .attr("font-size", "14px")
+                .attr("font-size", "1.2em")
                 .attr("font-weight", "bold");
         }
     },
@@ -214,7 +215,15 @@ export let streamGraphMixin = {
         //Set the y domain
         let yMax = d3.max(this.calcStackHeight(this.streamData, this.keys));
         this.yScale.domain([0, yMax]);
-        this.focus.select(".y").call(d3.axisLeft(this.yScale))
+        this.focus.select(".y")
+            .call(d3.axisLeft(this.yScale))
+        //Restyle
+        this.focus.select(".y")
+            .selectAll("text")
+            .attr("text-anchor", "start")
+            .attr("transform", "translate(-35, 0)")
+            .attr("font-size", "1.2em")
+            .attr("font-weight", "bold")
 
         //Reset stackedData
         //this.streamData is updated externally,

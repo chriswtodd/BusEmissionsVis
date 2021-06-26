@@ -68,9 +68,7 @@ export let streamTooltipFactoryMixin = {
                 .style("opacity", 0);
     },
 
-    createLineChartTooltip(event, infoDots, id, property) {
-        let left = event.pageX + 5;
-        let top = event.pageY + 5;
+    createLineChartTooltip(top, left, infoDots, id, property) {
         //Draw tooltip
         d3.select("#".concat(this.containerId))
             .insert("div", ":first-child")
@@ -81,7 +79,8 @@ export let streamTooltipFactoryMixin = {
             .style("padding", "10px")
             .style("cursor", "none")
             .style("border", `1px ${styles.background_colour} solid`)
-            .style("display", "inline-block")
+            .style("display", "flex")
+            .style("flex-direction", "column")
             .style("position", "absolute")
             .style("left", left + "px")
             .style("top", top + "px")
@@ -95,9 +94,7 @@ export let streamTooltipFactoryMixin = {
                 + "<br><span class=\"toolTip__vehicle-dot_EURO2\"></span> EURO2 : " + Math.round(infoDots["EURO2"] * 100) / 100);
     },
 
-    drawLineChartTooltip (event, infoDots, ttName, property) {
-        let left = event.pageX + 5;
-        let top = event.pageY + 5;
+    drawLineChartTooltip (top, left, infoDots, ttName, property) {
         //Select tooltip
     
         let timeStamp = infoDots.date.toString();
@@ -108,7 +105,7 @@ export let streamTooltipFactoryMixin = {
         d3.select("#".concat(this.containerId))
             .select("#".concat(ttName))
             .style("background", styles.ttBackground)
-            .style("display", "inline-block")
+            .style("display", "flex")
             .style("left", left + "px")
             .style("top", top + "px")
             .html("<p>" + timeStamp + "</p>"
@@ -124,7 +121,7 @@ export let streamTooltipFactoryMixin = {
     addTooltipToSvg(ttName, ttTitle) {
         let widthTooltipBars = this.graphBounds.xaxis / this.streamData.length;
         let t = this;
-        this.focus.on("mousemove", function (event) {
+        this.focus.on("mouseover", function (event) {
             let onDot = false;
             for (let area of t.streamData) {
                 //If the dots are hovered on
@@ -142,12 +139,14 @@ export let streamTooltipFactoryMixin = {
                             engine: key
                         });
                     }
+                    let top = event.pageY + 200 > t.height ? event.pageY - 200 : event.pageY + 5;
                     //See if the tooltip exists
                     if (d3.select("#".concat(t.containerId))
                         .select("#".concat(ttName))
                         .empty()
                     ) {
-                        t.createLineChartTooltip(event, area, ttName, ttTitle);
+
+                        t.createLineChartTooltip(top, event.pageX + 5, area, ttName, ttTitle);
                         d3.select("body")
                             .selectAll(".plot-rect")
                             .filter(d => { return d.date === area.date; })
@@ -156,7 +155,7 @@ export let streamTooltipFactoryMixin = {
                     }
                     //If tooltip exists select and draw
                     else {
-                        t.drawLineChartTooltip(event, area, ttName, ttTitle);
+                        t.drawLineChartTooltip(top, event.pageX + 5, area, ttName, ttTitle);
                         d3.select("body")
                             .selectAll(".plot-rect")
                             .attr("height", 1)

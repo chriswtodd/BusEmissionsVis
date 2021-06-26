@@ -19,7 +19,7 @@ export const windowSlice = createSlice({
             state.value = insertItem(state.value, {
                 index: state.value.length,
                 item: {
-                    id:"vis-window_"+state.value.length,
+                    id: payload.payload.props.id,
                     windowComponent: payload.payload,
                 }
             })
