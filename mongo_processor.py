@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from flask import jsonify, request
@@ -10,15 +11,13 @@ from pymongo.errors import BulkWriteError
 load_dotenv()
 user = os.environ['MONGO_USER']
 password = os.environ['MONGO_PASS']
-mongo_online = MongoClient("mongodb+srv://{user}:{password}@cluster0-9mebh.mongodb.net/test?retryWrites=true&w=majority")
+mongo_online = MongoClient("mongodb+srv://{0}:{1}@cluster0-9mebh.mongodb.net/test?retryWrites=true&w=majority".format(user, password))
 
 class Trips_Network(Resource):    
     def get_emissions_by_class_per_day(self, city, startDate, endDate, startTime, endTime):
         #### Deployment Environment
         db = mongo_online["test"]
         col = db["trips_2019"]
-
-        print(startTime)
 
         #### Old dev env
         # db = mongo_client["emma"]["end_2019_pax_by_route"]
