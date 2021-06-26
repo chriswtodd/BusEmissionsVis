@@ -18,9 +18,11 @@ const MenuContainer = styled.div`
     display: flex;
     flex-direction: column;
     top: 0px; left: 0;
-    width: ${styles.side_menu_width};
+    width: auto;
     opacity: 1;
     background-color: ${styles.side_menu_background};
+    overflow-y: auto;
+    overflow-x: hidden;
 `;
 
 const MenuContainerToggle = styled(MenuContainer)`

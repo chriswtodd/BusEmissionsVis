@@ -11,11 +11,10 @@ import { connect, useSelector } from 'react-redux';
 let styles = require('../styles.js')
 
 const Container = styled.div`
-    // flex: 1 1 auto;
+    flex: 1 1 auto;
     border: 2px rgba(0,0,0,0.4) solid;
     box-shadow: 0px 0px 2px 3px ${styles.window_background_colour};
     width: 100%;
-    height: calc(100% - 300px);
     display: flex;
     flex-direction: column;
 	margin: 0;
@@ -338,7 +337,7 @@ function WindowComponent(props) {
     useEffect(() => {
         
     })
-        
+
     return (
             <>
                 <Container id={props.id} style={getStyles(props.height)}>
@@ -347,6 +346,7 @@ function WindowComponent(props) {
                             {props.headerText}
                         </HeaderText>
                     </Header>
+                    {props.children}
                 </Container>
                 {/* <GhostPane id="ghostpane" /> */}
             </>
@@ -355,7 +355,6 @@ function WindowComponent(props) {
 
 const mapStateToProps = (state) => 
     {
-        console.log(state);
         return {
             selectedComponent : state.windows.windowRenderComponent,
             class: state.filters.class,
