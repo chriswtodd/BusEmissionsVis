@@ -7,7 +7,7 @@ import React, { useEffect } from 'react';
 
 import store from 'redux/store.js';
 import { useSelector, useDispatch } from 'react-redux';
-import { addWindow, extractWindow } from '../redux/windowSlice.js';
+import { addWindow, extractWindow, removeWindow } from '../redux/windowSlice.js';
 import { setStreamData } from '../redux/dataSlice.js';
 import { setLoading } from '../redux/envVarsSlice';
 
@@ -18,9 +18,11 @@ import LoadingBar from '../components/loadingBar.js';
 
 import * as d3Graph from '../d3/graph.js';
 import * as d3StreamGraph from '../d3/streamGraphMixin.js';
+import * as d3LineChart from '../d3/lineChartMixin.js';
 import { streamTooltipFactoryMixin } from "../d3/tooltipMixin.js";
 
 import { processStreamData } from "../models/streamModel.js";
+import { processLineData } from "../models/lineModel.js";
 
 let modelData = require('../models/modelData.js')
 
@@ -42,7 +44,7 @@ export default function Visualisations(props) {
     const url = useSelector(state => state.envVars.url);
     //Page
     const streamData = useSelector(state => state.data.streamData);
-    const windows = useSelector(state => state.windows);
+    let windows = useSelector(state => state.windows);
     //Filters
     const granularity = useSelector(state => state.filters.granularity);
     const classes = useSelector(state => state.filters.class);
@@ -51,12 +53,26 @@ export default function Visualisations(props) {
     const emissionType = useSelector(state => state.filters.emissionType);
 
     function getRenderedComponentFunction(windowId) {
-        if (windowId != "overview_window") {
-            return createGraph(windowId, d3Graph.axisDateMixin,d3Graph.axisContinuousMixin, d3StreamGraph.streamGraphMixin,streamTooltipFactoryMixin)
+        if (windows.windowRenderComponent === "Stream Graph") {
+            if (windowId != "overview_window") {
+                return createGraph(windowId, d3Graph.axisDateMixin,d3Graph.axisContinuousMixin, d3StreamGraph.streamGraphMixin,streamTooltipFactoryMixin)
+            }
+            return createGraph(windowId, d3Graph.axisDateMixin, d3Graph.axisContinuousMixin, d3StreamGraph.streamGraphMixin);
+        } else if (windows.windowRenderComponent === "Line Chart") {
+            if (windowId != "overview_window") {
+                return createGraph(windowId, d3Graph.axisDateMixin,d3Graph.axisContinuousMixin, d3LineChart.lineChartMixin)
+            }
+            return createGraph(windowId, d3Graph.axisDateMixin, d3Graph.axisContinuousMixin, d3LineChart.lineChartMixin);
         }
-        return createGraph(windowId, d3Graph.axisDateMixin, d3Graph.axisContinuousMixin, d3StreamGraph.streamGraphMixin);
+        return {};
     }
 
+    /**
+     * Create a D3 graph with mixins
+     * 
+     * @param {String} windowId An id for the window, using it we can get the window out of state
+     * @param  {...any} mixins The mixins defining the behaviour of the graphs
+     */
     function createGraph (windowId, ...mixins) {
         let graph = new d3Graph.D3Graph(windowId)
         for (let mixin of mixins) {
@@ -65,14 +81,22 @@ export default function Visualisations(props) {
         return graph;
     }
 
+    /**
+     * Define the type of graph to create on initialisaion
+     */
     function initGraphs() {
         let graphToDraw = store.getState().windows.windowRenderComponent
         if (graphToDraw === "Stream Graph")
             windows.value.forEach(d => createStreamGraph(d.windowComponent))
-        if (graphToDraw === "Heat Chart")
-            windows.value.forEach(d => createStreamGraph(d.windowComponent))
+        if (graphToDraw === "Line Chart")
+            windows.value.forEach(d => createLineChart(d.windowComponent))
     }
 
+    /**
+     * Takes a window component and creates the graph within it
+     * 
+     * @param {ReactFunctionalComponent:WindowComponent} window 
+     */
     function createStreamGraph(window) {
         if (window != undefined) {
             let vis = window.props.renderedComponent;
@@ -85,7 +109,6 @@ export default function Visualisations(props) {
             vis.setKeys(modelData.engine_types);
             vis.setStreamData(processStreamData(streamData));
 
-            // vis.setData(streamData);
             //Set visualisation xaxis incase it needs to be redrawn
             vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Date"));
             vis.drawXAxis(vis.getXAxis(), 0, [new Date(2019, 0, 1), new Date(2019, 11, 10)]);
@@ -110,14 +133,60 @@ export default function Visualisations(props) {
         }
     }
 
-    function redrawGraphs(newData) {
-        windows.value.forEach(d => renderStreamGraph(d.windowComponent, newData))
+    function createLineChart(window) {
+        if (window != undefined) {
+            let vis = window.props.renderedComponent;
+    
+            //Assign date mixin for the stream graph
+            vis.init();
+                
+            vis.setData(streamData);
+            vis.setColorScheme(modelData.engine_colours);
+            vis.setKeys(modelData.engine_types);
+            vis.setLineData(processLineData(streamData));
+
+            //Set visualisation xaxis incase it needs to be redrawn
+            vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Date"));
+            vis.drawXAxis(vis.getXAxis(), 0, [new Date(2019, 0, 1), new Date(2019, 11, 10)]);
+    
+            vis.setYAxis(vis.createYAxis([0, 0], "UNIT / L"));
+
+            vis.enter();
+            vis.render();
+        }
     }
 
+    /**
+     * Redraw the graphs when data changes
+     * 
+     * @param {JSON} newData data from API/State store
+     */
+    function redrawGraphs(newData) {
+        let graphToDraw = store.getState().windows.windowRenderComponent
+        if (graphToDraw === "Stream Graph")
+            windows.value.forEach(d => renderStreamGraph(d.windowComponent, newData))
+        if (graphToDraw === "Line Chart")
+            windows.value.forEach(d => renderLineChart(d.windowComponent, newData))
+    }
+
+    /**
+     * Redraw the stream graph with new data
+     */
     function renderStreamGraph(window, newData) {
         let vis = window.props.renderedComponent;
         vis.setData(newData);
         vis.setStreamData(processStreamData(newData));
+        vis.enter();
+        vis.render();
+    }
+
+    /**
+     * Redraw the line chart with new data
+     */
+    function renderLineChart(window, newData) {
+        let vis = window.props.renderedComponent;
+        vis.setData(newData);
+        vis.setLineData(processLineData(newData));
         vis.enter();
         vis.render();
     }
@@ -134,17 +203,23 @@ export default function Visualisations(props) {
             dispatch(setStreamData(json));
             // Turn off loader
             dispatch(setLoading(false));
+            windows.value.forEach(d => {
+                dispatch(removeWindow(d.id))
+            })
             // Add windows to draw
             let firstWindow = (
                 <WindowComponent key={"vis-window_0"}
                     id={"vis-window_0"}
+                    // use to delete graph component and redraw
+                    selectedComponent={store.getState().windows.windowRenderComponent}
                     renderedComponent={getRenderedComponentFunction("vis-window_0")}
                 >
                 </WindowComponent>
             )
             let overview = (
-                <WindowComponent id={"overview_window"}
+                <WindowComponent key={"overview_window"}
                     id={"overview_window"}
+                    selectedComponent={store.getState().windows.windowRenderComponent}
                     renderedComponent={getRenderedComponentFunction("overview_window")}
                 />
             )
@@ -157,7 +232,8 @@ export default function Visualisations(props) {
     }, [])
 
     /**
-     * Call use effect to recall flask when granularity changes
+     * Call use effect to recall flask when certain filters 
+     * change
      * 
      * TODO: Add logic to stop unneccessary reloading
      */
@@ -188,7 +264,12 @@ export default function Visualisations(props) {
             .value
             .map(window => {
                 let vis = window.windowComponent.props.renderedComponent
-                vis.setStreamData(processStreamData(streamData));
+                let graphToDraw = store.getState().windows.windowRenderComponent
+                if (graphToDraw === "Stream Graph") {
+                    vis.setStreamData(processStreamData(streamData));
+                } else if (graphToDraw === "Line Chart") {
+                    vis.setLineData(processLineData(streamData));
+                }
                 vis.render();
                 // if (vis.id != "overview_window") {
                 //     // Update the tooltip
@@ -198,6 +279,37 @@ export default function Visualisations(props) {
                 // }
             })
     }, [classes, emissionType])
+
+
+    useEffect(() => {
+        //Data not loaded yet
+        if (!Array.isArray(streamData)) return
+        windows.value.forEach(d => {
+            dispatch(removeWindow(d.id))
+        })
+        // Add windows to draw
+        let firstWindow = (
+            <WindowComponent key={"vis-window_0"}
+                id={"vis-window_0"}
+                // use to delete graph component and redraw
+                selectedComponent={store.getState().windows.windowRenderComponent}
+                renderedComponent={getRenderedComponentFunction("vis-window_0")}
+            >
+            </WindowComponent>
+        )
+        let overview = (
+            <WindowComponent key={"overview_window"}
+                id={"overview_window"}
+                selectedComponent={store.getState().windows.windowRenderComponent}
+                renderedComponent={getRenderedComponentFunction("overview_window")}
+            />
+        )
+        // Set state with windows
+        dispatch(addWindow(firstWindow));
+        dispatch(addWindow(overview));
+
+        windows = store.getState().windows;
+    }, [windows.windowRenderComponent])
 
     /** 
      * Call use effect to rerender components in window when windows state changes
@@ -223,7 +335,8 @@ export default function Visualisations(props) {
                         .map(window => {
                             let r = (<WindowComponent key={window.windowComponent.props.id}
                                 id={window.windowComponent.props.id}
-                                renderedComponent={window.windowComponent.props.renderedComponent}
+                                renderedComponent={getRenderedComponentFunction(window.windowComponent.props.id)}
+                                selectedComponent={window.windowComponent.props.selectedComponent}
                             />)
                             return r;
                         })

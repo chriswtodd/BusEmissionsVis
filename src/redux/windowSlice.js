@@ -15,7 +15,6 @@ export const windowSlice = createSlice({
     },
     reducers: {
         addWindow: (state, payload) => {
-            console.log(state, payload);
             state.value = insertItem(state.value, {
                 index: state.value.length,
                 item: {
@@ -24,9 +23,9 @@ export const windowSlice = createSlice({
                 }
             })
         },
-        removeWindow: (state, div_id) => {
+        removeWindow: (state, payload) => {
             state.value = state.value.filter((d) => {
-                return d.id != div_id;
+                return d.id != payload.payload;
             })
         },
         setWindowRenderComponent: (state, action) => {

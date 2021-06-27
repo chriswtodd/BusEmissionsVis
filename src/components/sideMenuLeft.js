@@ -46,6 +46,10 @@ export const buttons = [
 
                 }
             }, 
+            {
+                "label": "Line Chart",
+                "onClick": function() {}
+            }, 
             // {
             //     "label": "Heat Chart",
             //     "onClick": function() {}

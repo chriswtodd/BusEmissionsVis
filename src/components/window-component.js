@@ -334,8 +334,9 @@ function WindowComponent(props) {
     // ────▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀
     // ───▐▀▒▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀
     // ──▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀▀
+
     useEffect(() => {
-        
+
     })
 
     return (
@@ -360,4 +361,10 @@ const mapStateToProps = (state) =>
             class: state.filters.class,
         }
     }
-export default connect(mapStateToProps)(WindowComponent);
+    
+const setRenderedComponentFunction = (renderFunction) => ({
+    payload: {
+        renderedComponent: renderFunction
+    }
+})
+export default connect(mapStateToProps, { setRenderedComponentFunction })(WindowComponent);
