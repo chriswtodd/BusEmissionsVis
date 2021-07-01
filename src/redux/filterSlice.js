@@ -23,13 +23,13 @@ export const filterSlice = createSlice({
         },
         routes: "",
         emissionType: "co2",
+        streamType: "Zero Offset",
     },
     reducers: {
         setClasses: (state, payload) => {
             state.class[payload.payload] = !state.class[payload.payload];
         },
         setReqGranularity: (state, payload) => {
-            console.log(state, payload);
             state.granularity = payload.payload
         },
         setStartTime: (state, payload) => {
@@ -62,9 +62,12 @@ export const filterSlice = createSlice({
             } else if (payload.payload === "Trips") {
                 state.emissionType = "trips";
             }
+        },
+        setStreamType: (state, payload) => {
+            state.streamType = payload.payload;
         }
     }
 })
 
-export const { setClasses, setReqGranularity, setStartTime, setEndTime, setEmissionType } = filterSlice.actions;
+export const { setClasses, setReqGranularity, setStartTime, setEndTime, setEmissionType, setStreamType } = filterSlice.actions;
 export const filterReducer = filterSlice.reducer;

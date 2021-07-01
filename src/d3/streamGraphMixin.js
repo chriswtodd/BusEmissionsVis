@@ -10,7 +10,18 @@ export let streamGraphMixin = {
     area: d3.area(),
     setColorScheme(colorScheme) { this.colorScheme = colorScheme; },
     setKeys(keys)               { this.keys = keys; },
+    setStackType(stackType)     { this.stackType = stackType },
     setStreamData(data)         { this.streamData = data; },
+
+    decodeStackType(stringStackType) {
+        if (stringStackType === "Zero Offset") {
+            this.setStackType(d3.stackOffsetNone);
+        } else if (stringStackType === "Normalized") {
+            this.setStackType(d3.stackOffsetExpand);
+        } else if (stringStackType === "Min/Max") {
+            this.setStackType(d3.stackOffsetWiggle);
+        }
+    },
 
     /**
      * Takes processed stack data in the form return by d3.stack()
@@ -152,9 +163,11 @@ export let streamGraphMixin = {
         let t = this;
 
         this.stackedData = d3.stack()
-            .offset(d3.stackOffsetNone)
+            .offset(this.stackType)
             .keys(this.keys)
             (this.streamData)
+            console.log(this.stackedData)
+
         
         let yMax = d3.max(this.calcStackHeight(this.streamData, this.keys));
         this.drawYAxis(0, yMax);
@@ -213,7 +226,10 @@ export let streamGraphMixin = {
         let t = this;
 
         //Set the y domain
-        let yMax = d3.max(this.calcStackHeight(this.streamData, this.keys));
+        let yMax = 1;
+        if (this.stackType != d3.stackOffsetExpand) {
+            yMax = d3.max(this.calcStackHeight(this.streamData, this.keys));
+        }
         this.yScale.domain([0, yMax]);
         this.focus.select(".y")
             .call(d3.axisLeft(this.yScale))
@@ -231,7 +247,7 @@ export let streamGraphMixin = {
         //so we must recalculate instead of relying 
         //on a cached version
         this.stackedData = d3.stack()
-            .offset(d3.stackOffsetNone)
+            .offset(this.stackType)
             .keys(this.keys)
             (this.streamData)
 

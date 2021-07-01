@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import ReactRadioButtonGroup from 'react-radio-button-group';
 import styled from "styled-components";
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, connect } from 'react-redux';
 
 import { setClasses, setReqGranularity, 
-    setStartTime, setEndTime, setEmissionType } from '../redux/filterSlice.js';
+    setStartTime, setEndTime, setEmissionType, setStreamType } from '../redux/filterSlice.js';
 
 import TimePicker from './materialUi/TimePicker.js';
 
@@ -39,14 +39,35 @@ const SectionLabel = styled.text`
     border-bottom: 1px solid ${styles.background_colour}
     padding: 5px;
     width: 100%;
+    opacity: 100;
+    transition: all ease 0.2s;
 `;
 
-export default function SideMenuFilters(props) {
+const SectionLabelToggle = styled(SectionLabel)`
+  ${({ active }) =>
+    active &&
+    `
+    display: none;
+    opacity: 0;
+  `}
+`;
+
+const CheckboxContainerToggle = styled(CheckboxContainer)`
+  ${({ active }) =>
+    active &&
+    `
+    display: none;
+    opacity: 0;
+  `}
+`;
+
+function SideMenuFilters(props) {
     const dispatch = useDispatch();
     const filters = useSelector(state => state.filters)
 
     const [granularity, setGranularity] = useState("day");
     const [emissionTypeRadio, setEmissionTypeRadio] = useState("CO2");
+    const [streamTypeRadio, setStreamTypeRadio] = useState("Zero Offset");
 
     return (
         <SideMenuContainer label={"Visualisation Filters"}>
@@ -124,6 +145,35 @@ export default function SideMenuFilters(props) {
                     }}
                 />
             </TimePickerContainer>
+
+            <SectionLabelToggle active={props.streamTypeViewed}>
+                Stream Type:
+            </SectionLabelToggle>
+            <CheckboxContainerToggle 
+                id={"checkbox_stream_type"}
+                active={props.streamTypeViewed}
+            >
+                <ReactRadioButtonGroup
+                    options={["Zero Offset", "Normalized"]}
+                    name="stream_offset"
+                    isStateful={false}
+                    onChange={
+                        (checkedValue) => {
+                            setStreamTypeRadio(checkedValue);
+                            dispatch(setStreamType(checkedValue))
+                        }
+                    }
+                    value={streamTypeRadio}
+                />
+            </CheckboxContainerToggle>
         </SideMenuContainer>
     )
 }
+const mapStateToProps = (state) => {
+    {
+        return {
+            streamTypeViewed: state.windows.windowRenderComponent != "Stream Graph"
+        }
+    }
+}
+export default connect(mapStateToProps)(SideMenuFilters);

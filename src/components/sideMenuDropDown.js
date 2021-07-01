@@ -4,7 +4,8 @@
  */ 
 
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, connect } from 'react-redux';
+import store from "../redux/store.js";
 import { setWindowRenderComponent, addWindow } from '../redux/windowSlice.js';
 
 import styled from "styled-components";
@@ -118,7 +119,7 @@ function DropDownButtonFactory (props) {
 }
 
 function PopulateItems(props) {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(props.active);
     let button = buttons.filter(button => button.label === props.open);
     if ( button.length != 0 ) {
         return button[0].entries.map((e) => (
@@ -132,6 +133,14 @@ function PopulateItems(props) {
     }
     return <></>;
 }
+const mapStateToProps = (state) => {
+  {
+    return {
+      active: state.windows.windowRenderComponent
+    }
+  }
+}
+let Pop = connect(mapStateToProps)(PopulateItems);
 
 export default class SideMenuDropDown extends React.Component {
   constructor(props) {
@@ -144,7 +153,7 @@ export default class SideMenuDropDown extends React.Component {
             <SectionSeparator>
               Select a visualisation:
             </SectionSeparator>
-            <PopulateItems open={this.props.open} active={this.props.active} setActive={this.props.setActive} />
+            <Pop open={this.props.open} active={this.props.active} setActive={this.props.setActive} />
         </ContainerToggle>
     )
   }

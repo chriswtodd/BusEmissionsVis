@@ -51,6 +51,7 @@ export default function Visualisations(props) {
     const startTime = useSelector(state => state.filters.startTime);
     const endTime = useSelector(state => state.filters.endTime);
     const emissionType = useSelector(state => state.filters.emissionType);
+    const stackType = useSelector(state => state.filters.streamType);
 
     function getRenderedComponentFunction(windowId) {
         if (windows.windowRenderComponent === "Stream Graph") {
@@ -107,6 +108,7 @@ export default function Visualisations(props) {
             vis.setData(streamData);
             vis.setColorScheme(modelData.engine_colours);
             vis.setKeys(modelData.engine_types);
+            vis.decodeStackType(stackType);
             vis.setStreamData(processStreamData(streamData));
 
             //Set visualisation xaxis incase it needs to be redrawn
@@ -136,8 +138,6 @@ export default function Visualisations(props) {
     function createLineChart(window) {
         if (window != undefined) {
             let vis = window.props.renderedComponent;
-
-            console.log(streamData)
     
             //Assign date mixin for the stream graph
             vis.init();
@@ -269,6 +269,7 @@ export default function Visualisations(props) {
                 let vis = window.windowComponent.props.renderedComponent
                 let graphToDraw = store.getState().windows.windowRenderComponent
                 if (graphToDraw === "Stream Graph") {
+                    vis.decodeStackType(stackType);
                     vis.setStreamData(processStreamData(streamData));
                 } else if (graphToDraw === "Line Chart") {
                     vis.setLineData(processLineData(streamData));
@@ -281,7 +282,7 @@ export default function Visualisations(props) {
                 //     vis.updateBars();
                 // }
             })
-    }, [classes, emissionType])
+    }, [classes, emissionType, stackType])
 
 
     useEffect(() => {
