@@ -19,6 +19,20 @@ let modelData = {
     "EURO5",
     "EURO6",
     "ELECTRIC",
+    ],
+
+    emission_type_ui: [
+        "Average Distance",
+        "Average Speed",
+        "Average Time",
+        "CO2", 
+        "CO", 
+        "Fuel Consumption",
+        "Hydro Carbons", 
+        "Nitrogen Oxide", 
+        "Particulate Matter", 
+        "Passenger Km",
+        "Trips"
     ]
 }
 

@@ -136,6 +136,8 @@ export default function Visualisations(props) {
     function createLineChart(window) {
         if (window != undefined) {
             let vis = window.props.renderedComponent;
+
+            console.log(streamData)
     
             //Assign date mixin for the stream graph
             vis.init();
@@ -196,6 +198,7 @@ export default function Visualisations(props) {
         async function fetchData() {
             // Fetch base set of data
             let d1 = '2019-01-01', d2 = '2019-12-10';
+            console.log(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
             let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
             let res = await fetch(fetchURL);
             const json = await res.json();

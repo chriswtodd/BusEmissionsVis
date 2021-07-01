@@ -72,7 +72,7 @@ export default function SideMenuFilters(props) {
             </SectionLabel>
             <CheckboxContainer id={"checkbox_granularity"}>
                 <ReactRadioButtonGroup
-                    options={["CO2", "CO", "Fuel Consumption", "Hydro Carbons", "Nitrogen Oxide", "Particulate Matter", "Passenger Km"]}
+                    options={modelData.emission_type_ui}
                     name="emissionTypeRadio"
                     isStateful={false}
                     onChange={

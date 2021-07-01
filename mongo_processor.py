@@ -44,7 +44,7 @@ class Trips_Network(Resource):
                 "trips" : { "$sum" : 1 },
                 "avgSpeed" : { "$avg" : "$speed" },
                 "avgDistance" : { "$avg" : "$distance" },
-                "avgTime" : { "$avg" : "$time" },
+                "avgTime" : { "$avg" : { "$toInt" : "$time" }},
                 "fc" : { "$sum" : "$FC" },
                 "co" : { "$sum" : "$CO" },
                 "hc" : { "$sum" : "$HC" },
@@ -62,6 +62,9 @@ class Trips_Network(Resource):
                         }
                     },
                 "engine_type" : "$_id.engine_type"
+            }},
+            {"$set" : {
+                "avgTime" : {"$divide" : ["$avgTime", 60]}
             }},
             {"$project" : {
                 "_id" : 0
@@ -98,7 +101,8 @@ class Trips_Network(Resource):
                         "00:00:00",
                         "$departure"
                     ] 
-                }
+                },
+                "time" : { "$toInt" : "$time" }
             }},
             {"$project" : { "_id" : 0 }},
             {"$group" : {

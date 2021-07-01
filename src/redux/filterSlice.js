@@ -39,7 +39,13 @@ export const filterSlice = createSlice({
             state.endTime = payload.payload;
         },
         setEmissionType: (state, payload) => {
-            if (payload.payload === "CO2") {
+            if (payload.payload === "Average Distance") {
+                state.emissionType = "avgDistance";
+            } else if (payload.payload === "Average Speed") {
+                state.emissionType = "avgSpeed";
+            } else if (payload.payload === "Average Time") {
+                state.emissionType = "avgTime";
+            } else if (payload.payload === "CO2") {
                 state.emissionType = "co2";
             } else if (payload.payload === "CO") {
                 state.emissionType = "co";
@@ -53,6 +59,8 @@ export const filterSlice = createSlice({
                 state.emissionType = "pm";
             } else if (payload.payload === "Passenger Km") {
                 state.emissionType = "paxKm";
+            } else if (payload.payload === "Trips") {
+                state.emissionType = "trips";
             }
         }
     }
