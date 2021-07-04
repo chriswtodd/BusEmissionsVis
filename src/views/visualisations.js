@@ -39,6 +39,9 @@ const PageContainerVertical = styled(PageContainer)`
 `;
 
 export default function Visualisations(props) {
+    // This needs to be changed to suit the React Redux way of doing things
+    // Use connect to map state vars to props, use these in place of useSelector
+    // useSelector still prefered over store.getState
     let dispatch = useDispatch();
     //App
     const url = useSelector(state => state.envVars.url);
@@ -121,7 +124,10 @@ export default function Visualisations(props) {
             vis.render();
             if (window.props.id != "overview_window") {
                 // Create the tooltip
-                vis.setTooltipKeys(modelData.engine_types);
+                let keys = Object.keys(classes).filter(key => {
+                    return classes[key];
+                })
+                vis.setTooltipKeys(keys);
                 vis.addTooltipToSvg("tt-main", emissionType, vis.streamData);
                 // Create tt bars
                 vis.createBars(vis.streamData);
@@ -157,7 +163,10 @@ export default function Visualisations(props) {
             vis.render();
             if (window.props.id != "overview_window") {
                 // Create the tooltip
-                vis.setTooltipKeys(modelData.engine_types);
+                let keys = Object.keys(classes).filter(key => {
+                    return classes[key];
+                })
+                vis.setTooltipKeys(keys);
                 vis.addTooltipToSvg("tt-main", emissionType, processStreamData(streamData));
                 // Create tt bars
                 vis.createBars(processStreamData(streamData));
@@ -203,6 +212,13 @@ export default function Visualisations(props) {
         vis.setLineData(processLineData(newData));
         vis.enter();
         vis.render();
+    }
+
+    function createTitleForWindow() {
+        let start = "", end = "";
+        if (stackType === "Normalized" && windows.windowRenderComponent === "Stream Graph") { start = "Normalized " }
+        if (startTime != "00:00" && endTime != "23:59") { end = " between " + startTime + " and " + endTime }
+        return start + windows.windowRenderComponent + " of " + emissionType + " by class per " + granularity + end
     }
 
     // Call use effect only once to fetch data required for visualisations
@@ -287,12 +303,14 @@ export default function Visualisations(props) {
                     vis.setLineData(processLineData(streamData));
                 }
                 vis.render();
-                // if (vis.id != "overview_window") {
-                //     // Update the tooltip
-                //     vis.addTooltipToSvg("tt-main", "CO2");
-                //     // Update tt bars
-                //     vis.updateBars();
-                // }
+                if (window.id != "overview_window") {
+                    // Create the tooltip
+                    let keys = Object.keys(classes).filter(key => {
+                        return classes[key];
+                    })
+                    vis.setTooltipKeys(keys);
+                    vis.addTooltipToSvg("tt-main", emissionType, processStreamData(streamData));
+                }
             })
     }, [classes, emissionType, stackType])
 
@@ -353,6 +371,7 @@ export default function Visualisations(props) {
                                 id={window.windowComponent.props.id}
                                 renderedComponent={getRenderedComponentFunction(window.windowComponent.props.id)}
                                 selectedComponent={window.windowComponent.props.selectedComponent}
+                                title={createTitleForWindow()}
                             />)
                             return r;
                         })

@@ -69,6 +69,10 @@ export let streamTooltipFactoryMixin = {
     },
 
     createLineChartTooltip(top, left, infoDots, id, property) {
+        let innerHTMLString = "<p> " + property + " </p>";
+        for (let key of this.tooltipKeys) {
+            innerHTMLString = innerHTMLString + "<br>" + key + ": " + (Math.round(infoDots[key] * 100) / 100)
+        }
         //Draw tooltip
         d3.select("#".concat(this.containerId))
             .insert("div", ":first-child")
@@ -84,14 +88,7 @@ export let streamTooltipFactoryMixin = {
             .style("position", "absolute")
             .style("left", left + "px")
             .style("top", top + "px")
-            .html("<p>" + infoDots.date.toString().split(/[0-9]{2}:/)[0] + "</p>"
-                + "<p> " + property + " </p>"
-                + "<br><span class=\"toolTip__vehicle-dot_el\"></span> ELECTRIC : " + Math.round(infoDots["ELECTRIC"] * 100) / 100
-                + "<br><span class=\"toolTip__vehicle-dot_EURO6\"></span> EURO6 : " + Math.round(infoDots["EURO6"] * 100) / 100
-                + "<br><span class=\"toolTip__vehicle-dot_EURO5\"></span> EURO5 : " + Math.round(infoDots["EURO5"] * 100) / 100
-                + "<br><span class=\"toolTip__vehicle-dot_EURO4\"></span> EURO4 : " + Math.round(infoDots["EURO4"] * 100) / 100
-                + "<br><span class=\"toolTip__vehicle-dot_EURO3\"></span> EURO3 : " + Math.round(infoDots["EURO3"] * 100) / 100
-                + "<br><span class=\"toolTip__vehicle-dot_EURO2\"></span> EURO2 : " + Math.round(infoDots["EURO2"] * 100) / 100);
+            .html(innerHTMLString);
     },
 
     drawLineChartTooltip (top, left, infoDots, ttName, property) {
@@ -101,21 +98,19 @@ export let streamTooltipFactoryMixin = {
         if (timeStamp.split(" ")[4] === "00:00:00") {
             timeStamp = infoDots.date.toString().split(/[0-9]{2}:/)[0];
         }
-    
+        let innerHTMLString = "<p>" + timeStamp + "</p>"
+        + "<p> " + property + " </p>";
+        for (let key of this.tooltipKeys) {
+            innerHTMLString = innerHTMLString + "<br>" + key + ": " + (Math.round(infoDots[key] * 100) / 100)
+        }
+        
         d3.select("#".concat(this.containerId))
             .select("#".concat(ttName))
             .style("background", styles.ttBackground)
             .style("display", "flex")
             .style("left", left + "px")
             .style("top", top + "px")
-            .html("<p>" + timeStamp + "</p>"
-            + "<p> " + property + " </p>"
-            + "<br><span class=\"toolTip__vehicle-dot_el\"></span> ELECTRIC : " + Math.round(infoDots["ELECTRIC"] * 100) / 100
-            + "<br><span class=\"toolTip__vehicle-dot_EURO6\"></span> EURO6 : " + Math.round(infoDots["EURO6"] * 100) / 100
-            + "<br><span class=\"toolTip__vehicle-dot_EURO5\"></span> EURO5 : " + Math.round(infoDots["EURO5"] * 100) / 100
-            + "<br><span class=\"toolTip__vehicle-dot_EURO4\"></span> EURO4 : " + Math.round(infoDots["EURO4"] * 100) / 100
-            + "<br><span class=\"toolTip__vehicle-dot_EURO3\"></span> EURO3 : " + Math.round(infoDots["EURO3"] * 100) / 100
-            + "<br><span class=\"toolTip__vehicle-dot_EURO2\"></span> EURO2 : " + Math.round(infoDots["EURO2"] * 100) / 100);
+            .html(innerHTMLString);
     },
 
     addTooltipToSvg(ttName, ttTitle, data) {

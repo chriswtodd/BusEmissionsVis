@@ -38,7 +38,7 @@ function VehicleDot(props) {
 }
 
 export default function Checkbox(props) {
-    let [checked, setChecked] = useState(true);
+    let [checked, setChecked] = useState(props.checked);
 
     return (
         <Container>

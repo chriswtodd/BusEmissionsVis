@@ -84,6 +84,7 @@ function SideMenuFilters(props) {
                         callback={(e) => {
                             dispatch(setClasses(e.target.name));
                         }}
+                        checked={filters.class[property]}
                     />
                 )) : null}
             </CheckboxContainer>

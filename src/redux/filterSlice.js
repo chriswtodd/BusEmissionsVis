@@ -12,8 +12,8 @@ export const filterSlice = createSlice({
         startTime: "00:00",
         endTime: "23:59",
         class: {
-          "PRE-EURO" : true,
-          "EURO1" : true,
+          "PRE-EURO" : false,
+          "EURO1" : false,
           "EURO2" : true,
           "EURO3" : true,
           "EURO4" : true,

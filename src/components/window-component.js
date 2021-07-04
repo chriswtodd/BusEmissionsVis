@@ -344,7 +344,7 @@ function WindowComponent(props) {
                 <Container id={props.id} style={getStyles(props.height)}>
                     <Header>
                         <HeaderText>
-                            {props.headerText}
+                            {props.title}
                         </HeaderText>
                     </Header>
                     {props.children}
