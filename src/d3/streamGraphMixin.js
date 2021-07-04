@@ -13,6 +13,10 @@ export let streamGraphMixin = {
     setStackType(stackType)     { this.stackType = stackType },
     setStreamData(data)         { this.streamData = data; },
 
+    numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+
     decodeStackType(stringStackType) {
         if (stringStackType === "Zero Offset") {
             this.setStackType(d3.stackOffsetNone);
@@ -166,10 +170,9 @@ export let streamGraphMixin = {
             .offset(this.stackType)
             .keys(this.keys)
             (this.streamData)
-
         
         let yMax = d3.max(this.calcStackHeight(this.streamData, this.keys));
-        this.drawYAxis(0, yMax);
+        this.drawYAxis(yMax);
 
         this.blankArea = d3.area()
             .x(d => {
@@ -232,13 +235,6 @@ export let streamGraphMixin = {
         this.yScale.domain([0, yMax]);
         this.focus.select(".y")
             .call(d3.axisLeft(this.yScale))
-        //Restyle
-        this.focus.select(".y")
-            .selectAll("text")
-            .attr("text-anchor", "start")
-            .attr("transform", "translate(-35, 0)")
-            .attr("font-size", "1.2em")
-            .attr("font-weight", "bold")
 
         //Reset stackedData
         //this.streamData is updated externally,
@@ -285,5 +281,28 @@ export let streamGraphMixin = {
             .attr("d", this.area)
             .style("fill", function (d) { return t.colorScheme[d.key] })
             .attr("clip-path", "url(#zoom)");
+    },
+
+    renderTotal() {
+        // Add a text element to show sum of graph
+        this.sum = 0;
+        this.streamData.forEach((d) => {
+            for (let key of Object.keys(d)) {
+                this.sum = isNaN(d[key]) ? this.sum : this.sum + d[key];
+            }
+        })
+        this.sum = Math.round(this.sum * 100) / 100
+
+        this.focus.selectAll(".sum_text").remove();
+
+        this.focus
+            .append("text")
+            .attr("class", "sum_text")
+            .attr("transform", "translate(" + this.width / 2 + "," + (this.height - 5) + ")")
+            .style("font-size", "2.5em")
+            .style("font-weight", "bold")
+            .style("text-anchor", "middle")
+            .style("fill", "rgba(0,0,0,0.8)")
+            .text("Total: " + this.numberWithCommas(this.sum));
     }
 }

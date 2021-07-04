@@ -100,6 +100,7 @@ export let axisDateMixin = {
 
 export let axisContinuousMixin = {
     createYAxis (yRange, label) {
+        this.yText = label;
         this.yScale = d3.scaleLinear()
             .range([this.graphBounds.yaxis, this.margin.bottom]);
 
@@ -112,19 +113,25 @@ export let axisContinuousMixin = {
             .selectAll("text")
             .attr("text-anchor", "start")
             .attr("transform", "translate(-35, 0)")
-            .attr("font-size", "1.2em")
+            .attr("font-size", "1.4em")
             .attr("font-weight", "bold");
     
         // Y label
         this.focus.select(".y")
             .append("text")
+            .attr("class", "y-label")
+            .attr("transform", "translate(-50 " + this.height / 2 + ") rotate(270)")
+            .style("font-size", "1.4em")
             .style("text-anchor", "middle")
+            .style("fill", "black")
+            .style("font-weight", "bold")
             .text(label);
     
         return d3.axisLeft(this.yScale);
     },
 
-    drawYAxis(text, yMax) {
+    drawYAxis(yMax, label) {
+        this.yText = label;
         this.yScale.domain([0, yMax]);
     
         this.gY = this.focus.select(".y")
@@ -134,14 +141,20 @@ export let axisContinuousMixin = {
             .selectAll("text")
             .attr("text-anchor", "start")
             .attr("transform", "translate(-35, 0)")
-            .attr("font-size", "1.2em")
-            .attr("font-weight", "bold")
+            .attr("font-size", "1.4em")
+            .attr("font-weight", "bold");
+
+        this.focus.select(".y-label").remove();
     
-        this.focus
-            .select(".y")
+        this.focus.select(".y")
             .append("text")
             .attr("class", "y-label")
-            .text(text);
+            .attr("transform", "translate(-50 " + this.height / 2 + ") rotate(270)")
+            .style("font-size", "1.4em")
+            .style("text-anchor", "middle")
+            .style("fill", "black")
+            .style("font-weight", "bold")
+            .text(label);
     }
 }
 
@@ -223,10 +236,10 @@ export class D3Graph {
             .attr("id", "svg_parent_container");
         // Default behaviour fill entire container
         this.width = d3.select(containerId).node().offsetWidth;
-        this.height = d3.select(containerId).node().offsetHeight - this.margin.top - this.margin.bottom;
+        this.height = d3.select(containerId).node().offsetHeight;
         //Axis bounds
         this.graphBounds.xaxis = this.width - this.margin.left - this.margin.right;
-        this.graphBounds.yaxis = this.height - styles.convertToInt(styles.window_header_height);
+        this.graphBounds.yaxis = this.height - styles.convertToInt(styles.window_header_height) - this.margin.top - this.margin.bottom;
         //Resize svg
         this.svg
             .attr("width", this.width)

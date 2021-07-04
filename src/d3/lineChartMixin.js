@@ -4,6 +4,7 @@
  */ 
 
 import * as d3 from "d3";
+import { IoMdBatteryCharging } from "react-icons/io";
 const styles = require("../styles.js")
 
 export let lineChartMixin = {
@@ -11,6 +12,10 @@ export let lineChartMixin = {
     setColorScheme(colorScheme) { this.colorScheme = colorScheme; },
     setKeys(keys)               { this.keys = keys; },
     setLineData(data)         { this.lineData = data; },
+
+    numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
 
      /**
      * Bind a graph with a zoom function and connect its zooming to a brush on a separate
@@ -154,7 +159,7 @@ export let lineChartMixin = {
      */
     enter() {        
         let yMax = d3.max(this.calcMaxHeight(this.lineData, this.keys));
-        this.drawYAxis(0, yMax);
+        this.drawYAxis(yMax);
 
         this.g.append("rect")
             .attr("width", this.graphBounds.xaxis)
@@ -184,7 +189,7 @@ export let lineChartMixin = {
      */
     render() {
         let yMax = d3.max(this.calcMaxHeight(this.lineData, this.keys));
-        this.drawYAxis(0, yMax);
+        this.drawYAxis(yMax);
 
         this.g
             .selectAll(".bus-type_path")
@@ -207,5 +212,30 @@ export let lineChartMixin = {
                 .attr("stroke-dashoffset", 0);
             this.drawnLines[lineEntry.key] = (drawnLine);
         }
+    },
+
+    renderTotal() {
+        // Add a text element to show sum of graph
+        this.sum = 0;
+        let keys = this.lineData.map(d => d.key)
+        let t = this;
+        this.data.forEach((d) => {
+            for (let key of t.keys) {
+                this.sum = isNaN(d[key]) ? this.sum : this.sum + d[key];
+            }
+        })
+        this.sum = Math.round(this.sum * 100) / 100
+
+        this.focus.selectAll(".sum_text").remove();
+
+        this.focus
+            .append("text")
+            .attr("class", "sum_text")
+            .attr("transform", "translate(" + this.width / 2 + "," + (this.height - 5) + ")")
+            .style("font-size", "2.5em")
+            .style("font-weight", "bold")
+            .style("text-anchor", "middle")
+            .style("fill", "rgba(0,0,0,0.8)")
+            .text("Total: " + this.numberWithCommas(this.sum));
     }
 }

@@ -95,6 +95,23 @@ export default function Visualisations(props) {
         if (graphToDraw === "Line Chart")
             windows.value.forEach(d => createLineChart(d.windowComponent))
     }
+    
+    function decodeEmissionType(emissionType) {
+        console.log(emissionType);
+        if (emissionType === "avgDistance") {
+            return "KM"
+        } else if (emissionType === "avgSpeed") {
+            return "KM/H"
+        } else if (emissionType === "avgTime") {
+            return "Minutes"
+        } else if (emissionType === "paxKm") {
+            return "Passenger Kilometers"
+        } else if (emissionType === "trips") {
+            return "Trips"
+        } else {
+            return "KG"
+        }
+    }
 
     /**
      * Takes a window component and creates the graph within it
@@ -116,9 +133,10 @@ export default function Visualisations(props) {
 
             //Set visualisation xaxis incase it needs to be redrawn
             vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Date"));
-            vis.drawXAxis(vis.getXAxis(), 0, [new Date(2019, 0, 1), new Date(2019, 11, 10)]);
+            vis.drawXAxis(0, decodeEmissionType(emissionType));
     
-            vis.setYAxis(vis.createYAxis([0, 0], "UNIT / L"));
+            vis.setYAxis(vis.createYAxis([undefined, undefined], decodeEmissionType(emissionType)));
+            vis.drawYAxis(0, decodeEmissionType(emissionType));
 
             vis.enter();
             vis.render();
@@ -131,7 +149,8 @@ export default function Visualisations(props) {
                 vis.addTooltipToSvg("tt-main", emissionType, vis.streamData);
                 // Create tt bars
                 vis.createBars(vis.streamData);
-                // vis.updateBars();
+                // Draw Total
+                vis.renderTotal();
             } else {
                 // TO BE FIXED : WINDOW UPDATE
                 let w1 = store.getState().windows.value[0].windowComponent.props.renderedComponent,
@@ -148,7 +167,7 @@ export default function Visualisations(props) {
             //Assign date mixin for the stream graph
             vis.init();
                 
-            vis.setData(streamData);
+            vis.setData(processStreamData(streamData));
             vis.setColorScheme(modelData.engine_colours);
             vis.setKeys(modelData.engine_types);
             vis.setLineData(processLineData(streamData));
@@ -157,7 +176,8 @@ export default function Visualisations(props) {
             vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Date"));
             vis.drawXAxis(vis.getXAxis(), 0, [new Date(2019, 0, 1), new Date(2019, 11, 10)]);
     
-            vis.setYAxis(vis.createYAxis([0, 0], "UNIT / L"));
+            vis.setYAxis(vis.createYAxis([undefined, undefined], decodeEmissionType(emissionType)));
+            vis.setYAxis(0, decodeEmissionType(emissionType));
 
             vis.enter();
             vis.render();
@@ -167,9 +187,11 @@ export default function Visualisations(props) {
                     return classes[key];
                 })
                 vis.setTooltipKeys(keys);
-                vis.addTooltipToSvg("tt-main", emissionType, processStreamData(streamData));
+                vis.addTooltipToSvg("tt-main", emissionType, vis.data);
                 // Create tt bars
-                vis.createBars(processStreamData(streamData));
+                vis.createBars(vis.data);
+                // Draw total
+                vis.renderTotal();
             } else {
                 // TO BE FIXED : WINDOW UPDATE
                 let w1 = store.getState().windows.value[0].windowComponent.props.renderedComponent,
@@ -199,8 +221,12 @@ export default function Visualisations(props) {
         let vis = window.props.renderedComponent;
         vis.setData(newData);
         vis.setStreamData(processStreamData(newData));
+        vis.drawYAxis(0,decodeEmissionType(emissionType));
         vis.enter();
         vis.render();
+        if (window.props.id != "overview_window") {
+            vis.renderTotal();
+        }
     }
 
     /**
@@ -210,8 +236,12 @@ export default function Visualisations(props) {
         let vis = window.props.renderedComponent;
         vis.setData(newData);
         vis.setLineData(processLineData(newData));
+        vis.drawYAxis(0,decodeEmissionType(emissionType));
         vis.enter();
         vis.render();
+        if (window.props.id != "overview_window") {
+            vis.renderTotal();
+        }
     }
 
     function createTitleForWindow() {
@@ -296,6 +326,7 @@ export default function Visualisations(props) {
             .map(window => {
                 let vis = window.windowComponent.props.renderedComponent
                 let graphToDraw = store.getState().windows.windowRenderComponent
+                vis.drawYAxis(0,decodeEmissionType(emissionType));
                 if (graphToDraw === "Stream Graph") {
                     vis.decodeStackType(stackType);
                     vis.setStreamData(processStreamData(streamData));
@@ -310,6 +341,7 @@ export default function Visualisations(props) {
                     })
                     vis.setTooltipKeys(keys);
                     vis.addTooltipToSvg("tt-main", emissionType, processStreamData(streamData));
+                    vis.renderTotal();
                 }
             })
     }, [classes, emissionType, stackType])
