@@ -174,10 +174,10 @@ export default function Visualisations(props) {
 
             //Set visualisation xaxis incase it needs to be redrawn
             vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Date"));
-            vis.drawXAxis(vis.getXAxis(), 0, [new Date(2019, 0, 1), new Date(2019, 11, 10)]);
+            vis.drawXAxis(0, decodeEmissionType(emissionType));
     
             vis.setYAxis(vis.createYAxis([undefined, undefined], decodeEmissionType(emissionType)));
-            vis.setYAxis(0, decodeEmissionType(emissionType));
+            vis.drawYAxis(0, decodeEmissionType(emissionType));
 
             vis.enter();
             vis.render();
