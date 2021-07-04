@@ -12,7 +12,7 @@ export let streamTooltipFactoryMixin = {
         this.tooltipKeys = keys;
     },
 
-    createBars() {
+    createBars(data) {
         let t = this;
         let currentDay = new Date(this.data[0].date), nextDay = new Date(this.data[0].date);
         nextDay.setDate(nextDay.getDate() + 1);
@@ -22,7 +22,7 @@ export let streamTooltipFactoryMixin = {
             .selectAll(".plot-rect")
             .remove()
             .exit()
-            .data(this.streamData)
+            .data(data)
             .enter()
             .append("rect")
             .attr("class", "plot-rect")
@@ -41,14 +41,14 @@ export let streamTooltipFactoryMixin = {
             .style("opacity", 0);
     },
 
-    updateBars() {
+    updateBars(data) {
         let t = this;
         let currentDay = new Date(this.data[0].date), nextDay = new Date(this.data[0].date);
         nextDay.setDate(nextDay.getDate() + 1);
         let widthTooltipBars = this.xScale(nextDay) - this.xScale(currentDay);
         this.ttBars = this.ttBars
             .selectAll(".plot-rect")
-            .data(this.streamData, d => d.date)
+            .data(data, d => d.date)
 
             this.ttBars
                 .enter()
@@ -118,19 +118,19 @@ export let streamTooltipFactoryMixin = {
             + "<br><span class=\"toolTip__vehicle-dot_EURO2\"></span> EURO2 : " + Math.round(infoDots["EURO2"] * 100) / 100);
     },
 
-    addTooltipToSvg(ttName, ttTitle) {
-        let widthTooltipBars = this.graphBounds.xaxis / this.streamData.length;
+    addTooltipToSvg(ttName, ttTitle, data) {
+        let widthTooltipBars = this.graphBounds.xaxis / data.length;
         let t = this;
         this.focus.on("mouseover", function (event) {
             let onDot = false;
-            for (let area of t.streamData) {
+            for (let area of data) {
                 //If the dots are hovered on
                 if (d3.pointer(event)[0] > t.xScale(new Date(area.date))
                     && d3.pointer(event)[0] < t.xScale(new Date(area.date)) + widthTooltipBars) {
                     //set onDot
                     onDot = true;
                     //get the tooltip info
-                    let infoDots = t.streamData.filter(d => 
+                    let infoDots = data.filter(d => 
                         new Date(d.date).getTime() === new Date(area.date).getTime())[0];
                     let engineTypesEmissions = [];
                     for (let key of t.tooltipKeys) {

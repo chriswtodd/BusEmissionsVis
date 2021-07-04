@@ -61,7 +61,7 @@ export default function Visualisations(props) {
             return createGraph(windowId, d3Graph.axisDateMixin, d3Graph.axisContinuousMixin, d3StreamGraph.streamGraphMixin);
         } else if (windows.windowRenderComponent === "Line Chart") {
             if (windowId != "overview_window") {
-                return createGraph(windowId, d3Graph.axisDateMixin,d3Graph.axisContinuousMixin, d3LineChart.lineChartMixin)
+                return createGraph(windowId, d3Graph.axisDateMixin,d3Graph.axisContinuousMixin, d3LineChart.lineChartMixin,streamTooltipFactoryMixin)
             }
             return createGraph(windowId, d3Graph.axisDateMixin, d3Graph.axisContinuousMixin, d3LineChart.lineChartMixin);
         }
@@ -122,9 +122,9 @@ export default function Visualisations(props) {
             if (window.props.id != "overview_window") {
                 // Create the tooltip
                 vis.setTooltipKeys(modelData.engine_types);
-                vis.addTooltipToSvg("tt-main", emissionType);
+                vis.addTooltipToSvg("tt-main", emissionType, vis.streamData);
                 // Create tt bars
-                vis.createBars();
+                vis.createBars(vis.streamData);
                 // vis.updateBars();
             } else {
                 // TO BE FIXED : WINDOW UPDATE
@@ -155,6 +155,18 @@ export default function Visualisations(props) {
 
             vis.enter();
             vis.render();
+            if (window.props.id != "overview_window") {
+                // Create the tooltip
+                vis.setTooltipKeys(modelData.engine_types);
+                vis.addTooltipToSvg("tt-main", emissionType, processStreamData(streamData));
+                // Create tt bars
+                vis.createBars(processStreamData(streamData));
+            } else {
+                // TO BE FIXED : WINDOW UPDATE
+                let w1 = store.getState().windows.value[0].windowComponent.props.renderedComponent,
+                w2 = store.getState().windows.value[1].windowComponent.props.renderedComponent;
+                w1.addBrushAndZoom(w2, w1);
+            }
         }
     }
 

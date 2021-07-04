@@ -166,7 +166,6 @@ export let streamGraphMixin = {
             .offset(this.stackType)
             .keys(this.keys)
             (this.streamData)
-            console.log(this.stackedData)
 
         
         let yMax = d3.max(this.calcStackHeight(this.streamData, this.keys));
