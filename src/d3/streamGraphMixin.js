@@ -271,7 +271,7 @@ export let streamGraphMixin = {
                     // .attr("d", this.blankArea),
                 update => update,
                 exit => exit
-                    .attr("d", this.area)
+                    // .attr("d", this.blankArea)
                     .remove()
             )
             .transition()

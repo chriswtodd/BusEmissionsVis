@@ -53,7 +53,6 @@ export let axisDateMixin = {
             .call(d3.axisBottom(this.xScale))
         this.gX
             .selectAll('text')
-            .attr("transform", "rotate(45deg)")
             .attr("text-anchor", "middle")
             .attr("font-size", "1.2em")
             .attr("font-weight", "bold")

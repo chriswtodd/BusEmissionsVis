@@ -97,7 +97,6 @@ export default function Visualisations(props) {
     }
     
     function decodeEmissionType(emissionType) {
-        console.log(emissionType);
         if (emissionType === "avgDistance") {
             return "KM"
         } else if (emissionType === "avgSpeed") {
@@ -121,13 +120,18 @@ export default function Visualisations(props) {
     function createStreamGraph(window) {
         if (window != undefined) {
             let vis = window.props.renderedComponent;
+            // Update the index keys for the graph based
+            // on the filters
+            let keys = Object.keys(classes).filter(key => {
+                return classes[key];
+            })
     
             //Assign date mixin for the stream graph
             vis.init();
                 
             vis.setData(streamData);
             vis.setColorScheme(modelData.engine_colours);
-            vis.setKeys(modelData.engine_types);
+            vis.setKeys(keys);
             vis.decodeStackType(stackType);
             vis.setStreamData(processStreamData(streamData));
 
@@ -142,9 +146,6 @@ export default function Visualisations(props) {
             vis.render();
             if (window.props.id != "overview_window") {
                 // Create the tooltip
-                let keys = Object.keys(classes).filter(key => {
-                    return classes[key];
-                })
                 vis.setTooltipKeys(keys);
                 vis.addTooltipToSvg("tt-main", emissionType, vis.streamData);
                 // Create tt bars
@@ -163,13 +164,16 @@ export default function Visualisations(props) {
     function createLineChart(window) {
         if (window != undefined) {
             let vis = window.props.renderedComponent;
+            let keys = Object.keys(classes).filter(key => {
+                return classes[key];
+            })
     
             //Assign date mixin for the stream graph
             vis.init();
                 
             vis.setData(processStreamData(streamData));
             vis.setColorScheme(modelData.engine_colours);
-            vis.setKeys(modelData.engine_types);
+            vis.setKeys(keys);
             vis.setLineData(processLineData(streamData));
 
             //Set visualisation xaxis incase it needs to be redrawn
@@ -183,9 +187,6 @@ export default function Visualisations(props) {
             vis.render();
             if (window.props.id != "overview_window") {
                 // Create the tooltip
-                let keys = Object.keys(classes).filter(key => {
-                    return classes[key];
-                })
                 vis.setTooltipKeys(keys);
                 vis.addTooltipToSvg("tt-main", emissionType, vis.data);
                 // Create tt bars
@@ -256,7 +257,6 @@ export default function Visualisations(props) {
         async function fetchData() {
             // Fetch base set of data
             let d1 = '2019-01-01', d2 = '2019-12-10';
-            console.log(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
             let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
             let res = await fetch(fetchURL);
             const json = await res.json();
