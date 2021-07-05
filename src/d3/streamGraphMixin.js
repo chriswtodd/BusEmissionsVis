@@ -246,6 +246,16 @@ export let streamGraphMixin = {
             .keys(this.keys)
             (this.streamData)
 
+        this.stackedData = this.stackedData.filter(d=> {
+            let r = true;
+            d.forEach(subArray => {
+                if (isNaN(subArray[0]) || isNaN(subArray[1])) {
+                    r = false;
+                }
+            })
+            return r;
+        })
+
         this.area = d3.area()
             .x(function (d, i) {
                 return t.xScale(new Date(d.data.date));
@@ -265,10 +275,10 @@ export let streamGraphMixin = {
         //Using same selection, update path
         this.path
             .join(
-                enter => enter,
-                    // .append("path")
-                    // .attr("class", "mylayers")
-                    // .attr("d", this.blankArea),
+                enter => enter
+                    .append("path")
+                    .attr("class", "mylayers")
+                    .attr("d", this.blankArea),
                 update => update,
                 exit => exit
                     // .attr("d", this.blankArea)

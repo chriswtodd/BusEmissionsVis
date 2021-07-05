@@ -131,7 +131,7 @@ export default function Visualisations(props) {
                 
             vis.setData(streamData);
             vis.setColorScheme(modelData.engine_colours);
-            vis.setKeys(keys);
+            vis.setKeys(modelData.engine_types);
             vis.decodeStackType(stackType);
             vis.setStreamData(processStreamData(streamData));
 
@@ -173,7 +173,7 @@ export default function Visualisations(props) {
                 
             vis.setData(processStreamData(streamData));
             vis.setColorScheme(modelData.engine_colours);
-            vis.setKeys(keys);
+            vis.setKeys(modelData.engine_types);
             vis.setLineData(processLineData(streamData));
 
             //Set visualisation xaxis incase it needs to be redrawn
