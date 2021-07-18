@@ -3,18 +3,20 @@
  * Github: chriswtodd
  */ 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 
 import { useSelector, useDispatch } from 'react-redux';
 import { setUrl } from 'redux/envVarsSlice.js';
+import { setRoutes } from 'redux/filterSlice';
 
 // Page components for router
 import Home from './views/home.js';
 import Visualisations from './views/visualisations.js';
 
 import logo from './components/GW_Logo.png';
+import { FaSdCard } from "react-icons/fa";
 const Logo = styled.img`
   height: 45px;
   border-right: 1px solid rgba(255, 255, 255, 0.3);
@@ -134,7 +136,17 @@ const MainFlex = styled.main`
 export default function App() {
   let dispatch = useDispatch();
   const [active, setActive] = useState(buttons[0]);
-  dispatch(setUrl(window.location.href))
+  // Cheeky hack to flip between dev and deployment
+  dispatch(setUrl(window.location.href));
+  let url = useSelector(state => state.envVars.url)
+  useEffect(() => {
+    async function fetchRoutes () {
+      let response = await fetch(`${url}/routes`);
+      let routes = await response.json();
+      dispatch(setRoutes(routes));
+    }
+    fetchRoutes();
+  }, [])
   //Set body
   componentWillMount();
   return (

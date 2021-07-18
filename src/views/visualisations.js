@@ -55,6 +55,7 @@ export default function Visualisations(props) {
     const endTime = useSelector(state => state.filters.endTime);
     const emissionType = useSelector(state => state.filters.emissionType);
     const stackType = useSelector(state => state.filters.streamType);
+    const routes = useSelector(state => state.filters.routes);
 
     function getRenderedComponentFunction(windowId) {
         if (windows.windowRenderComponent === "Stream Graph") {

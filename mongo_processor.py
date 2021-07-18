@@ -1,4 +1,5 @@
 import os
+import re
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from flask import jsonify, request
@@ -14,6 +15,55 @@ password = os.environ['MONGO_PASS']
 mongo_online = MongoClient("mongodb+srv://{0}:{1}@cluster0-9mebh.mongodb.net/test?retryWrites=true&w=majority".format(user, password))
 
 class Trips_Network(Resource):    
+    def get_routes(self):
+        db = mongo_online["test"]["trips_2019"]
+        col = db["trips_2019"]
+
+        regex = re.compile("[a-zA-Z]")
+
+        result = db.aggregate([
+            {"$match" : {
+                "_id" : {"$exists" : True}
+            }},
+            {"$group" : {
+                "_id" : "$route"
+            }},
+            {"$addFields" : {
+                "active" : True,
+                # "route" : {
+                #         "$cond" : [
+                #             {"$regexMatch" : {
+                #                 "input" : "$_id",
+                #                 "regex" : regex
+                #             }},
+                #             "$_id",
+                #             {"$toInt" : "$_id"}
+                #         ]
+                #     "$toInt" : {
+                #         "$cond" : [
+                #             {"$regexMatch" : {
+                #                 "input" : "$_id",
+                #                 "regex" : "/[a-zA-Z]/"
+                #             }},
+                #             {"$substr" : [
+                #                 "$_id", 
+                #                 0, 
+                #                 {"subtract" : [{"$indexOfBytes" : ["$_id", "/[a-zA-Z]/"]}, 1]}
+                #             ]},
+                #             "$_id"
+                #         ]
+                #     }
+                # }
+                # }
+            }},
+            {"$sort" : {
+                "_id" : 1
+            }}
+        ]
+        , allowDiskUse=True)
+
+        return list(result)
+
     def get_emissions_by_class_per_day(self, city, startDate, endDate, startTime, endTime):
         #### Deployment Environment
         db = mongo_online["test"]
