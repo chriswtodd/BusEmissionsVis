@@ -23,6 +23,7 @@ const Container = styled.div`
     width: ${styles.side_menu_width};
     opacity: 0;
     transition: ease all 250ms;
+    cursor: default;
 `;
 
 //Set button to change colour on active change

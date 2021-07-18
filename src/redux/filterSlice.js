@@ -21,7 +21,7 @@ export const filterSlice = createSlice({
           "EURO6" : true,
           "ELECTRIC" : true,
         },
-        routes: "",
+        routes: {},
         emissionType: "co2",
         streamType: "Zero Offset",
     },
@@ -65,9 +65,17 @@ export const filterSlice = createSlice({
         },
         setStreamType: (state, payload) => {
             state.streamType = payload.payload;
+        },
+        setRoutes: (state, payload) => {
+            payload.payload.map(d => {
+                state.routes[d._id] = true;
+            });
+        },
+        toggleRoute: (state, payload) => {
+            state.routes[payload.payload] = state.routes[payload.payload];
         }
     }
 })
 
-export const { setClasses, setReqGranularity, setStartTime, setEndTime, setEmissionType, setStreamType } = filterSlice.actions;
+export const { setClasses, setReqGranularity, setStartTime, setEndTime, setEmissionType, setStreamType, setRoutes } = filterSlice.actions;
 export const filterReducer = filterSlice.reducer;

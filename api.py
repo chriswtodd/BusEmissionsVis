@@ -19,10 +19,14 @@ CORS(app)
 # def not_found(e):
 #     return app.send_static_file('index.html')
 
+metlink_trips = Trips_Network()
+
+@app.route('/routes', methods=["GET"])
+def routes():
+    return jsonify(metlink_trips.get_routes())
+
 @app.route('/day/<string:city>/<string:startDate>/<string:endDate>/<string:startTime>/<string:endTime>', methods=["GET"])
 def trip(city, startDate, endDate, startTime, endTime):    
-    metlink_trips = Trips_Network()
-
     # Clean date from url encoding
     startDate = startDate.replace("-", "/")
     endDate = endDate.replace("-", "/")
@@ -30,8 +34,7 @@ def trip(city, startDate, endDate, startTime, endTime):
     return jsonify(metlink_trips.get_emissions_by_class_per_day(city, startDate, endDate, startTime, endTime))
 
 @app.route('/hour/<string:city>/<string:startDate>/<string:endDate>/<string:startTime>/<string:endTime>', methods=["GET"])
-def tripHour(city, startDate, endDate, startTime, endTime):    
-    metlink_trips = Trips_Network()
+def tripHour(city, startDate, endDate, startTime, endTime):
     # Clean date from url encoding
     startDate = startDate.replace("-", "/")
     endDate = endDate.replace("-", "/")
