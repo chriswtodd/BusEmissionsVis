@@ -6,7 +6,7 @@ import { IoIosArrowForward } from 'react-icons/io';
 import { useSelector, useDispatch, connect } from 'react-redux';
 
 import { setClasses, setReqGranularity, 
-    setStartTime, setEndTime, setEmissionType, setStreamType, setRoutes } from '../redux/filterSlice.js';
+    setStartTime, setEndTime, setEmissionType, setStreamType, toggleRoute, setReload } from '../redux/filterSlice.js';
 
 import TimePicker from './materialUi/TimePicker.js';
 
@@ -99,7 +99,6 @@ function SideMenuFilters(props) {
     function modifyFiltersOpen(title) {
         filterContainers[title] = !filterContainers[title];
         setOpenFilters(filterContainers);
-        console.log(openFilters);
     }
 
     return (
@@ -217,6 +216,13 @@ function SideMenuFilters(props) {
                 id={"checkbox_routes"}
                 active={openFilters["Routes"]}
             >
+            <button 
+                onClick={() => {
+                    dispatch(setReload(true))
+                }}
+                style={{"width": "85%","background-color": "#67e037","border-radius":"25px"}}> 
+                Load New Data 
+            </button>
 
             {filters != undefined ? Object.keys(filters.routes).map(property => (
                     <Checkbox
@@ -225,7 +231,7 @@ function SideMenuFilters(props) {
                         label={property}
                         color={modelData.engine_colours[property]}
                         callback={(e) => {
-                            dispatch(setRoutes(e.target.name));
+                            dispatch(toggleRoute(e.target.name));
                         }}
                         checked={filters.routes[property]}
                     />
@@ -238,7 +244,8 @@ const mapStateToProps = (state) => {
     {
         return {
             streamTypeViewed: state.windows.windowRenderComponent === "Stream Graph",
-            routes: state.filters.routes
+            routes: state.filters.routes,
+            reload: state.filters.reload,
         }
     }
 }

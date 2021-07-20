@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addWindow, extractWindow, removeWindow } from '../redux/windowSlice.js';
 import { setStreamData } from '../redux/dataSlice.js';
 import { setLoading } from '../redux/envVarsSlice';
+import { setRoutes, setReload } from 'redux/filterSlice';
 
 import styled from "styled-components";
 import SideMenuLeft from '../components/sideMenuLeft.js';
@@ -47,6 +48,7 @@ export default function Visualisations(props) {
     const url = useSelector(state => state.envVars.url);
     //Page
     const streamData = useSelector(state => state.data.streamData);
+    const reload = useSelector(state => state.filters.reload);
     let windows = useSelector(state => state.windows);
     //Filters
     const granularity = useSelector(state => state.filters.granularity);
@@ -256,11 +258,17 @@ export default function Visualisations(props) {
     // Call use effect only once to fetch data required for visualisations
     useEffect(() => {
         async function fetchData() {
+            // Get the routes from the dataset for the filter
+            let response = await fetch(`${url}/routes`);
+            let routes = await response.json();
+            dispatch(setRoutes(routes));
+            
             // Fetch base set of data
             let d1 = '2019-01-01', d2 = '2019-12-10';
             let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
             let res = await fetch(fetchURL);
             const json = await res.json();
+            
             // Set to global draw data
             dispatch(setStreamData(json));
             // Turn off loader
@@ -268,6 +276,7 @@ export default function Visualisations(props) {
             windows.value.forEach(d => {
                 dispatch(removeWindow(d.id))
             })
+            
             // Add windows to draw
             let firstWindow = (
                 <WindowComponent key={"vis-window_0"}
@@ -294,13 +303,54 @@ export default function Visualisations(props) {
     }, [])
 
     /**
+     * Call useEffect for reloading when data is loaded due to the routes being changed.
+     * Perhaps we can do this with the other filters, or join setReload & setLoading?
+     */
+    useEffect(() => {
+        async function fetchData() {            
+            // Fetch new data
+            let d1 = '2019-01-01', d2 = '2019-12-10';
+            let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
+            let res = await fetch(fetchURL);
+            const json = await res.json();
+            // Set data
+            dispatch(setStreamData(json));
+            // Turn off loader
+            dispatch(setLoading(false));
+            // Redraw existing visualisations
+            redrawGraphs(json);
+        }
+        async function setRoutes() {
+            let r2 = await fetch("http://localhost:5000/set_routes", {
+                method: "POST",
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers : {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    routes: routes
+                })
+            }).then(() => {
+                dispatch(setReload(false));
+                fetchData();
+            })
+        }
+        if (reload === true) {
+            // Turn on loader before fetch
+            dispatch(setLoading(true));
+            setRoutes();
+        }
+    }, [routes, reload])
+
+    /**
      * Call use effect to recall flask when certain filters 
      * change
      * 
-     * TODO: Add logic to stop unneccessary reloading
      */
     useEffect(() => {
-        async function fetchData() {
+        async function fetchData() {            
             // Fetch new data
             let d1 = '2019-01-01', d2 = '2019-12-10';
             let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
@@ -348,6 +398,10 @@ export default function Visualisations(props) {
     }, [classes, emissionType, stackType])
 
 
+    /**
+     * Called to redraw the windows when added,
+     * template for adding windows dynamically #7
+     */
     useEffect(() => {
         //Data not loaded yet
         if (!Array.isArray(streamData)) return

@@ -14,7 +14,10 @@ user = os.environ['MONGO_USER']
 password = os.environ['MONGO_PASS']
 mongo_online = MongoClient("mongodb+srv://{0}:{1}@cluster0-9mebh.mongodb.net/test?retryWrites=true&w=majority".format(user, password))
 
-class Trips_Network(Resource):    
+class Trips_Network(Resource):
+    '''
+    Called to get the routes initially
+    ''' 
     def get_routes(self):
         db = mongo_online["test"]["trips_2019"]
         col = db["trips_2019"]
@@ -30,31 +33,6 @@ class Trips_Network(Resource):
             }},
             {"$addFields" : {
                 "active" : True,
-                # "route" : {
-                #         "$cond" : [
-                #             {"$regexMatch" : {
-                #                 "input" : "$_id",
-                #                 "regex" : regex
-                #             }},
-                #             "$_id",
-                #             {"$toInt" : "$_id"}
-                #         ]
-                #     "$toInt" : {
-                #         "$cond" : [
-                #             {"$regexMatch" : {
-                #                 "input" : "$_id",
-                #                 "regex" : "/[a-zA-Z]/"
-                #             }},
-                #             {"$substr" : [
-                #                 "$_id", 
-                #                 0, 
-                #                 {"subtract" : [{"$indexOfBytes" : ["$_id", "/[a-zA-Z]/"]}, 1]}
-                #             ]},
-                #             "$_id"
-                #         ]
-                #     }
-                # }
-                # }
             }},
             {"$sort" : {
                 "_id" : 1
@@ -64,11 +42,24 @@ class Trips_Network(Resource):
 
         return list(result)
 
-    def get_emissions_by_class_per_day(self, city, startDate, endDate, startTime, endTime):
+    '''
+    Called by api.py to return data for the Stream Graph &
+    line chart visualisations
+    '''
+    def get_emissions_by_class_per_day(self, city, startDate, endDate, startTime, endTime, route_coll):
         #### Deployment Environment
         db = mongo_online["test"]
         col = db["trips_2019"]
-
+        
+        route_set = set()
+        if isinstance(route_coll, dict):
+            for entry in route_coll:
+                if route_coll[entry]:
+                    route_set.add(entry)
+        
+        route_list = list(route_set)
+        if len(route_list) == 0:
+            route_list.append("1")
         #### Old dev env
         # db = mongo_client["emma"]["end_2019_pax_by_route"]
         # db = mongo_client["emma"]["trips"]
@@ -84,6 +75,9 @@ class Trips_Network(Resource):
             }},
             {"$match" : {   
                 "departure": { "$lt" : endTime }
+            }},
+            {"$match" : {
+                "route" : {"$in" : route_list}
             }},
             {"$project" : { "_id" : 0 }},
             {"$group" : {
@@ -125,6 +119,8 @@ class Trips_Network(Resource):
 
         return list(result)
 
+    # Called to load data at a more granular level, not suitable for deployment
+    # as complex calculation, front end slows significantly
     def get_emissions_by_class_per_hour(self, city, startDate, endDate, startTime, endTime):
         db = mongo_online["test"]["trips_2019"]
 
