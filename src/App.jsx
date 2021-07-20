@@ -140,14 +140,6 @@ export default function App() {
   dispatch(setApiUrl())
   // Cheeky hack to flip between dev and deployment
   let url = useSelector(state => state.envVars.url)
-  useEffect(() => {
-    async function fetchRoutes () {
-      let response = await fetch(`${url}/routes`);
-      let routes = await response.json();
-      dispatch(setRoutes(routes));
-    }
-    fetchRoutes();
-  }, [])
   //Set body
   componentWillMount();
   return (
