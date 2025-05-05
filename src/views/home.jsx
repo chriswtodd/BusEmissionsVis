@@ -7,10 +7,10 @@ import React, { useEffect } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import Banner from "../components/banner.js";
-import Info from "../components/infoContainer";
-import Actions from "../components/actionsContainer";
-import Contacts from "../components/contactContainer";
+import Banner from "../components/banner.jsx";
+import Info from "../components/infoContainer.jsx";
+import Actions from "../components/actionsContainer.jsx";
+import Contacts from "../components/contactContainer.jsx";
 
 export default function Home(props) {
     let dispatch = useDispatch();

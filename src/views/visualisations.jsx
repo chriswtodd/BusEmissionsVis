@@ -5,16 +5,16 @@
 
 import React, { useEffect } from 'react';
 
-import store from 'redux/store.js';
+import store from '../redux/store.js';
 import { useSelector, useDispatch } from 'react-redux';
-import { addWindow, extractWindow, removeWindow } from '../redux/windowSlice.js';
+import { addWindow, removeWindow } from '../redux/windowSlice.js';
 import { setStreamData } from '../redux/dataSlice.js';
-import { setLoading } from '../redux/envVarsSlice';
+import { setLoading } from '../redux/envVarsSlice.js';
 
 import styled from "styled-components";
-import SideMenuLeft from '../components/sideMenuLeft.js';
-import WindowComponent from '../components/window-component.js';
-import LoadingBar from '../components/loadingBar.js';
+import SideMenuLeft from '../components/sideMenuLeft.jsx';
+import WindowComponent from '../components/window-component.jsx';
+import LoadingBar from '../components/loadingBar.jsx';
 
 import * as d3Graph from '../d3/graph.js';
 import * as d3StreamGraph from '../d3/streamGraphMixin.js';

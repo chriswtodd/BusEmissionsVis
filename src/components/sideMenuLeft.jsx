@@ -5,8 +5,8 @@
 
 import React, { useState } from 'react';
 import styled from "styled-components";
-import ButtonFactory from "./sideMenuButton.js";
-import SideMenuFilter from "./sideMenuFilters.js"
+import ButtonFactory from "./sideMenuButton.jsx";
+import SideMenuFilter from "./sideMenuFilters.jsx"
 
 import { FaDatabase, FaEye, FaTools, FaCog } from 'react-icons/fa';
 

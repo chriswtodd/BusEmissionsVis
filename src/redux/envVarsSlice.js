@@ -4,7 +4,6 @@
  */ 
 
 import { createSlice } from '@reduxjs/toolkit';
-require('dotenv').config()
 
 export const envVarsSlice = createSlice({
     name: 'env',
@@ -14,9 +13,9 @@ export const envVarsSlice = createSlice({
     },
     reducers: {
         setUrl: (state, payload) => {
-            state.url = process.env.REACT_APP_DEV_URL;
+            state.url = import.meta.env.VITE_APP_DEV_URL;
             if (payload.payload.includes("bevferle")) {
-                state.url = process.env.REACT_APP_DEPLOYMENT_URL;
+                state.url = import.meta.env.VITE_APP_DEPLOYMENT_URL;
             }
         },
         setLoading: (state, payload) => {

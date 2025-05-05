@@ -1,7 +1,7 @@
 /**
- * @author Chris Todd, chriswilltodd@gmail.com
- * Github: chriswtodd
- */ 
+* @author Chris Todd, chriswilltodd@gmail.com
+* Github: chriswtodd
+*/
 
 import * as d3 from "d3";
 const styles = require("../styles.js");
@@ -50,22 +50,22 @@ export let streamTooltipFactoryMixin = {
             .selectAll(".plot-rect")
             .data(data, d => d.date)
 
-            this.ttBars
-                .enter()
-                .append("rect")
-                .join(this.ttBars)
-                .merge(this.ttBars)
-                .attr("class", "plot-rect")
-                .attr("x", function (d) {
-                    return t.xScale(new Date(d.date));
-                })
-                .attr("width", function (d, i) {
-                    return widthTooltipBars;
-                })
-                .attr("height", 1)
-                .attr("border", "1px solid black")
-                .style("fill", "white")
-                .style("opacity", 0);
+        this.ttBars
+            .enter()
+            .append("rect")
+            .join(this.ttBars)
+            .merge(this.ttBars)
+            .attr("class", "plot-rect")
+            .attr("x", function (d) {
+                return t.xScale(new Date(d.date));
+            })
+            .attr("width", function (d, i) {
+                return widthTooltipBars;
+            })
+            .attr("height", 1)
+            .attr("border", "1px solid black")
+            .style("fill", "white")
+            .style("opacity", 0);
     },
 
     createLineChartTooltip(top, left, infoDots, id, property) {
@@ -91,19 +91,19 @@ export let streamTooltipFactoryMixin = {
             .html(innerHTMLString);
     },
 
-    drawLineChartTooltip (top, left, infoDots, ttName, property) {
+    drawLineChartTooltip(top, left, infoDots, ttName, property) {
         //Select tooltip
-    
+
         let timeStamp = infoDots.date.toString();
         if (timeStamp.split(" ")[4] === "00:00:00") {
             timeStamp = infoDots.date.toString().split(/[0-9]{2}:/)[0];
         }
         let innerHTMLString = "<p>" + timeStamp + "</p>"
-        + "<p> " + property + " </p>";
+            + "<p> " + property + " </p>";
         for (let key of this.tooltipKeys) {
             innerHTMLString = innerHTMLString + "<br>" + key + ": " + (Math.round(infoDots[key] * 100) / 100)
         }
-        
+
         d3.select("#".concat(this.containerId))
             .select("#".concat(ttName))
             .style("background", styles.ttBackground)
@@ -125,7 +125,7 @@ export let streamTooltipFactoryMixin = {
                     //set onDot
                     onDot = true;
                     //get the tooltip info
-                    let infoDots = data.filter(d => 
+                    let infoDots = data.filter(d =>
                         new Date(d.date).getTime() === new Date(area.date).getTime())[0];
                     let engineTypesEmissions = [];
                     for (let key of t.tooltipKeys) {
@@ -175,34 +175,34 @@ export let streamTooltipFactoryMixin = {
                     .style("opacity", 0)
             }
         })
-        .on("mouseout", function (d) {
-            //If selection not empty, remove tooltip on mouse leave
-            if (!d3.select("#".concat(t.containerId))
-                .select("#".concat(ttName))
-                .empty()
-            ) {
-                d3.select("#".concat(ttName))
-                    .attr("fill", "none")
-                    .style("display", "none");
-                d3.selectAll(".plot-rect")
-                    .attr("height", 1)
-                    .style("opacity", 0)
-            }
-        })
-        .on("mouseleave", function (d) {
-            //If selection not empty, remove tooltip on mouse leave
-            if (
-                !d3.select("#".concat(t.containerId))
-                .select("#".concat(ttName))
-                .empty()
-            ) {
-                d3.select("#".concat(ttName))
-                    .attr("fill", "none")
-                    .style("display", "none");
-                d3.selectAll(".plot-rect")
-                    .attr("height", 1)
-                    .style("opacity", 0)
-            }
-        })
+            .on("mouseout", function (d) {
+                //If selection not empty, remove tooltip on mouse leave
+                if (!d3.select("#".concat(t.containerId))
+                    .select("#".concat(ttName))
+                    .empty()
+                ) {
+                    d3.select("#".concat(ttName))
+                        .attr("fill", "none")
+                        .style("display", "none");
+                    d3.selectAll(".plot-rect")
+                        .attr("height", 1)
+                        .style("opacity", 0)
+                }
+            })
+            .on("mouseleave", function (d) {
+                //If selection not empty, remove tooltip on mouse leave
+                if (
+                    !d3.select("#".concat(t.containerId))
+                        .select("#".concat(ttName))
+                        .empty()
+                ) {
+                    d3.select("#".concat(ttName))
+                        .attr("fill", "none")
+                        .style("display", "none");
+                    d3.selectAll(".plot-rect")
+                        .attr("height", 1)
+                        .style("opacity", 0)
+                }
+            })
     }
 }
