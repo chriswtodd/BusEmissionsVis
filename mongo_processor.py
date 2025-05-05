@@ -17,7 +17,7 @@ mongo_local = MongoClient("mongodb://localhost:27017/test?retryWrites=true&w=maj
 class Trips_Network(Resource):    
     def get_emissions_by_class_per_day(self, city, startDate, endDate, startTime, endTime):
         #### Deployment Environment
-        db = mongo_online["test"]
+        db = mongo_local["test"]
         col = db["trips_2019"]
 
         #### Old dev env

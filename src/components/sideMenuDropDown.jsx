@@ -5,13 +5,11 @@
 
 import React, { useState } from 'react';
 import { useSelector, useDispatch, connect } from 'react-redux';
-import store from "../redux/store.js";
 import { setWindowRenderComponent, addWindow } from '../redux/windowSlice.js';
 
 import styled from "styled-components";
-import TimePicker from 'react-time-picker';
 
-import { buttons } from './sideMenuLeft.js';
+import { buttons } from './sideMenuLeft.jsx';
 
 let styles = require('../styles.js');
 

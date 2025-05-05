@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import ReactRadioButtonGroup from 'react-radio-button-group';
 import styled from "styled-components";
 
 import { useSelector, useDispatch, connect } from 'react-redux';
@@ -7,10 +6,10 @@ import { useSelector, useDispatch, connect } from 'react-redux';
 import { setClasses, setReqGranularity, 
     setStartTime, setEndTime, setEmissionType, setStreamType } from '../redux/filterSlice.js';
 
-import TimePicker from './materialUi/TimePicker.js';
+// import TimePicker from './materialUi/TimePicker.jsx';
 
-import SideMenuContainer from "./sideMenuContainer.js";
-import Checkbox from "./html/checkbox.js";
+import SideMenuContainer from "./sideMenuContainer.jsx";
+import Checkbox from "./html/checkbox.jsx";
 
 let modelData = require('../models/modelData.js')
 const styles = require("../styles.js")
@@ -93,58 +92,21 @@ function SideMenuFilters(props) {
                 Emission Type:
             </SectionLabel>
             <CheckboxContainer id={"checkbox_granularity"}>
-                <ReactRadioButtonGroup
-                    options={modelData.emission_type_ui}
-                    name="emissionTypeRadio"
-                    isStateful={false}
-                    onChange={
-                        (checkedValue) => {
-                            setEmissionTypeRadio(checkedValue)
-                            dispatch(setEmissionType(checkedValue))
-                        }
-                    }
-                    value={emissionTypeRadio}
-                />
+
             </CheckboxContainer>
             
             <SectionLabel>
                 Granularity:
             </SectionLabel>
             <CheckboxContainer id={"checkbox_granularity"}>
-                <ReactRadioButtonGroup
-                    options={["day"]}
-                    name="granularity"
-                    isStateful={false}
-                    onChange={
-                        (checkedValue) => {
-                            setGranularity(checkedValue);
-                            dispatch(setReqGranularity(checkedValue))
-                        }
-                    }
-                    value={granularity}
-                />
+
             </CheckboxContainer>
             
             <SectionLabel>
                 Trips Between:
             </SectionLabel>
             <TimePickerContainer>
-                <TimePicker
-                    id={"start_time"}
-                    label={"Start Time"}
-                    defaultValue={"00:00"}
-                    onChange={(e) => {
-                        dispatch(setStartTime(e.target.value));
-                    }}
-                />
-                <TimePicker
-                    id={"end_time"}
-                    label={"End Time"}
-                    defaultValue={"23:59"}
-                    onChange={(e) => {
-                        dispatch(setEndTime(e.target.value));
-                    }}
-                />
+
             </TimePickerContainer>
 
             <SectionLabelToggle active={props.streamTypeViewed}>
@@ -154,18 +116,6 @@ function SideMenuFilters(props) {
                 id={"checkbox_stream_type"}
                 active={props.streamTypeViewed}
             >
-                <ReactRadioButtonGroup
-                    options={["Zero Offset", "Normalized"]}
-                    name="stream_offset"
-                    isStateful={false}
-                    onChange={
-                        (checkedValue) => {
-                            setStreamTypeRadio(checkedValue);
-                            dispatch(setStreamType(checkedValue))
-                        }
-                    }
-                    value={streamTypeRadio}
-                />
             </CheckboxContainerToggle>
         </SideMenuContainer>
     )

@@ -8,11 +8,11 @@ import styled from "styled-components";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 
 import { useSelector, useDispatch } from 'react-redux';
-import { setUrl } from 'redux/envVarsSlice.js';
+import { setUrl } from './redux/envVarsSlice.js';
 
 // Page components for router
-import Home from './views/home.js';
-import Visualisations from './views/visualisations.js';
+import Home from './views/home.jsx';
+import Visualisations from './views/visualisations.jsx';
 
 import logo from './components/GW_Logo.png';
 const Logo = styled.img`
@@ -22,8 +22,7 @@ const Logo = styled.img`
   padding-right: 105px;
 `;
 
-require('dotenv').config()
-let styles = require('../src/styles.js');
+let styles = require('./styles.js');
 
 const buttons = [
   {

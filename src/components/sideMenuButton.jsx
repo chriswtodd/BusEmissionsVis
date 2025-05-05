@@ -5,7 +5,7 @@
 
 import React from 'react';
 import styled from "styled-components";
-import SideMenuDropDown from "../components/sideMenuDropDown.js";
+import SideMenuDropDown from "../components/sideMenuDropDown.jsx";
 import { IoIosArrowForward } from 'react-icons/io';
 
 let styles = require('../styles.js');
