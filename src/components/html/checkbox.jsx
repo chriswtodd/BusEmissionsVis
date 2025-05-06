@@ -34,7 +34,7 @@ const Dot = styled.span`
 `;
 
 function VehicleDot(props) {
-    return <Dot style={{"background-color": props.color}} />
+    return <Dot style={{"backgroundColor": props.color}} />
 }
 
 export default function Checkbox(props) {
@@ -51,7 +51,7 @@ export default function Checkbox(props) {
                     props.callback(e, checked);
                 }}/>
             <VehicleDot color={props.color} />
-            <Label for={props.id}>{props.label}</Label>
+            <Label htmlFor={props.id}>{props.label}</Label>
         </Container>
     )
 }

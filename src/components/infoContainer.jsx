@@ -10,7 +10,7 @@ const InfoContainer = styled.div`
     display: flex;
     justify-content: space-between;
     margin: 5% 18%;
-    font-weight: 300;
+    fontWeight: 300;
 `;
 
 const InfoTitle = styled.h3`
