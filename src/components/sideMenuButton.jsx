@@ -12,7 +12,7 @@ let styles = require('../styles.js');
 
 const Button = styled.button`
     font: 400 18px Roboto;
-    z-index: 1000;
+    zIndex: 1000;
     color: ${styles.text_colour};
     background: ${styles.background_colour}
     width: ${styles.side_menu_width};
@@ -97,24 +97,24 @@ export default class ButtonFactory extends React.Component {
 
   render() {
       return (
-        <>
+        <div key={this.props.type}>
         <MenuButtonToggle
-          active={this.props.active === this.props.type.label} 
+          active={(this.props.active === this.props.type.label).toString()} 
           onClick={() => setActive(this)}
         >
           <Header>
           {this.props.type.label}
-          <ButtonArrowToggle active={this.props.active === this.props.type.label} />
+          <ButtonArrowToggle active={(this.props.active === this.props.type.label).toString()} />
         </Header>
         </MenuButtonToggle>
           <SideMenuDropDown
             open={this.props.active} 
             type={this.props.type} 
-            active={this.props.active}
+            active={this.props.active.toString()}
             setActive={this.props.setActive}
             title={this.state.dropdownTitle}
           />
-        </>
+        </div>
       )
   }
 }

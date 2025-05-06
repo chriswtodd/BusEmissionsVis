@@ -18,7 +18,7 @@ const Header = styled.div`
 
 const Container = styled.div`
     font: 400 18px Roboto;
-    z-index: 1000;
+    zIndex: 1000;
     color: ${styles.text_colour};
     background: ${styles.background_colour}
     width: ${styles.side_menu_width};
@@ -111,12 +111,12 @@ export default function SideMenuContainer (props) {
     }
 
     return (
-        <MenuContainerToggle active={active} >
+        <MenuContainerToggle active={active.toString()} >
             <Header onClick={() => setActive(!active)}>
                 {props.label}
-                <ContainerArrowToggle active={active} />
+                <ContainerArrowToggle active={active.toString()} />
             </Header>
-            <MenuBodyToggle active={active}>
+            <MenuBodyToggle active={active.toString()}>
                 {getChildren()}
             </MenuBodyToggle>
         </MenuContainerToggle>
