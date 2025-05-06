@@ -11,7 +11,7 @@ const ContactContainer = styled.div`
     justify-content: space-between;
     margin-top: 5%;
     padding: 2% 18%;
-    backgroundColor: rgb(0,0,0,0.1);
+    background-color: rgb(0,0,0,0.1);
 `;
 
 const DescriptionContainer = styled.div`
@@ -23,7 +23,7 @@ export default function Contacts (props) {
       return (
         <ContactContainer >
             <DescriptionContainer>
-                <p style={{"fontWeight": "bold"}}>Author</p>
+                <p style={{"font-weight": "bold"}}>Author</p>
                 <p>
                     Chris Todd
                     <br />

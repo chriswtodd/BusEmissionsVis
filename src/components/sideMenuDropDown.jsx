@@ -14,11 +14,11 @@ import { buttons } from './sideMenuLeft.jsx';
 let styles = require('../styles.js');
 
 const Container = styled.div`
-    zIndex: -1;
+    z-index: -1;
     display: flex;
     flex-direction: column;
     top: 0px; left: 0;
-    backgroundColor: ${styles.side_menu_background};
+    background-color: ${styles.side_menu_background};
     height: 0;
     width: ${styles.side_menu_width};
     opacity: 0;
@@ -37,7 +37,7 @@ const ContainerToggle = styled(Container)`
 
 const DropDownButton = styled.button`
     font: 400 18px Roboto;
-    zIndex: 1000;
+    z-index: 1000;
     color: ${styles.side_menu_text};
     padding: 0 0.6em;
     height: 0px;
@@ -52,7 +52,7 @@ const DropDownButton = styled.button`
     user-select: none;
     cursor: pointer;
     transition: ease all 250ms;
-    backgroundColor: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
     &:hover {
         background: ${styles.background_colour};
         color: ${styles.text_colour};
@@ -95,7 +95,7 @@ const SectionSeparator = styled.div`
   width: 100%;
   color: ${styles.text_colour_neg};
   border-bottom: 1px solid ${styles.background_colour};
-  fontWeight: bold;
+  font-weight: bold;
   padding: 5px;
 `;
 
@@ -104,8 +104,7 @@ function DropDownButtonFactory (props) {
 
   return (
     <DropDownButtonToggle
-      key={props.type.label}
-      active={(props.active === props.type.label)}
+      active={props.active === props.type.label}
       open={props.open}
       onClick={(e) => {
         props.setActive(props.type.label)
@@ -122,10 +121,7 @@ function PopulateItems(props) {
     let button = buttons.filter(button => button.label === props.open);
     if ( button.length != 0 ) {
         return button[0].entries.map((e) => (
-            <DropDownButtonFactory 
-              id={e.label}
-              key={e.label}
-              active={active.toString()} 
+            <DropDownButtonFactory active={active} 
               type={e} 
               setActive={setActive} 
               open={props.open}
@@ -133,7 +129,7 @@ function PopulateItems(props) {
             </DropDownButtonFactory>
         ));
     }
-    return <div key={"side-menu-dropdown_empty-list"}></div>;
+    return <></>;
 }
 const mapStateToProps = (state) => {
   {
@@ -151,20 +147,11 @@ export default class SideMenuDropDown extends React.Component {
 
   render() {
     return (
-        <ContainerToggle 
-          open={this.props.open === this.props.type.label}
-          key={"div_container-toggle"}
-        >
-            <SectionSeparator id={"label_select-a-visualisation"} key={"label_select-a-visualisation"}>
+        <ContainerToggle open={this.props.open === this.props.type.label}>
+            <SectionSeparator>
               Select a visualisation:
             </SectionSeparator>
-            <Pop
-              id={"item-populator"}
-              key={"item-populator"}
-              open={this.props.open} 
-              active={this.props.active.toString()} 
-              setActive={this.props.setActive} 
-            />
+            <Pop open={this.props.open} active={this.props.active} setActive={this.props.setActive} />
         </ContainerToggle>
     )
   }

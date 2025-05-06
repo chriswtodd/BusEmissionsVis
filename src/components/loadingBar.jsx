@@ -28,10 +28,10 @@ const LoadingBarProgress = styled.div`
   padding: 15px;
   `;
 
-const LoadingBarPercent = styled.span`
+const LoadingBarPercent = styled.text`
     position: absolute;
     align-self: center;
-    zIndex: 51;
+    z-index: 51;
     fill: #222;
     color: #222;
 `;
@@ -41,7 +41,7 @@ const LoadingWrapper = styled.div`
     opacity: 0;
     height: 100%;
     width: 100%;
-    zIndex: 50;
+    z-index: 50;
     pointer-events: none;
 `;
 
@@ -66,7 +66,7 @@ export default function LoadingBar() {
                 position: 'absolute',
                 left: "50%",
                 top: "35%",
-                "zIndex": "10000",
+                "z-index": "10000",
             },
             valueText: "Fetching data..."
           },

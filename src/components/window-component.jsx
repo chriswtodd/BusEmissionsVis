@@ -19,7 +19,7 @@ const Container = styled.div`
     flex-direction: column;
 	margin: 0;
 	padding: 0;
-	zIndex: 99;
+	z-index: 99;
 	background: #fefefe;
 `;
 
@@ -33,7 +33,7 @@ const Header = styled.div`
     align-items: center;
 `;
 
-const HeaderText = styled.span`
+const HeaderText = styled.text`
     font: 400 18px Roboto;
     color: ${styles.text_colour_neg};
     margin: 10px;
@@ -51,7 +51,7 @@ const GhostPane = styled.div`
 	position: absolute;
 	margin: 0;
 	padding: 0;
-	zIndex: 98;
+	z-index: 98;
 
 	-webkit-transition: all 0.25s ease-in-out;
 	-moz-transition: all 0.25s ease-in-out;

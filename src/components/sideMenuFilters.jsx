@@ -32,7 +32,7 @@ const TimePickerContainer = styled.div`
     color: ${styles.text_colour_neg}
 `;
 
-const SectionLabel = styled.span`
+const SectionLabel = styled.text`
     display: flex;
     color: ${styles.text_colour_neg}
     border-bottom: 1px solid ${styles.background_colour}
@@ -70,14 +70,13 @@ function SideMenuFilters(props) {
 
     return (
         <SideMenuContainer label={"Visualisation Filters"}>
-            <SectionLabel key={"label_engine-classes"} >
+            <SectionLabel>
                 Engine Classes:
             </SectionLabel>
-            <CheckboxContainer id={"checkbox_engine-classes"} key={"checkbox_engine-classes"}>
+            <CheckboxContainer id={"checkbox_engine-classes"}>
                 {filters != undefined ? Object.keys(filters.class).map(property => (
                     <Checkbox
                         id={property}
-                        key={property}
                         name={property}
                         label={property}
                         color={modelData.engine_colours[property]}
@@ -89,37 +88,32 @@ function SideMenuFilters(props) {
                 )) : null}
             </CheckboxContainer>
 
-            <SectionLabel id={"label_emission-type"} key={"label_emission-type"}>
+            <SectionLabel>
                 Emission Type:
             </SectionLabel>
-            <CheckboxContainer id={"checkbox_emission-type"} key={"checkbox_emission-type"}>
+            <CheckboxContainer id={"checkbox_granularity"}>
 
             </CheckboxContainer>
             
-            <SectionLabel id={"label_granularity"} key={"label_granularity"}>
+            <SectionLabel>
                 Granularity:
             </SectionLabel>
-            <CheckboxContainer id={"checkbox_granularity"} key={"checkbox_granularity"}>
+            <CheckboxContainer id={"checkbox_granularity"}>
 
             </CheckboxContainer>
             
-            <SectionLabel id={"label_trips-between"} key={"label_trips-between"}>
+            <SectionLabel>
                 Trips Between:
             </SectionLabel>
-            <TimePickerContainer id={"div_trips-between"} key={"div_trips-between"}>
+            <TimePickerContainer>
 
             </TimePickerContainer>
 
-            <SectionLabelToggle 
-                id={"label_stream-type"} 
-                key={"label_stream-type"}
-                active={props.streamTypeViewed}
-            >
+            <SectionLabelToggle active={props.streamTypeViewed}>
                 Stream Type:
             </SectionLabelToggle>
             <CheckboxContainerToggle 
                 id={"checkbox_stream_type"}
-                key={"checkbox_stream_type"}
                 active={props.streamTypeViewed}
             >
             </CheckboxContainerToggle>

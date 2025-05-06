@@ -10,7 +10,7 @@ let styles = require('../styles.js');
 
 const BannerContainer = styled.div`
     font: 400 18px Roboto;
-    zIndex: 1000;
+    z-index: 1000;
     color: ${styles.text_colour};
     background-image: ${styles.banner_background};
     width: 100%;
@@ -27,7 +27,7 @@ const BannerContainer = styled.div`
 const BannerTitle = styled.h1`
     margin: 20px 10px 10px 10px;
     font-size: 4em;
-    fontWeight: 300;
+    font-weight: 300;
     user-select: none;
     color: ${styles.text_colour};
     -webkit-text-stroke-width: .25px;
@@ -37,7 +37,7 @@ const BannerTitle = styled.h1`
 const BannerSubtitle = styled.div`
     margin: 10px 10px 20px 10px;
     font-size: 1.5em;
-    fontWeight: 300;
+    font-weight: 300;
     user-select: none;
     color: ${styles.text_colour};
     -webkit-text-stroke-width: .1px;
@@ -56,7 +56,7 @@ const BannerButton = styled.button`
     width: 30%;
     height: 2em;
     padding: 10px;
-    transition: backgroundColor 0.1s ease-in-out;
+    transition: background-color 0.1s ease-in-out;
     background-image: ${styles.banner_background};
     color: #E0F7FA;
     border-radius: 10px;
