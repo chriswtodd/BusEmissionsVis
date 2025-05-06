@@ -14,13 +14,13 @@ let styles = require('../styles.js');
 
 const MenuContainer = styled.div`
     transition: opacity 0.2s, width 0.2s;
-    z-index: 20000;
+    zIndex: 20000;
     display: flex;
     flex-direction: column;
     top: 0px; left: 0;
     width: auto;
     opacity: 1;
-    background-color: ${styles.side_menu_background};
+    backgroundColor: ${styles.side_menu_background};
     overflow-y: auto;
     overflow-x: hidden;
 `;
@@ -93,7 +93,9 @@ export default function SideMenuLeft() {
         <>
             <MenuContainer>                
                 {buttons.map((type) => (
-                    <ButtonFactory active={active}
+                    <ButtonFactory 
+                        key={type.label}
+                        active={active}
                         type={type} 
                         setActive={setActive}
                     >

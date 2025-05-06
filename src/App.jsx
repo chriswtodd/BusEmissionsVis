@@ -54,7 +54,7 @@ const buttons = [
   
 const Button = styled.button`
   font: 400 18px Roboto;
-  z-index: 1000;
+  zIndex: 1000;
   color: ${styles.text_colour};
   background: ${styles.background_colour}
   padding: 0 0.6em;
@@ -69,7 +69,7 @@ const Button = styled.button`
   border-bottom: none;
   user-select: none;
   cursor: pointer;
-  transition: ease background-color 250ms;
+  transition: ease backgroundColor 250ms;
   &:hover {
     background: rgba(255, 255, 255, 0.164);
   }
@@ -96,7 +96,7 @@ const ButtonToggle = styled(Button)`
     active &&
     `
     opacity: 1;
-    background-color: rgba(255, 255, 255, 0.1);
+    backgroundColor: rgba(255, 255, 255, 0.1);
   `}
 `;
 
@@ -107,7 +107,7 @@ const Header = styled.div`
   padding: 0px 10px;
   align-items: center;
   justify-content: left;
-  z-index: 1;
+  zIndex: 1;
   position: relative;
   box-shadow: var(--container-shadow);
   background: transparent url(./imgs/banner.jpg);
@@ -140,11 +140,11 @@ export default function App() {
     <Router>
       <MainFlex>
         <nav>
-          <Header id='header' >
+          <Header id='header' key='header' >
             <Logo src={logo} />
             {buttons.map((type) => (
-              <LinkUnstyled to={type.to}>
-                <ButtonToggle active={active === type.label} onClick={() => setActive(type.label)}>
+              <LinkUnstyled to={type.to} key={type.label} >
+                <ButtonToggle active={(active === type.label).toString()} onClick={() => setActive(type.label)}>
                   {type.label}
                 </ButtonToggle>
               </LinkUnstyled>
@@ -153,7 +153,7 @@ export default function App() {
         </nav>
         <Switch>
           {buttons.map((type) => (
-            <Route path={type.to} exact component={type.component} />
+            <Route path={type.to} key={type.label} exact component={type.component} />
           ))}
           
           <Route render={() => <h1>404: page not found</h1>} />

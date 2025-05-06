@@ -20,7 +20,7 @@ const ActionsButton = styled.button`
     width: 30%;
     height: 2em;
     padding: 10px;
-    transition: background-color 0.1s ease-in-out;
+    transition: backgroundColor 0.1s ease-in-out;
     background-image: ${styles.banner_background};
     color: #E0F7FA;
     border-radius: 10px;
