@@ -17,3 +17,15 @@ and has a Python (Flask) backend
 ### New Workflow
 
 <img src="./resources/gitworkflow.png"/>
+
+
+## Licensing info
+
+### Favicon
+
+The emoji graphics (favicon) are from the open source project [Twemoji](https://twemoji.twitter.com/). The graphics are copyright 2020 Twitter, Inc and other contributors. The graphics are licensed under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+- Graphics Title: 1f68c.svg
+- Graphics Author: Copyright 2020 Twitter, Inc and other contributors (https://github.com/twitter/twemoji)
+- Graphics Source: https://github.com/twitter/twemoji/blob/master/assets/svg/1f68c.svg
+- Graphics License: CC-BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
