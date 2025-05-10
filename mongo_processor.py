@@ -9,9 +9,9 @@ from pymongo.errors import BulkWriteError
 # Development Environment 
 #
 load_dotenv()
-user = os.environ['MONGO_USER']
-password = os.environ['MONGO_PASS']
 mongo_local = MongoClient("mongodb://localhost:27017/test?retryWrites=true&w=majority")
+# user = os.environ['MONGO_USER']
+# password = os.environ['MONGO_PASS']
 # mongo_online = MongoClient("mongodb+srv://{0}:{1}@cluster0-9mebh.mongodb.net/test?retryWrites=true&w=majority".format(user, password))
 
 class Trips_Network(Resource):    
