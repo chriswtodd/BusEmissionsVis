@@ -89,15 +89,17 @@ export default function Visualisations(props) {
      * Define the type of graph to create on initialisaion
      */
     function initGraphs() {
-        if (windows.Length <= 0) 
+        console.log(windows)
+        if (windows.value.Length <= 0) 
         {
             return;
         }
+        
         let graphToDraw = store.getState().windows.windowRenderComponent
         if (graphToDraw === "Stream Graph")
-            windows.value.forEach(d => createStreamGraph(JSON.parse(d.windowComponent)).key)
+            windows.value.forEach(d => createStreamGraph(JSON.parse(d.windowComponent).key))
         if (graphToDraw === "Line Chart")
-            windows.value.forEach(d => createLineChart(JSON.parse(d.windowComponent)).key)
+            windows.value.forEach(d => createLineChart(JSON.parse(d.windowComponent).key))
     }
     
     function decodeEmissionType(emissionType) {
@@ -119,9 +121,10 @@ export default function Visualisations(props) {
     /**
      * Takes a window component and creates the graph within it
      * 
-     * @param {ReactFunctionalComponent:WindowComponent} window 
+     * @param {string} windowId the id of the window to draw the graph on
      */
     function createStreamGraph(windowId) {
+        console.log(windowId)
         if (windowId != undefined) {
             let vis = getRenderedComponentFunction(windowId);
             // Update the index keys for the graph based
@@ -130,6 +133,8 @@ export default function Visualisations(props) {
                 return classes[key];
             })
     
+            console.log(vis)
+
             //Assign date mixin for the stream graph
             vis.init();
                 
@@ -148,7 +153,7 @@ export default function Visualisations(props) {
 
             vis.enter();
             vis.render();
-            if (window.props.id != "overview_window") {
+            if (windowId != "overview_window") {
                 // Create the tooltip
                 vis.setTooltipKeys(keys);
                 vis.addTooltipToSvg("tt-main", emissionType, vis.streamData);
@@ -166,9 +171,9 @@ export default function Visualisations(props) {
         }
     }
 
-    function createLineChart(window) {
-        if (window != undefined) {
-            let vis = getRenderedComponentFunction(window.props.id);
+    function createLineChart(windowId) {
+        if (windowId != undefined) {
+            let vis = getRenderedComponentFunction(windowId);
             let keys = Object.keys(classes).filter(key => {
                 return classes[key];
             })
@@ -190,7 +195,7 @@ export default function Visualisations(props) {
 
             vis.enter();
             vis.render();
-            if (window.props.id != "overview_window") {
+            if (windowId != "overview_window") {
                 // Create the tooltip
                 vis.setTooltipKeys(keys);
                 vis.addTooltipToSvg("tt-main", emissionType, vis.data);
@@ -326,33 +331,7 @@ export default function Visualisations(props) {
      * Call use effect to rerender window when filters change
      */
     useEffect(() => {
-        windows
-            .value
-            .map(window => {
-                createStreamGraph(window)
-                // console.log(window)
-                // console.log(JSON.parse(window.windowComponent).key)
-                // let vis = getRenderedComponentFunction(JSON.parse(window.windowComponent).key);
-                // console.log(vis)
-                // let graphToDraw = store.getState().windows.windowRenderComponent
-                // vis.drawYAxis(0,decodeEmissionType(emissionType));
-                // if (graphToDraw === "Stream Graph") {
-                //     vis.decodeStackType(stackType);
-                //     vis.setStreamData(processStreamData(streamData));
-                // } else if (graphToDraw === "Line Chart") {
-                //     vis.setLineData(processLineData(streamData));
-                // }
-                // vis.render();
-                // if (window.id != "overview_window") {
-                //     // Create the tooltip
-                //     let keys = Object.keys(classes).filter(key => {
-                //         return classes[key];
-                //     })
-                //     vis.setTooltipKeys(keys);
-                //     vis.addTooltipToSvg("tt-main", emissionType, processStreamData(streamData));
-                //     vis.renderTotal();
-                // }
-            })
+        initGraphs()
     }, [classes, emissionType, stackType])
 
 
