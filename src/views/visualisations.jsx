@@ -89,7 +89,7 @@ export default function Visualisations(props) {
      * Define the type of graph to create on initialisaion
      */
     function initGraphs() {
-        console.log(windows)
+        
         if (windows.value.Length <= 0) 
         {
             return;
@@ -124,7 +124,6 @@ export default function Visualisations(props) {
      * @param {string} windowId the id of the window to draw the graph on
      */
     function createStreamGraph(windowId) {
-        console.log(windowId)
         if (windowId != undefined) {
             let vis = getRenderedComponentFunction(windowId);
             // Update the index keys for the graph based
@@ -132,8 +131,6 @@ export default function Visualisations(props) {
             let keys = Object.keys(classes).filter(key => {
                 return classes[key];
             })
-    
-            console.log(vis)
 
             //Assign date mixin for the stream graph
             vis.init();
