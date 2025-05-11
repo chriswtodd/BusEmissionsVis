@@ -18,7 +18,7 @@ export const windowSlice = createSlice({
             state.value = insertItem(state.value, {
                 index: state.value.length,
                 item: {
-                    id: payload.payload.props.id,
+                    id: state.value.length,
                     windowComponent: payload.payload,
                 }
             })

@@ -89,11 +89,17 @@ export default function Visualisations(props) {
      * Define the type of graph to create on initialisaion
      */
     function initGraphs() {
+        
+        if (windows.value.Length <= 0) 
+        {
+            return;
+        }
+        
         let graphToDraw = store.getState().windows.windowRenderComponent
         if (graphToDraw === "Stream Graph")
-            windows.value.forEach(d => createStreamGraph(d.windowComponent))
+            windows.value.forEach(d => createStreamGraph(JSON.parse(d.windowComponent).key))
         if (graphToDraw === "Line Chart")
-            windows.value.forEach(d => createLineChart(d.windowComponent))
+            windows.value.forEach(d => createLineChart(JSON.parse(d.windowComponent).key))
     }
     
     function decodeEmissionType(emissionType) {
@@ -115,17 +121,17 @@ export default function Visualisations(props) {
     /**
      * Takes a window component and creates the graph within it
      * 
-     * @param {ReactFunctionalComponent:WindowComponent} window 
+     * @param {string} windowId the id of the window to draw the graph on
      */
-    function createStreamGraph(window) {
-        if (window != undefined) {
-            let vis = window.props.renderedComponent;
+    function createStreamGraph(windowId) {
+        if (windowId != undefined) {
+            let vis = getRenderedComponentFunction(windowId);
             // Update the index keys for the graph based
             // on the filters
             let keys = Object.keys(classes).filter(key => {
                 return classes[key];
             })
-    
+
             //Assign date mixin for the stream graph
             vis.init();
                 
@@ -144,7 +150,7 @@ export default function Visualisations(props) {
 
             vis.enter();
             vis.render();
-            if (window.props.id != "overview_window") {
+            if (windowId != "overview_window") {
                 // Create the tooltip
                 vis.setTooltipKeys(keys);
                 vis.addTooltipToSvg("tt-main", emissionType, vis.streamData);
@@ -154,16 +160,17 @@ export default function Visualisations(props) {
                 vis.renderTotal();
             } else {
                 // TO BE FIXED : WINDOW UPDATE
-                let w1 = store.getState().windows.value[0].windowComponent.props.renderedComponent,
-                w2 = store.getState().windows.value[1].windowComponent.props.renderedComponent;
-                w1.addBrushAndZoom(w2, w1);
+                // console.log(store.getState())
+                // let w1 = getRenderedComponentFunction(store.getState().windows.value[0].id);
+                // let w2 = getRenderedComponentFunction(store.getState().windows.value[1].id);
+                // w1.addBrushAndZoom(w2, w1);
             }
         }
     }
 
-    function createLineChart(window) {
-        if (window != undefined) {
-            let vis = window.props.renderedComponent;
+    function createLineChart(windowId) {
+        if (windowId != undefined) {
+            let vis = getRenderedComponentFunction(windowId);
             let keys = Object.keys(classes).filter(key => {
                 return classes[key];
             })
@@ -185,7 +192,7 @@ export default function Visualisations(props) {
 
             vis.enter();
             vis.render();
-            if (window.props.id != "overview_window") {
+            if (windowId != "overview_window") {
                 // Create the tooltip
                 vis.setTooltipKeys(keys);
                 vis.addTooltipToSvg("tt-main", emissionType, vis.data);
@@ -195,9 +202,9 @@ export default function Visualisations(props) {
                 vis.renderTotal();
             } else {
                 // TO BE FIXED : WINDOW UPDATE
-                let w1 = store.getState().windows.value[0].windowComponent.props.renderedComponent,
-                w2 = store.getState().windows.value[1].windowComponent.props.renderedComponent;
-                w1.addBrushAndZoom(w2, w1);
+                // let w1 = store.getState().windows.value[0].windowComponent.props.renderedComponent,
+                // w2 = store.getState().windows.value[1].windowComponent.props.renderedComponent;
+                // w1.addBrushAndZoom(w2, w1);
             }
         }
     }
@@ -285,8 +292,8 @@ export default function Visualisations(props) {
                 />
             )
             // Set state with windows
-            dispatch(addWindow(firstWindow));
-            dispatch(addWindow(overview));
+            dispatch(addWindow(JSON.stringify(firstWindow)));
+            dispatch(addWindow(JSON.stringify(overview)));
         }
 
         fetchData();
@@ -321,29 +328,7 @@ export default function Visualisations(props) {
      * Call use effect to rerender window when filters change
      */
     useEffect(() => {
-        windows
-            .value
-            .map(window => {
-                let vis = window.windowComponent.props.renderedComponent
-                let graphToDraw = store.getState().windows.windowRenderComponent
-                vis.drawYAxis(0,decodeEmissionType(emissionType));
-                if (graphToDraw === "Stream Graph") {
-                    vis.decodeStackType(stackType);
-                    vis.setStreamData(processStreamData(streamData));
-                } else if (graphToDraw === "Line Chart") {
-                    vis.setLineData(processLineData(streamData));
-                }
-                vis.render();
-                if (window.id != "overview_window") {
-                    // Create the tooltip
-                    let keys = Object.keys(classes).filter(key => {
-                        return classes[key];
-                    })
-                    vis.setTooltipKeys(keys);
-                    vis.addTooltipToSvg("tt-main", emissionType, processStreamData(streamData));
-                    vis.renderTotal();
-                }
-            })
+        initGraphs()
     }, [classes, emissionType, stackType])
 
 
@@ -359,7 +344,6 @@ export default function Visualisations(props) {
                 id={"vis-window_0"}
                 // use to delete graph component and redraw
                 selectedComponent={store.getState().windows.windowRenderComponent}
-                renderedComponent={getRenderedComponentFunction("vis-window_0")}
             >
             </WindowComponent>
         )
@@ -367,12 +351,11 @@ export default function Visualisations(props) {
             <WindowComponent key={"overview_window"}
                 id={"overview_window"}
                 selectedComponent={store.getState().windows.windowRenderComponent}
-                renderedComponent={getRenderedComponentFunction("overview_window")}
             />
         )
         // Set state with windows
-        dispatch(addWindow(firstWindow));
-        dispatch(addWindow(overview));
+        dispatch(addWindow(JSON.stringify(firstWindow)));
+        dispatch(addWindow(JSON.stringify(overview)));
 
         windows = store.getState().windows;
     }, [windows.windowRenderComponent])
@@ -399,10 +382,13 @@ export default function Visualisations(props) {
                     {useSelector(state => state.windows)
                         .value
                         .map(window => {
-                            let r = (<WindowComponent key={window.windowComponent.props.id}
-                                id={window.windowComponent.props.id}
-                                renderedComponent={getRenderedComponentFunction(window.windowComponent.props.id)}
-                                selectedComponent={window.windowComponent.props.selectedComponent}
+                            const component = JSON.parse(window.windowComponent)
+                            const r = (
+                            <WindowComponent 
+                                key={component.props.id}
+                                id={component.props.id}
+                                renderedComponent={getRenderedComponentFunction(component.props.id)}
+                                selectedComponent={component.props.selectedComponent}
                                 title={createTitleForWindow()}
                             />)
                             return r;
