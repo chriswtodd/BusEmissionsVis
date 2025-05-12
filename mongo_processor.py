@@ -5,25 +5,25 @@ from flask import jsonify, request
 from flask_restful import Resource
 from pymongo.errors import BulkWriteError
 
-#
-# Development Environment 
-#
+# Deployment 
 load_dotenv()
-mongo_local = MongoClient("mongodb://localhost:27017/test?retryWrites=true&w=majority")
 # user = os.environ['MONGO_USER']
 # password = os.environ['MONGO_PASS']
-# mongo_online = MongoClient("mongodb+srv://{0}:{1}@cluster0-9mebh.mongodb.net/test?retryWrites=true&w=majority".format(user, password))
+# server = os.environ['MONGO_SERVER']
+# mongo_online = MongoClient("mongodb+srv://{0}:{1}@{2}/test?retryWrites=true&w=majority".format(user, password, server))
+
+# Development
+mongo_local = MongoClient("mongodb://localhost:27017/test?retryWrites=true&w=majority")
 
 class Trips_Network(Resource):    
     def get_emissions_by_class_per_day(self, city, startDate, endDate, startTime, endTime):
-        #### Deployment Environment
-        db = mongo_local["test"]
-        col = db["trips_2019"]
+        # Development
+        db = mongo_local["test"]["trips_2019"]
+        
+        # Deployment
+        # db = mongo_online["test"]["trips_2019"]
 
-        #### Old dev env
-        # db = mongo_client["emma"]["end_2019_pax_by_route"]
-        # db = mongo_client["emma"]["trips"]
-        result = col.aggregate([
+        result = db.aggregate([
             {"$match" : {
                 "date" : { "$gte" : startDate }
             }},
@@ -77,11 +77,12 @@ class Trips_Network(Resource):
         return list(result)
 
     def get_emissions_by_class_per_hour(self, city, startDate, endDate, startTime, endTime):
-        db = mongo_online["test"]["trips_2019"]
+        # Development
+        db = mongo_local["test"]["trips_2019"]
+        
+        # Deployment
+        # db = mongo_online["test"]["trips_2019"]
 
-        #### Old dev env
-        # db = mongo_client["emma"]["end_2019_pax_by_route"]
-        # db = mongo_client["emma"]["trips"]
         col = db.aggregate([
             {"$match" : {
                     "date" :{ "$gte" : startTime },

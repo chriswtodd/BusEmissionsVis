@@ -1,0 +1,1 @@
+"C:\Program Files\MongoDB\Tools\100\bin\mongodump" --host=localhost --port=27017 --db=test | "C:\Program Files\MongoDB\Tools\100\bin\mongorestore" --uri=mongodb+srv://<USER>:<PASSWORD>@cluster0.qsqh7nu.mongodb.net
