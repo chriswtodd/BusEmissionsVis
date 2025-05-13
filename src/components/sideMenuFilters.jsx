@@ -8,10 +8,11 @@ import { setClasses, setReqGranularity,
 
 // import TimePicker from './materialUi/TimePicker.jsx';
 
+import RadioButtonGroup from "./radioButtonGroup.tsx";
 import SideMenuContainer from "./sideMenuContainer.jsx";
 import Checkbox from "./html/checkbox.jsx";
 
-let modelData = require('../models/modelData.js')
+let modelData = require('../models/modelData.ts')
 const styles = require("../styles.js")
 
 const CheckboxContainer = styled.div`
@@ -80,7 +81,7 @@ function SideMenuFilters(props) {
                         key={property}
                         name={property}
                         label={property}
-                        color={modelData.engine_colours[property]}
+                        color={modelData.EngineColours[property]}
                         callback={(e) => {
                             dispatch(setClasses(e.target.name));
                         }}
@@ -93,7 +94,17 @@ function SideMenuFilters(props) {
                 Emission Type:
             </SectionLabel>
             <CheckboxContainer id={"checkbox_emission-type"} key={"checkbox_emission-type"}>
-
+            {/* <RadioButtonGroup
+                    options={modelData.EmissionTypeUi}
+                    name="emissionTypeRadio"
+                    onChange={
+                        (checkedValue) => {
+                            setEmissionTypeRadio(checkedValue)
+                            //dispatch(setEmissionType(checkedValue))
+                        }
+                    }
+                    value={emissionTypeRadio}
+                /> */}
             </CheckboxContainer>
             
             <SectionLabel id={"label_granularity"} key={"label_granularity"}>

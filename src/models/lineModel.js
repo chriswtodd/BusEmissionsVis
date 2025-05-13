@@ -6,18 +6,18 @@
 import React, { useState } from 'react';
 import store from '../redux/store.js';
 
-let modelData = require('./modelData');
+let modelData = require('./modelData.ts');
 
 export function processLineData(data) {
     let filters = store.getState().filters;
 
     let p = filters.emissionType;
 
-    let keys = ["date"].concat(modelData.engine_types)
+    let keys = ["date"].concat(modelData.EngineTypes)
         .filter(d => filters.class[d] || d === "date")
 
     let lineData = [];
-    modelData.engine_types.forEach(engineType => {
+    modelData.EngineTypes.forEach(engineType => {
         if (keys.includes(engineType)) {
             lineData.push({
                 "key" : engineType,

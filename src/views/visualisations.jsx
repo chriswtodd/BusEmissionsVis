@@ -24,7 +24,7 @@ import { streamTooltipFactoryMixin } from "../d3/tooltipMixin.js";
 import { processStreamData } from "../models/streamModel.js";
 import { processLineData } from "../models/lineModel.js";
 
-let modelData = require('../models/modelData.js')
+let modelData = require('../models/modelData.ts')
 
 const PageContainer = styled.div`
     display: flex;
@@ -160,10 +160,11 @@ export default function Visualisations(props) {
                 vis.renderTotal();
             } else {
                 // TO BE FIXED : WINDOW UPDATE
-                // console.log(store.getState())
-                // let w1 = getRenderedComponentFunction(store.getState().windows.value[0].id);
-                // let w2 = getRenderedComponentFunction(store.getState().windows.value[1].id);
-                // w1.addBrushAndZoom(w2, w1);
+                // console.log(store.getState().windows.value[0].windowComponent)
+
+                // let w1 = getRenderedComponentFunction(JSON.parse(store.getState().windows.value[0].windowComponent).key);
+                // let w2 = getRenderedComponentFunction(JSON.parse(store.getState().windows.value[1].windowComponent).key);
+                // w2.addBrushAndZoom(vis, w2);
             }
         }
     }
