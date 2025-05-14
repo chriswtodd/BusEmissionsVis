@@ -10,7 +10,7 @@ let modelData = require('./modelData.ts');
 
 export function processStreamData(data) {
     let filters = store.getState().filters;
-    let keys = ["date"].concat(modelData.EngineTypes);
+    let keys = ["date"].concat(Object.entries(modelData.EngineTypes).map(kvp => kvp[0]));
 
     // Filter data according to UI
     keys = keys.filter(d => filters.class[d] || d === "date")
@@ -57,5 +57,6 @@ export function processStreamData(data) {
             }
         }
     }
+    console.log(final)
     return final;
 }

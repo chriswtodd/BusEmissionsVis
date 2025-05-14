@@ -89,6 +89,7 @@ export default function Visualisations(props) {
      * Define the type of graph to create on initialisaion
      */
     function initGraphs() {
+        console.log(granularity, startTime, endTime, classes, emissionType, stackType);
         
         if (windows.value.Length <= 0) 
         {
@@ -134,10 +135,11 @@ export default function Visualisations(props) {
 
             //Assign date mixin for the stream graph
             vis.init();
-                
             vis.setData(streamData);
-            vis.setColorScheme(modelData.engine_colours);
-            vis.setKeys(modelData.engine_types);
+            let colours = modelData.EngineColours;
+            let visKeys = Object.entries(modelData.EngineTypes).map(k => k[0]);
+            vis.setColorScheme(colours);
+            vis.setKeys(visKeys);
             vis.decodeStackType(stackType);
             vis.setStreamData(processStreamData(streamData));
 
@@ -180,8 +182,10 @@ export default function Visualisations(props) {
             vis.init();
                 
             vis.setData(processStreamData(streamData));
-            vis.setColorScheme(modelData.engine_colours);
-            vis.setKeys(modelData.engine_types);
+            let colours = modelData.EngineColours;
+            let visKeys = Object.entries(modelData.EngineTypes).map(k => k[0]);
+            vis.setColorScheme(colours);
+            vis.setKeys(visKeys);
             vis.setLineData(processLineData(streamData));
 
             //Set visualisation xaxis incase it needs to be redrawn
@@ -357,8 +361,6 @@ export default function Visualisations(props) {
         // Set state with windows
         dispatch(addWindow(JSON.stringify(firstWindow)));
         dispatch(addWindow(JSON.stringify(overview)));
-
-        windows = store.getState().windows;
     }, [windows.windowRenderComponent])
 
     /** 

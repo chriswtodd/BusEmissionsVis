@@ -1,31 +1,30 @@
 import React, { useState } from 'react';
 
 function RadioButtonGroup(options: { [key:string]: string }, 
-  onChange: React.ChangeEventHandler<HTMLInputElement>, 
-  name: string
+  onChange: (s: string) => string, 
+  name: string,
+  value: string
 ): JSX.Element 
 {
-  const [selectedValue, setSelectedValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState(options.value);
 
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event)
-    setSelectedValue(event.target.value);
-    //onChange(event.target.value);
-  };
   console.log(options)
   console.log(Object.entries(options.options))
   
   return (
     <div>
       {
-        Object.entries(options.options).forEach((k) => {
-          <>
+        Object.entries(options.options).map((k) => {
+          return <>
             <input
               type="radio"
               name={name}
               value={k[0]}
               checked={selectedValue === k[0]}
-              onChange={handleRadioChange}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setSelectedValue(event.target.value);
+                options.onChange(event.target.value);
+              }}
             />
             <label key={k[0]}>
               {k[1]}

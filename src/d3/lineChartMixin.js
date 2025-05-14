@@ -146,8 +146,8 @@ export let lineChartMixin = {
 
             // let value = 0;
             // //Add all the previous lines according to reverse order
-            // for (let i = Object.keys(engine_colours).reverse().indexOf(category); i > -1; i--) {
-            //     value = value + d[Object.keys(engine_colours).reverse()[i]];
+            // for (let i = Object.keys(EngineColours).reverse().indexOf(category); i > -1; i--) {
+            //     value = value + d[Object.keys(EngineColours).reverse()[i]];
             // }
             // return;
             })

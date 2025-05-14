@@ -94,17 +94,17 @@ function SideMenuFilters(props) {
                 Emission Type:
             </SectionLabel>
             <CheckboxContainer id={"checkbox_emission-type"} key={"checkbox_emission-type"}>
-            {/* <RadioButtonGroup
+            <RadioButtonGroup
                     options={modelData.EmissionTypeUi}
                     name="emissionTypeRadio"
                     onChange={
                         (checkedValue) => {
                             setEmissionTypeRadio(checkedValue)
-                            //dispatch(setEmissionType(checkedValue))
+                            dispatch(setEmissionType(checkedValue))
                         }
                     }
                     value={emissionTypeRadio}
-                /> */}
+                />
             </CheckboxContainer>
             
             <SectionLabel id={"label_granularity"} key={"label_granularity"}>
