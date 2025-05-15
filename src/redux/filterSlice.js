@@ -64,6 +64,7 @@ export const filterSlice = createSlice({
             }
         },
         setStreamType: (state, payload) => {
+            console.log(payload)
             state.streamType = payload.payload;
         }
     }

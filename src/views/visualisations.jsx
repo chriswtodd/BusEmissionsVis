@@ -141,6 +141,7 @@ export default function Visualisations(props) {
             vis.setColorScheme(colours);
             vis.setKeys(visKeys);
             vis.decodeStackType(stackType);
+            console.log(vis.stackType)
             vis.setStreamData(processStreamData(streamData));
 
             //Set visualisation xaxis incase it needs to be redrawn

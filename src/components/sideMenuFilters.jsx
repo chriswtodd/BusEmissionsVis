@@ -94,7 +94,7 @@ function SideMenuFilters(props) {
                 Emission Type:
             </SectionLabel>
             <CheckboxContainer id={"checkbox_emission-type"} key={"checkbox_emission-type"}>
-            <RadioButtonGroup
+                <RadioButtonGroup
                     options={modelData.EmissionTypeUi}
                     name="emissionTypeRadio"
                     onChange={
@@ -111,7 +111,17 @@ function SideMenuFilters(props) {
                 Granularity:
             </SectionLabel>
             <CheckboxContainer id={"checkbox_granularity"} key={"checkbox_granularity"}>
-
+                <RadioButtonGroup
+                    options={{"day": "day"}}
+                    name="granularity"
+                    onChange={
+                        (checkedValue) => {
+                            setGranularity(checkedValue)
+                            dispatch(setReqGranularity(checkedValue))
+                        }
+                    }
+                    value={granularity}
+                />
             </CheckboxContainer>
             
             <SectionLabel id={"label_trips-between"} key={"label_trips-between"}>
@@ -133,6 +143,22 @@ function SideMenuFilters(props) {
                 key={"checkbox_stream_type"}
                 active={props.streamTypeViewed}
             >
+                <RadioButtonGroup
+                    options={{
+                        "Zero Offset": "Zero Offset", 
+                        "Normalized": "Normalized"
+                    }}
+                    name="stream_offset"
+                    isStateful={false}
+                    onChange={
+                        (checkedValue) => {
+                            setStreamTypeRadio(checkedValue);
+                            console.log(checkedValue)
+                            dispatch(setStreamType(checkedValue))
+                        }
+                    }
+                    value={streamTypeRadio}
+                />
             </CheckboxContainerToggle>
         </SideMenuContainer>
     )

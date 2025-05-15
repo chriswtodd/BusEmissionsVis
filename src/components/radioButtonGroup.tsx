@@ -7,9 +7,6 @@ function RadioButtonGroup(options: { [key:string]: string },
 ): JSX.Element 
 {
   const [selectedValue, setSelectedValue] = useState(options.value);
-
-  console.log(options)
-  console.log(Object.entries(options.options))
   
   return (
     <div>
@@ -18,7 +15,7 @@ function RadioButtonGroup(options: { [key:string]: string },
           return <>
             <input
               type="radio"
-              name={name}
+              name={options.name}
               value={k[0]}
               checked={selectedValue === k[0]}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
