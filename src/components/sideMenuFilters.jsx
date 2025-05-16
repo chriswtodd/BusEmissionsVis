@@ -93,7 +93,10 @@ function SideMenuFilters(props) {
             <SectionLabel id={"label_emission-type"} key={"label_emission-type"}>
                 Emission Type:
             </SectionLabel>
-            <CheckboxContainer id={"checkbox_emission-type"} key={"checkbox_emission-type"}>
+            <CheckboxContainer 
+                id={"checkbox_emission-type"} 
+                key={"checkbox_emission-type"}
+            >
                 <RadioButtonGroup
                     options={modelData.EmissionTypeUi}
                     name="emissionTypeRadio"
@@ -107,7 +110,10 @@ function SideMenuFilters(props) {
                 />
             </CheckboxContainer>
             
-            <SectionLabel id={"label_granularity"} key={"label_granularity"}>
+            <SectionLabel 
+                id={"label_granularity"} 
+                key={"label_granularity"}
+            >
                 Granularity:
             </SectionLabel>
             <CheckboxContainer id={"checkbox_granularity"} key={"checkbox_granularity"}>
@@ -124,7 +130,10 @@ function SideMenuFilters(props) {
                 />
             </CheckboxContainer>
             
-            <SectionLabel id={"label_trips-between"} key={"label_trips-between"}>
+            <SectionLabel 
+                id={"label_trips-between"} 
+                key={"label_trips-between"}
+            >
                 Trips Between:
             </SectionLabel>
             <TimePickerContainer id={"div_trips-between"} key={"div_trips-between"}>

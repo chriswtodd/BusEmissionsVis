@@ -89,8 +89,6 @@ export default function Visualisations(props) {
      * Define the type of graph to create on initialisaion
      */
     function initGraphs() {
-        console.log(granularity, startTime, endTime, classes, emissionType, stackType);
-        
         if (windows.value.Length <= 0) 
         {
             return;
