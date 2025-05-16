@@ -6,12 +6,12 @@
 import React, { useState } from 'react';
 import store from '../redux/store.js';
 
-let modelData = require('./modelData');
+let modelData = require('./modelData.ts');
 
 export function processStreamData(data) {
     let filters = store.getState().filters;
-    let keys = ["date"].concat(modelData.engine_types);
-
+    let keys = ["date"].concat(Object.entries(modelData.EngineTypes).map(kvp => kvp[0]));
+    
     // Filter data according to UI
     keys = keys.filter(d => filters.class[d] || d === "date")
 
@@ -57,5 +57,6 @@ export function processStreamData(data) {
             }
         }
     }
+
     return final;
 }

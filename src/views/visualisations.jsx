@@ -24,7 +24,7 @@ import { streamTooltipFactoryMixin } from "../d3/tooltipMixin.js";
 import { processStreamData } from "../models/streamModel.js";
 import { processLineData } from "../models/lineModel.js";
 
-let modelData = require('../models/modelData.js')
+let modelData = require('../models/modelData.ts')
 
 const PageContainer = styled.div`
     display: flex;
@@ -89,7 +89,6 @@ export default function Visualisations(props) {
      * Define the type of graph to create on initialisaion
      */
     function initGraphs() {
-        
         if (windows.value.Length <= 0) 
         {
             return;
@@ -134,11 +133,13 @@ export default function Visualisations(props) {
 
             //Assign date mixin for the stream graph
             vis.init();
-                
             vis.setData(streamData);
-            vis.setColorScheme(modelData.engine_colours);
-            vis.setKeys(modelData.engine_types);
+            let colours = modelData.EngineColours;
+            let visKeys = Object.entries(modelData.EngineTypes).map(k => k[0]);
+            vis.setColorScheme(colours);
+            vis.setKeys(visKeys);
             vis.decodeStackType(stackType);
+            console.log(vis.stackType)
             vis.setStreamData(processStreamData(streamData));
 
             //Set visualisation xaxis incase it needs to be redrawn
@@ -160,10 +161,11 @@ export default function Visualisations(props) {
                 vis.renderTotal();
             } else {
                 // TO BE FIXED : WINDOW UPDATE
-                // console.log(store.getState())
-                // let w1 = getRenderedComponentFunction(store.getState().windows.value[0].id);
-                // let w2 = getRenderedComponentFunction(store.getState().windows.value[1].id);
-                // w1.addBrushAndZoom(w2, w1);
+                // console.log(store.getState().windows.value[0].windowComponent)
+
+                // let w1 = getRenderedComponentFunction(JSON.parse(store.getState().windows.value[0].windowComponent).key);
+                // let w2 = getRenderedComponentFunction(JSON.parse(store.getState().windows.value[1].windowComponent).key);
+                // w2.addBrushAndZoom(vis, w2);
             }
         }
     }
@@ -179,8 +181,10 @@ export default function Visualisations(props) {
             vis.init();
                 
             vis.setData(processStreamData(streamData));
-            vis.setColorScheme(modelData.engine_colours);
-            vis.setKeys(modelData.engine_types);
+            let colours = modelData.EngineColours;
+            let visKeys = Object.entries(modelData.EngineTypes).map(k => k[0]);
+            vis.setColorScheme(colours);
+            vis.setKeys(visKeys);
             vis.setLineData(processLineData(streamData));
 
             //Set visualisation xaxis incase it needs to be redrawn
@@ -356,8 +360,6 @@ export default function Visualisations(props) {
         // Set state with windows
         dispatch(addWindow(JSON.stringify(firstWindow)));
         dispatch(addWindow(JSON.stringify(overview)));
-
-        windows = store.getState().windows;
     }, [windows.windowRenderComponent])
 
     /** 
