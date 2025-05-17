@@ -21,13 +21,12 @@ const DescriptionContainer = styled.div`
 `;
 
 export default function Info (props) {
-
       return (
         <InfoContainer >
             <DescriptionContainer>
                 <InfoTitle> About the Project </InfoTitle>
                 <p>
-                    This project is a redesign of <a href={"https://warm-temple-67996.herokuapp.com/"}>BEVis</a>, a research tool designed over 3 years
+                    This project is a redesign of a research tool designed over 3 years
                     with 3 developers, Greater Wellington Regional Council, and VUW. The final iteration above was finished over
                     my engineering honours project, and a collaboration with NZTA over 3 months to test new datasets.
                     <br /><br />

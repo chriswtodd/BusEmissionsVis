@@ -1,11 +1,6 @@
 # The BEVis Redesign - BEVFERLE
 
-### Live Demo
-
-https://bevferle.herokuapp.com
-
-This is the main repo for the redesign project of: https://warm-temple-67996.herokuapp.com/
-a research tool developed in 2020 for my engineering honours project.
+This is the main repo for the redesign project of a research tool developed in 2020 for my engineering honours project.
 
 BEVis (the Bus Emissions Visualiser) is a tool that creates views of data on dynamic visualisations. The visualisations were designed and implemented
 with a team of 3 software developers working with Greater Wellington Regional Council/NZTA to develop a research tool; in conjunction with Victoria University. 

@@ -5,6 +5,7 @@
 
 import React from 'react';
 import styled from "styled-components";
+import { useSelector } from 'react-redux';
 
 let styles = require('../styles.js');
 
@@ -40,13 +41,13 @@ const ActionsButton = styled.button`
     }
 `;
 
-export default function Actions (props) {
-
-      return (
+export default function Actions() {
+    const url = useSelector(state => state.envVars.publicUrl);
+    return (
         <ActionsContainer >
-            <ActionsButton onClick={() => window.open('https://bevferle.herokuapp.com/visualisations', '_blank')}>
+            <ActionsButton onClick={() => window.open(`${url}/visualisations`, '_blank')}>
                 Try BEFVERLE
             </ActionsButton>
         </ActionsContainer>
-      )
+    )
 }

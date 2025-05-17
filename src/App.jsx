@@ -7,8 +7,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 
-import { useSelector, useDispatch } from 'react-redux';
-import { setUrl } from './redux/envVarsSlice.js';
+import { useDispatch } from 'react-redux';
+import { setPublicUrl, setApiUrl } from './redux/envVarsSlice.js';
 
 // Page components for router
 import Home from './views/home.jsx';
@@ -133,7 +133,8 @@ const MainFlex = styled.main`
 export default function App() {
   let dispatch = useDispatch();
   const [active, setActive] = useState(buttons[0]);
-  dispatch(setUrl(window.location.href))
+  dispatch(setPublicUrl())
+  dispatch(setApiUrl())
   //Set body
   componentWillMount();
   return (

@@ -8,15 +8,16 @@ import { createSlice } from '@reduxjs/toolkit';
 export const envVarsSlice = createSlice({
     name: 'env',
     initialState: {
-        url: {},
+        publicUrl: {},
+        apiUrl: {},
         loading: true,
     },
     reducers: {
-        setUrl: (state, payload) => {
-            state.url = import.meta.env.VITE_APP_DEV_URL;
-            if (payload.payload.includes("bevferle")) {
-                state.url = import.meta.env.VITE_APP_DEPLOYMENT_URL;
-            }
+        setPublicUrl: (state) => {
+            state.publicUrl = import.meta.env.VITE_APP_PUBLIC_DEV_URL;
+        },
+        setApiUrl: (state) => {
+            state.apiUrl = import.meta.env.VITE_APP_API_DEV_URL;
         },
         setLoading: (state, payload) => {
             state.loading = payload.payload;
@@ -24,5 +25,5 @@ export const envVarsSlice = createSlice({
     }
 })
 
-export const { setUrl, setLoading } = envVarsSlice.actions;
+export const { setApiUrl, setPublicUrl, setLoading } = envVarsSlice.actions;
 export const envVarReducer = envVarsSlice.reducer;
