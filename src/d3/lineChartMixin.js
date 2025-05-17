@@ -4,14 +4,14 @@
  */ 
 
 import * as d3 from "d3";
-import { IoMdBatteryCharging } from "react-icons/io";
 const styles = require("../styles.js")
 
 export let lineChartMixin = {
+    graphType: "lineChart",
     drawnLines: [],
     setColorScheme(colorScheme) { this.colorScheme = colorScheme; },
     setKeys(keys)               { this.keys = keys; },
-    setLineData(data)         { this.lineData = data; },
+    setTooltipData(tooltipData) { this.tooltipData = tooltipData; },
 
     numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -151,7 +151,7 @@ export let lineChartMixin = {
      * Called to initialise the graph, only called once per draw
      */
     enter() {        
-        let yMax = d3.max(this.calcMaxHeight(this.lineData, this.keys));
+        let yMax = d3.max(this.calcMaxHeight(this.data, this.keys));
         this.drawYAxis(yMax);
 
         this.g.append("rect")
@@ -160,7 +160,7 @@ export let lineChartMixin = {
             .attr("fill", "rgba(255,255,255,1)")
 
 
-        for (let lineEntry of this.lineData) {
+        for (let lineEntry of this.data) {
             if (lineEntry.data.length === 0)
                 continue;
             let drawnLine = this.addLineToChart(lineEntry.data);
@@ -181,14 +181,14 @@ export let lineChartMixin = {
      * Graph.render();
      */
     render() {
-        let yMax = d3.max(this.calcMaxHeight(this.lineData, this.keys));
+        let yMax = d3.max(this.calcMaxHeight(this.data, this.keys));
         this.drawYAxis(yMax);
 
         this.g
             .selectAll(".bus-type_path")
             .remove();
 
-        for (let lineEntry of this.lineData) {
+        for (let lineEntry of this.data) {
             if (lineEntry.data.length === 0)
                 continue;
             let drawnLine = this.addLineToChart(lineEntry.data);
@@ -210,11 +210,9 @@ export let lineChartMixin = {
     renderTotal() {
         // Add a text element to show sum of graph
         this.sum = 0;
-        let keys = this.lineData.map(d => d.key)
-        let t = this;
         this.data.forEach((d) => {
-            for (let key of t.keys) {
-                this.sum = isNaN(d[key]) ? this.sum : this.sum + d[key];
+            for (let elem of d.data) {
+                this.sum = this.sum + elem.y;
             }
         })
         this.sum = Math.round(this.sum * 100) / 100

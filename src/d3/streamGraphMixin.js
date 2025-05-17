@@ -7,11 +7,12 @@ import * as d3 from "d3";
 const styles = require("../styles.js")
 
 export let streamGraphMixin = {
+    graphType: "streamChart",
     area: d3.area(),
     setColorScheme(colorScheme) { this.colorScheme = colorScheme; },
     setKeys(keys)               { this.keys = keys; },
-    setStackType(stackType)     { this.stackType = stackType },
-    setStreamData(data)         { this.streamData = data; },
+    setStackType(stackType)     { this.stackType = stackType; },
+    setTooltipData(tooltipData) { this.tooltipData = tooltipData; },
 
     numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -169,9 +170,9 @@ export let streamGraphMixin = {
         this.stackedData = d3.stack()
             .offset(this.stackType)
             .keys(this.keys)
-            (this.streamData)
+            (this.data)
         
-        let yMax = d3.max(this.calcStackHeight(this.streamData, this.keys));
+        let yMax = d3.max(this.calcStackHeight(this.data, this.keys));
         this.drawYAxis(yMax);
 
         this.blankArea = d3.area()
@@ -230,21 +231,21 @@ export let streamGraphMixin = {
         //Set the y domain
         let yMax = 1;
         if (this.stackType != d3.stackOffsetExpand) {
-            yMax = d3.max(this.calcStackHeight(this.streamData, this.keys));
+            yMax = d3.max(this.calcStackHeight(this.data, this.keys));
         }
         this.yScale.domain([0, yMax]);
         this.focus.select(".y")
             .call(d3.axisLeft(this.yScale))
 
         //Reset stackedData
-        //this.streamData is updated externally,
+        //this.data is updated externally,
         //and we are using pure JS in this file,
         //so we must recalculate instead of relying 
         //on a cached version
         this.stackedData = d3.stack()
             .offset(this.stackType)
             .keys(this.keys)
-            (this.streamData)
+            (this.data)
 
         this.stackedData = this.stackedData.filter(d=> {
             let r = true;
@@ -296,7 +297,7 @@ export let streamGraphMixin = {
     renderTotal() {
         // Add a text element to show sum of graph
         this.sum = 0;
-        this.streamData.forEach((d) => {
+        this.data.forEach((d) => {
             for (let key of Object.keys(d)) {
                 this.sum = isNaN(d[key]) ? this.sum : this.sum + d[key];
             }

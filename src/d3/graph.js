@@ -174,6 +174,7 @@ export class D3Graph {
             yaxis: 0
         };
         this.zoomable = false;
+        this.graphType = "undefined";
     }
 
     getContainer() {
@@ -210,6 +211,14 @@ export class D3Graph {
 
     setYAxis(yAxis) {
         this.yAxis = yAxis;
+    }
+
+    getGraphType() {
+        return this.graphType;
+    }
+
+    setGraphType(graphType) {
+        this.graphType = graphType;
     }
 
     setG() {

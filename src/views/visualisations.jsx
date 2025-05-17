@@ -93,12 +93,7 @@ export default function Visualisations(props) {
         {
             return;
         }
-        
-        let graphToDraw = store.getState().windows.windowRenderComponent
-        if (graphToDraw === "Stream Graph")
-            windows.value.forEach(d => createStreamGraph(JSON.parse(d.windowComponent).key))
-        if (graphToDraw === "Line Chart")
-            windows.value.forEach(d => createLineChart(JSON.parse(d.windowComponent).key))
+        windows.value.forEach(d => initGraph(JSON.parse(d.windowComponent).key, streamData))
     }
     
     function decodeEmissionType(emissionType) {
@@ -122,7 +117,7 @@ export default function Visualisations(props) {
      * 
      * @param {string} windowId the id of the window to draw the graph on
      */
-    function createStreamGraph(windowId) {
+    function initGraph(windowId, data) {
         if (windowId != undefined) {
             let vis = getRenderedComponentFunction(windowId);
             // Update the index keys for the graph based
@@ -130,17 +125,26 @@ export default function Visualisations(props) {
             let keys = Object.keys(classes).filter(key => {
                 return classes[key];
             })
+            console.log(data)
 
-            //Assign date mixin for the stream graph
             vis.init();
-            vis.setData(streamData);
             let colours = modelData.EngineColours;
             let visKeys = Object.entries(modelData.EngineTypes).map(k => k[0]);
             vis.setColorScheme(colours);
             vis.setKeys(visKeys);
-            vis.decodeStackType(stackType);
-            console.log(vis.stackType)
-            vis.setStreamData(processStreamData(streamData));
+            if (vis.graphType === "lineChart")
+            {
+                vis.setData(processLineData(data));
+            }
+            else if (vis.graphType === "streamChart")
+            {
+                vis.decodeStackType(stackType);
+                vis.setData(processStreamData(data));
+            }
+
+            // the tooltip and its bars work off the data in the stream chart
+            // both are fine for this purpose
+            vis.setTooltipData(processStreamData(data));
 
             //Set visualisation xaxis incase it needs to be redrawn
             vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Date"));
@@ -154,9 +158,9 @@ export default function Visualisations(props) {
             if (windowId != "overview_window") {
                 // Create the tooltip
                 vis.setTooltipKeys(keys);
-                vis.addTooltipToSvg("tt-main", emissionType, vis.streamData);
+                vis.addTooltipToSvg("tt-main", emissionType, vis.tooltipData);
                 // Create tt bars
-                vis.createBars(vis.streamData);
+                vis.createBars(vis.tooltipData);
                 // Draw Total
                 vis.renderTotal();
             } else {
@@ -170,49 +174,6 @@ export default function Visualisations(props) {
         }
     }
 
-    function createLineChart(windowId) {
-        if (windowId != undefined) {
-            let vis = getRenderedComponentFunction(windowId);
-            let keys = Object.keys(classes).filter(key => {
-                return classes[key];
-            })
-    
-            //Assign date mixin for the stream graph
-            vis.init();
-                
-            vis.setData(processStreamData(streamData));
-            let colours = modelData.EngineColours;
-            let visKeys = Object.entries(modelData.EngineTypes).map(k => k[0]);
-            vis.setColorScheme(colours);
-            vis.setKeys(visKeys);
-            vis.setLineData(processLineData(streamData));
-
-            //Set visualisation xaxis incase it needs to be redrawn
-            vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Date"));
-            vis.drawXAxis(0, decodeEmissionType(emissionType));
-    
-            vis.setYAxis(vis.createYAxis([undefined, undefined], decodeEmissionType(emissionType)));
-            vis.drawYAxis(0, decodeEmissionType(emissionType));
-
-            vis.enter();
-            vis.render();
-            if (windowId != "overview_window") {
-                // Create the tooltip
-                vis.setTooltipKeys(keys);
-                vis.addTooltipToSvg("tt-main", emissionType, vis.data);
-                // Create tt bars
-                vis.createBars(vis.data);
-                // Draw total
-                vis.renderTotal();
-            } else {
-                // TO BE FIXED : WINDOW UPDATE
-                // let w1 = store.getState().windows.value[0].windowComponent.props.renderedComponent,
-                // w2 = store.getState().windows.value[1].windowComponent.props.renderedComponent;
-                // w1.addBrushAndZoom(w2, w1);
-            }
-        }
-    }
-
     /**
      * Redraw the graphs when data changes
      * 
@@ -221,18 +182,18 @@ export default function Visualisations(props) {
     function redrawGraphs(newData) {
         let graphToDraw = store.getState().windows.windowRenderComponent
         if (graphToDraw === "Stream Graph")
-            windows.value.forEach(d => renderStreamGraph(d.windowComponent, newData))
+            windows.value.forEach(d => renderStreamGraph(JSON.parse(d.windowComponent).key, newData))
         if (graphToDraw === "Line Chart")
-            windows.value.forEach(d => renderLineChart(d.windowComponent, newData))
+            windows.value.forEach(d => renderLineChart(JSON.parse(d.windowComponent).key, newData))
     }
 
     /**
      * Redraw the stream graph with new data
      */
-    function renderStreamGraph(window, newData) {
-        let vis = window.props.renderedComponent;
+    function renderStreamGraph(windowId, newData) {
+        let vis = getRenderedComponentFunction(windowId);
         vis.setData(newData);
-        vis.setStreamData(processStreamData(newData));
+        vis.setData(processStreamData(newData));
         vis.drawYAxis(0,decodeEmissionType(emissionType));
         vis.enter();
         vis.render();
@@ -244,8 +205,8 @@ export default function Visualisations(props) {
     /**
      * Redraw the line chart with new data
      */
-    function renderLineChart(window, newData) {
-        let vis = window.props.renderedComponent;
+    function renderLineChart(windowId, newData) {
+        let vis = getRenderedComponentFunction(windowId);
         vis.setData(newData);
         vis.setLineData(processLineData(newData));
         vis.drawYAxis(0,decodeEmissionType(emissionType));
@@ -259,22 +220,26 @@ export default function Visualisations(props) {
     function createTitleForWindow() {
         let start = "", end = "";
         if (stackType === "Normalized" && windows.windowRenderComponent === "Stream Graph") { start = "Normalized " }
-        if (startTime != "00:00" && endTime != "23:59") { end = " between " + startTime + " and " + endTime }
+        if (startTime != "00:00" || endTime != "23:59") { end = " between " + startTime + " and " + endTime }
         return start + windows.windowRenderComponent + " of " + emissionType + " by class per " + granularity + end
+    }
+
+    async function callApiAndSetData() {
+        // Fetch base set of data
+        let d1 = '2019-01-01', d2 = '2019-12-10';
+        let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
+        let res = await fetch(fetchURL);
+        const json = await res.json();
+        // Set to global draw data
+        dispatch(setStreamData(json));
+        // Turn off loader
+        dispatch(setLoading(false));
     }
 
     // Call use effect only once to fetch data required for visualisations
     useEffect(() => {
         async function fetchData() {
-            // Fetch base set of data
-            let d1 = '2019-01-01', d2 = '2019-12-10';
-            let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
-            let res = await fetch(fetchURL);
-            const json = await res.json();
-            // Set to global draw data
-            dispatch(setStreamData(json));
-            // Turn off loader
-            dispatch(setLoading(false));
+            await callApiAndSetData();
             windows.value.forEach(d => {
                 dispatch(removeWindow(d.id))
             })
@@ -311,17 +276,7 @@ export default function Visualisations(props) {
      */
     useEffect(() => {
         async function fetchData() {
-            // Fetch new data
-            let d1 = '2019-01-01', d2 = '2019-12-10';
-            let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
-            let res = await fetch(fetchURL);
-            const json = await res.json();
-            // Set data
-            dispatch(setStreamData(json));
-            // Turn off loader
-            dispatch(setLoading(false));
-            // Redraw existing visualisations
-            redrawGraphs(json);
+            await callApiAndSetData();
         }
         // Turn on loader before fetch
         dispatch(setLoading(true));
@@ -332,8 +287,8 @@ export default function Visualisations(props) {
      * Call use effect to rerender window when filters change
      */
     useEffect(() => {
-        initGraphs()
-    }, [classes, emissionType, stackType])
+        initGraphs();
+    }, [classes, emissionType, stackType, streamData])
 
 
     useEffect(() => {
