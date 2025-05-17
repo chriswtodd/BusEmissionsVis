@@ -44,7 +44,7 @@ export default function Visualisations(props) {
     // useSelector still prefered over store.getState
     let dispatch = useDispatch();
     //App
-    const url = useSelector(state => state.envVars.url);
+    const url = useSelector(state => state.envVars.apiUrl);
     //Page
     const streamData = useSelector(state => state.data.streamData);
     let windows = useSelector(state => state.windows);
@@ -125,7 +125,6 @@ export default function Visualisations(props) {
             let keys = Object.keys(classes).filter(key => {
                 return classes[key];
             })
-            console.log(data)
 
             vis.init();
             let colours = modelData.EngineColours;

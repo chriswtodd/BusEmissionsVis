@@ -5,6 +5,7 @@
 
 import React from 'react';
 import styled from "styled-components";
+import { useSelector } from 'react-redux';
 
 let styles = require('../styles.js');
 
@@ -78,9 +79,9 @@ const BannerButton = styled.button`
     }
 `;
 
-export default function Banner (props) {
-
-      return (
+export default function Banner() {
+    const url = useSelector(state => state.envVars.publicUrl);
+    return (
         <BannerContainer >
             <div>
                 <BannerTitle>
@@ -89,10 +90,10 @@ export default function Banner (props) {
                 <BannerSubtitle>
                     Visualising Public Transport Data from New Zealand
                 </BannerSubtitle>
-                <BannerButton onClick={() => window.open('https://bevferle.herokuapp.com/visualisations', '_blank')}>
+                <BannerButton onClick={() => window.open(`${url}/visualisations`, '_blank')}>
                     Try BEFVERLE
                 </BannerButton>
             </div>
         </BannerContainer>
-      )
+    )
 }
