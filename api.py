@@ -27,10 +27,6 @@ def trip(city, startDate, endDate, startTime, endTime):
     startDate = startDate.replace("-", "/")
     endDate = endDate.replace("-", "/")
 
-    # Clean time
-    startTime = startTime + ":00"
-    endTime = endTime + ":00"
-
     return jsonify(metlink_trips.get_emissions_by_class_per_day(city, startDate, endDate, startTime, endTime))
 
 @app.route('/hour/<string:city>/<string:startDate>/<string:endDate>/<string:startTime>/<string:endTime>', methods=["GET"])
@@ -39,10 +35,6 @@ def tripHour(city, startDate, endDate, startTime, endTime):
     # Clean date from url encoding
     startDate = startDate.replace("-", "/")
     endDate = endDate.replace("-", "/")
-
-    # Clean time
-    startTime = startTime + ":00"
-    endTime = endTime + ":00"
 
     return jsonify(metlink_trips.get_emissions_by_class_per_hour(city, startDate, endDate, startTime, endTime))
 

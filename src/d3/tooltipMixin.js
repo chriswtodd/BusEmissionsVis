@@ -14,7 +14,7 @@ export let streamTooltipFactoryMixin = {
 
     createBars(data) {
         let t = this;
-        let currentDay = new Date(this.data[0].date), nextDay = new Date(this.data[0].date);
+        let currentDay = new Date(this.tooltipData[0].date), nextDay = new Date(this.tooltipData[0].date);
         nextDay.setDate(nextDay.getDate() + 1);
         let widthTooltipBars = this.xScale(nextDay) - this.xScale(currentDay);
         // d3.select(this.focus.node().parentNode)
@@ -43,7 +43,7 @@ export let streamTooltipFactoryMixin = {
 
     updateBars(data) {
         let t = this;
-        let currentDay = new Date(this.data[0].date), nextDay = new Date(this.data[0].date);
+        let currentDay = new Date(this.tooltipData[0].date), nextDay = new Date(this.tooltipData[0].date);
         nextDay.setDate(nextDay.getDate() + 1);
         let widthTooltipBars = this.xScale(nextDay) - this.xScale(currentDay);
         this.ttBars = this.ttBars

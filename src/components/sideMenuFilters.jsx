@@ -136,8 +136,32 @@ function SideMenuFilters(props) {
             >
                 Trips Between:
             </SectionLabel>
-            <TimePickerContainer id={"div_trips-between"} key={"div_trips-between"}>
-
+            <TimePickerContainer 
+                id={"div_trips-between"} 
+                key={"div_trips-between"}
+            >
+                <input
+                    type="time"
+                    id="trips-between_startTime"
+                    name="trips-between_startTime"
+                    value={filters.startTime}
+                    min="00:00"
+                    max="23:59"
+                    onChange={(e) => {
+                        dispatch(setStartTime(e.target.value))
+                    }}
+                />
+                <input
+                    type="time"
+                    id="trips-between_endTime"
+                    name="trips-between_endTime"
+                    value={filters.endTime}
+                    min="00:01"
+                    max="23:59"
+                    onChange={(e) => {
+                        dispatch(setEndTime(e.target.value))
+                    }}
+                />
             </TimePickerContainer>
 
             <SectionLabelToggle 
@@ -162,8 +186,7 @@ function SideMenuFilters(props) {
                     onChange={
                         (checkedValue) => {
                             setStreamTypeRadio(checkedValue);
-                            console.log(checkedValue)
-                            dispatch(setStreamType(checkedValue))
+                            dispatch(setStreamType(checkedValue));
                         }
                     }
                     value={streamTypeRadio}

@@ -36,6 +36,7 @@ export const filterSlice = createSlice({
             state.startTime = payload.payload;
         },
         setEndTime: (state, payload) => {
+            console.log(payload.payload)
             state.endTime = payload.payload;
         },
         setEmissionType: (state, payload) => {
