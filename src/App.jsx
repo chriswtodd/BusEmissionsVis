@@ -5,15 +5,23 @@
 
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+<<<<<<< HEAD
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+=======
+import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { Navigate } from 'react-router';
+>>>>>>> 8be8010 (React router indexRoute required, and hook up auth provider to provide details)
 
 import { setPublicUrl, setApiUrl } from './redux/envVarsSlice.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { setRoutes } from './redux/filterSlice';
 
+import ProtectedRoute from './components/protectedRoute.tsx';
+
 // Page components for router
 import Home from './views/home.jsx';
 import Visualisations from './views/visualisations.jsx';
+import Login from './views/login.js';
 
 import logo from './components/GW_Logo.png';
 import { FaSdCard } from "react-icons/fa";
@@ -32,11 +40,6 @@ const buttons = [
     "to": "/",
     "component" : Home
   },
-  // {
-  //   "label": "Tutorial - User Interface",
-  //   "to": "/tut1",
-  //   "component" : ""
-  // },
   // {
   //   "label" : "Tutorial - Visualisations",
   //   "to": "/tut2",
@@ -154,12 +157,18 @@ export default function App() {
                 </ButtonToggle>
               </LinkUnstyled>
             ))}
+            <LinkUnstyled to={"/login"} key={"login"} >
+                <ButtonToggle active={(active === "login").toString()} onClick={() => setActive("login")}>
+                  Login
+                </ButtonToggle>
+              </LinkUnstyled>
           </Header>
         </nav>
         <Routes>
           {buttons.map((type) => (
-            <Route path={type.to} key={type.label} exact element={<type.component />} />
+            <Route path={type.to} key={type.label} exact element={<ProtectedRoute><type.component /></ProtectedRoute>} />
           ))}
+          <Route path={"/"} component={ Login } />
           
           <Route render={() => <h1>404: page not found</h1>} />
         </Routes>

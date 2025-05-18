@@ -11,6 +11,7 @@ import { streamDataReducer } from '../redux/dataSlice.js';
 import { filterReducer } from '../redux/filterSlice';
 import { envVarReducer } from './envVarsSlice.js';
 import { emissionsApi } from './query/emissionsApi.js';
+import { loginApi } from '../react-query/createSessionApi.tsx';
 
 export const store = configureStore({
   reducer: {
@@ -19,9 +20,11 @@ export const store = configureStore({
     data: streamDataReducer,
     filters: filterReducer,
     [emissionsApi.reducerPath]: emissionsApi.reducer,
+    [loginApi.reducerPath]: loginApi.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
-  .concat(emissionsApi.middleware)
+    .concat(emissionsApi.middleware)
+    .concat(loginApi.middleware)
 })
 
 setupListeners(store.dispatch)
