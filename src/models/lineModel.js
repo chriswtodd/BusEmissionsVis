@@ -4,7 +4,7 @@
  */ 
 
 import React, { useState } from 'react';
-import store from '../redux/store.js';
+import { store } from '../redux/store.js';
 
 let modelData = require('./modelData.ts');
 

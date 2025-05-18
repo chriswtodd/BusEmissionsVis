@@ -5,7 +5,7 @@
 
 import React, { useEffect } from 'react';
 
-import store from '../redux/store.js';
+import { store } from '../redux/store.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { addWindow, removeWindow } from '../redux/windowSlice.js';
 import { setStreamData } from '../redux/dataSlice.js';

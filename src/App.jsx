@@ -6,13 +6,17 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { Navigate } from 'react-router';
 
 import { useDispatch } from 'react-redux';
 import { setPublicUrl, setApiUrl } from './redux/envVarsSlice.js';
 
+import ProtectedRoute from './components/protectedRoute.tsx';
+
 // Page components for router
 import Home from './views/home.jsx';
 import Visualisations from './views/visualisations.jsx';
+import Login from './views/login.js';
 
 import logo from './components/GW_Logo.png';
 const Logo = styled.img`
@@ -30,11 +34,6 @@ const buttons = [
     "to": "/",
     "component" : Home
   },
-  // {
-  //   "label": "Tutorial - User Interface",
-  //   "to": "/tut1",
-  //   "component" : ""
-  // },
   // {
   //   "label" : "Tutorial - Visualisations",
   //   "to": "/tut2",
@@ -150,12 +149,28 @@ export default function App() {
                 </ButtonToggle>
               </LinkUnstyled>
             ))}
+            <LinkUnstyled to={"/login"} key={"login"} >
+                <ButtonToggle active={(active === "login").toString()} onClick={() => setActive("login")}>
+                  Login
+                </ButtonToggle>
+              </LinkUnstyled>
           </Header>
         </nav>
         <Switch>
-          {buttons.map((type) => (
-            <Route path={type.to} key={type.label} exact component={type.component} />
+          {buttons.map(({ to, label, component: Component }) => (
+            <Route 
+              path={to} 
+              key={label} 
+              exact 
+              element={
+                <ProtectedRoute>
+                  <Component></Component>
+                </ProtectedRoute>
+              } 
+            />
           ))}
+
+          <Route path={"/"} component={ Login } />
           
           <Route render={() => <h1>404: page not found</h1>} />
 
