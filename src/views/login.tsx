@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 import { useLoginMutation } from "../react-query/createSessionApi.js";
 import { ILoginCredentials } from "../models/loginModel.tsx"
 
 const Login = () => {
-    const [login, { data: loginData, isLoading: il, error: e }] = useLoginMutation();
+    const [login, { isLoading: il, error: e }] = useLoginMutation();
+    const url = useSelector(state => state.envVars.apiUrl);
 
     const [formData, setFormData] = useState<ILoginCredentials>({
         email: "",
@@ -19,24 +21,25 @@ const Login = () => {
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        await login({ body: formData }).unwrap();   // Make the API call
-        alert(loginData?.msg);
+        var res = await login({ url: url, data: formData }).unwrap();
+        console.log(res);
         // http cookies
-        localStorage.setItem("token", loginData?.token);
-        localStorage.setItem("role", loginData?.role);
+        localStorage.setItem("token", res?.token);
+        localStorage.setItem("role", res?.role);
         navigate("/visualisations");
     };
 
     return (
-    <div className="container">
-        <div className="title">Login</div>
-        <form onSubmit={handleSubmit}>
-            <label htmlFor="email">Email: </label>
-            <input id="email" type="text" onChange={handleChange} />
-            <label htmlFor="password">Password:</label>
-            <input id="password" type="text" onChange={handleChange} />            
-        </form>
-    </div>
+        <div className="container">
+            <div className="title">Login</div>
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="email">Email: </label>
+                <input id="email" type="text" onChange={handleChange} />
+                <label htmlFor="password">Password:</label>
+                <input id="password" type="text" onChange={handleChange} />
+                <input type="submit" />      
+            </form>
+        </div>
     );
 };
 

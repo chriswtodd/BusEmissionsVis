@@ -64,6 +64,9 @@ def tripHour(city, startDate, endDate, startTime, endTime):
 
     return jsonify(metlink_trips.get_emissions_by_class_per_hour(city, startDate, endDate, startTime, endTime))
 
+@app.route('/login', methods=["POST"])
+def login():
+    return jsonify({"token": "TEST", "role": "TEST"})
 
 if __name__ == "__main__":
     app.run()
