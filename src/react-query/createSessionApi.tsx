@@ -4,14 +4,14 @@ import { ILoggedInData, ILoginCredentials } from '../models/loginModel.tsx';
 export const loginApi = createApi({
   reducerPath: '',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: "/",
-    method: "POST"
+    baseUrl: "http://",
   }),
   endpoints: (builder) => ({
-    login: builder.mutation<ILoggedInData, ILoginCredentials>({
-      query: (body) => ({
-        url: `/login`,
-        body
+    login: builder.mutation<ILoggedInData, {url: string, data: ILoginCredentials}>({
+      query: ({ url, data }) => ({
+        url: `${url}/login`,
+        method: "POST",
+        data
       })
     }),
   }),

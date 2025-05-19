@@ -11,9 +11,9 @@ const AuthContext = createContext<ProviderProps>({
 })
 
 const AuthProvider = ({ children }: { children: React.ReactNode}) => {
-    const storedInfo =  localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null;
-    const [user, setUser] = useState<string | null>(storedInfo?.email);
-    const [token, setToken] = useState( storedInfo?.token || '');
+    console.log(localStorage)
+    const [user, setUser] = useState<string | null>(localStorage.getItem("role") || null);
+    const [token, setToken] = useState( localStorage.getItem("token") || '');
 
     return (
         <AuthContext.Provider value={{ user, token }}>
