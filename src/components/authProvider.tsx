@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import Cookies from "js-cookie";
 
 interface ProviderProps {
     user:  string | null,
@@ -11,9 +12,9 @@ const AuthContext = createContext<ProviderProps>({
 })
 
 const AuthProvider = ({ children }: { children: React.ReactNode}) => {
-    console.log(localStorage)
-    const [user, setUser] = useState<string | null>(localStorage.getItem("role") || null);
-    const [token, setToken] = useState( localStorage.getItem("token") || '');
+    console.log(Cookies.get())
+    const [user, setUser] = useState<string | null>(Cookies.get("role") || null);
+    const [token, setToken] = useState(Cookies.get("token") || '');
 
     return (
         <AuthContext.Provider value={{ user, token }}>

@@ -18,7 +18,7 @@ import Home from './views/home.jsx';
 import Visualisations from './views/visualisations.jsx';
 import Login from './views/login.tsx';
 
-import AuthProvider from './components/authProvider.tsx';
+import AuthProvider, { useAuth } from './components/authProvider.tsx';
 
 import logo from './components/GW_Logo.png';
 import { FaSdCard } from "react-icons/fa";
@@ -139,6 +139,26 @@ export default function App() {
   dispatch(setApiUrl())
   // Cheeky hack to flip between dev and deployment
   let url = useSelector(state => state.envVars.url)
+  const { user } = useAuth();
+  console.log(user !== null)
+
+  const LoginButton = () => (
+    <LinkUnstyled to={"/login"} key={"login"} >
+      <ButtonToggle active={(active === "login").toString()} onClick={() => setActive("login")}>
+        Login
+      </ButtonToggle>
+    </LinkUnstyled>
+  )
+
+  const LogoutButton = () => (
+    <LinkUnstyled to={"/logout"} key={"logout"} >
+      <ButtonToggle active={(active === "logout").toString()} onClick={() => setActive("logout")}>
+        Login
+      </ButtonToggle>
+    </LinkUnstyled>
+  )
+  
+
   //Set body
   componentWillMount();
   return (
@@ -154,11 +174,7 @@ export default function App() {
                   </ButtonToggle>
                 </LinkUnstyled>
               ))}
-              <LinkUnstyled to={"/login"} key={"login"} >
-                <ButtonToggle active={(active === "login").toString()} onClick={() => setActive("login")}>
-                  Login
-                </ButtonToggle>
-              </LinkUnstyled>
+              {user !== null ? <LoginButton /> : <LogoutButton /> }
           </Header>
         </nav>
         <AuthProvider>
@@ -166,7 +182,9 @@ export default function App() {
             {buttons.map((type) => (
               <Route path={type.to} key={type.label} exact element={<ProtectedRoute><type.component /></ProtectedRoute>} />
             ))}
-            <Route path={"/"} component={ Login } />
+
+            <Route path={"/login"} element={ <Login /> } />
+            <Route path={"/logout"} element={ <Login /> } />
             
             <Route render={() => <h1>404: page not found</h1>} />
           </Routes>
