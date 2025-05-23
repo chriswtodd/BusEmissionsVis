@@ -17,7 +17,7 @@ import Home from './views/home.jsx';
 import Visualisations from './views/visualisations.jsx';
 import Login from './views/login.tsx';
 
-import AuthProvider from './components/authProvider.tsx';
+import AuthProvider, { useAuth } from './components/authProvider.tsx';
 
 import logo from './components/GW_Logo.png';
 const Logo = styled.img`
@@ -135,6 +135,26 @@ export default function App() {
   const [active, setActive] = useState(buttons[0]);
   dispatch(setPublicUrl())
   dispatch(setApiUrl())
+  const { user } = useAuth();
+  console.log(user !== null)
+
+  const LoginButton = () => (
+    <LinkUnstyled to={"/login"} key={"login"} >
+      <ButtonToggle active={(active === "login").toString()} onClick={() => setActive("login")}>
+        Login
+      </ButtonToggle>
+    </LinkUnstyled>
+  )
+
+  const LogoutButton = () => (
+    <LinkUnstyled to={"/logout"} key={"logout"} >
+      <ButtonToggle active={(active === "logout").toString()} onClick={() => setActive("logout")}>
+        Login
+      </ButtonToggle>
+    </LinkUnstyled>
+  )
+  
+
   //Set body
   componentWillMount();
   return (
@@ -150,11 +170,7 @@ export default function App() {
                   </ButtonToggle>
                 </LinkUnstyled>
               ))}
-              <LinkUnstyled to={"/login"} key={"login"} >
-                <ButtonToggle active={(active === "login").toString()} onClick={() => setActive("login")}>
-                  Login
-                </ButtonToggle>
-              </LinkUnstyled>
+              {user !== null ? <LoginButton /> : <LogoutButton /> }
           </Header>
         </nav>
         <AuthProvider>
@@ -172,6 +188,7 @@ export default function App() {
             ))}
 
             <Route path={"/login"} element={ <Login /> } />
+            <Route path={"/logout"} element={ <Login /> } />
             
             <Route render={() => <h1>404: page not found</h1>} />
           </Routes>

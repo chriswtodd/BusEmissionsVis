@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import { useLoginMutation } from "../react-query/createSessionApi.js";
 import { ILoginCredentials } from "../models/loginModel.tsx"
+import Cookies from "js-cookie";
 
 const Login = () => {
     const [login, { isLoading: il, error: e }] = useLoginMutation();
@@ -24,8 +25,8 @@ const Login = () => {
         var res = await login({ url: url, data: formData }).unwrap();
         console.log(res);
         // http cookies
-        localStorage.setItem("token", res?.token);
-        localStorage.setItem("role", res?.role);
+        Cookies.set("token", res?.token, {expires: 7, path: "/"});
+        Cookies.set("role", res?.role, {expires: 7, path: "/"});
         navigate("/visualisations");
     };
 
