@@ -17,7 +17,6 @@ let modelData = require('../models/modelData.ts')
 const styles = require("../styles.js")
 
 const CheckboxContainer = styled.div`
-    // flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
@@ -100,20 +99,19 @@ function SideMenuFilters(props) {
     function modifyFiltersOpen(title) {
         filterContainers[title] = !filterContainers[title];
         setOpenFilters(filterContainers);
+        console.log(openFilters)
+        console.log(title)
     }
 
     return (
         <SideMenuContainer label={"Visualisation Filters"}>
-            <SectionLabel key={"label_engine-classes"} >
-                Engine Classes:
-            </SectionLabel>
-            
-            <SectionLabel>
+            <SectionLabel key={"label_engine-classes"}>
                 Engine Classes: <ButtonArrowToggle active={openFilters["Engine Classes"]} />
             </SectionLabel>
             <CheckboxContainerToggle 
                 id={"checkbox_engine-classes"}
                 active={openFilters["Engine Classes"]}
+                onClick={modifyFiltersOpen}
             >
                 {filters != undefined ? Object.keys(filters.class).map(property => (
                     <Checkbox
@@ -133,9 +131,10 @@ function SideMenuFilters(props) {
             <SectionLabel id={"label_emission-type"} key={"label_emission-type"}>
                 Emission Type:
             </SectionLabel>
-            <CheckboxContainer 
+            <CheckboxContainerToggle 
                 id={"checkbox_emission-type"} 
                 key={"checkbox_emission-type"}
+                active={openFilters["Emission Type"]}
             >
                 <RadioButtonGroup
                     options={modelData.EmissionTypeUi}
@@ -148,7 +147,7 @@ function SideMenuFilters(props) {
                     }
                     value={emissionTypeRadio}
                 />
-            </CheckboxContainer>
+            </CheckboxContainerToggle>
             
             <SectionLabel 
                 id={"label_granularity"} 
@@ -156,7 +155,11 @@ function SideMenuFilters(props) {
             >
                 Granularity:
             </SectionLabel>
-            <CheckboxContainer id={"checkbox_granularity"} key={"checkbox_granularity"}>
+            <CheckboxContainerToggle 
+                id={"checkbox_granularity"} 
+                key={"checkbox_granularity"}
+                active={openFilters["Granularity"]}
+            >
                 <RadioButtonGroup
                     options={{"day": "day"}}
                     name="granularity"
@@ -168,7 +171,7 @@ function SideMenuFilters(props) {
                     }
                     value={granularity}
                 />
-            </CheckboxContainer>
+            </CheckboxContainerToggle>
             
             <SectionLabel 
                 id={"label_trips-between"} 
@@ -244,16 +247,17 @@ function SideMenuFilters(props) {
                 onClick={() => {
                     dispatch(setReload(true))
                 }}
-                style={{"width": "85%","background-color": "#67e037","border-radius":"25px"}}> 
+                style={{"width": "85%","backgroundColor": "#67e037","borderRadius":"25px"}}> 
                 Load New Data 
             </button>
 
-            {filters != undefined ? Object.keys(filters.routes).map(property => (
+            {filters?.routes != undefined ? Object.keys(filters.routes).map(property => (
                     <Checkbox
                         id={property}
+                        key={property}
                         name={property}
                         label={property}
-                        color={modelData.engine_colours[property]}
+                        color={modelData.EngineColours[property]}
                         callback={(e) => {
                             dispatch(toggleRoute(e.target.name));
                         }}

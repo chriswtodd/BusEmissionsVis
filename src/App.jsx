@@ -5,12 +5,11 @@
 
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-import { useDispatch } from 'react-redux';
 import { setPublicUrl, setApiUrl } from './redux/envVarsSlice.js';
 import { useSelector, useDispatch } from 'react-redux';
-import { setRoutes } from 'redux/filterSlice';
+import { setRoutes } from './redux/filterSlice';
 
 // Page components for router
 import Home from './views/home.jsx';
@@ -157,14 +156,13 @@ export default function App() {
             ))}
           </Header>
         </nav>
-        <Switch>
+        <Routes>
           {buttons.map((type) => (
-            <Route path={type.to} key={type.label} exact component={type.component} />
+            <Route path={type.to} key={type.label} exact element={<type.component />} />
           ))}
           
           <Route render={() => <h1>404: page not found</h1>} />
-
-        </Switch>
+        </Routes>
       </MainFlex>
     </Router>
   );

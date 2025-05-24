@@ -10,7 +10,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addWindow, removeWindow } from '../redux/windowSlice.js';
 import { setStreamData } from '../redux/dataSlice.js';
 import { setLoading } from '../redux/envVarsSlice';
-import { setRoutes, setReload } from 'redux/filterSlice';
+import { setRoutes, setReload } from '../redux/filterSlice';
+import { useGetRoutesQuery } from '../redux/query/getRoutesApi.tsx';
+// import { RouteFilterModel } from '../models/routeFilter';
 
 import styled from "styled-components";
 import SideMenuLeft from '../components/sideMenuLeft.jsx';
@@ -58,6 +60,7 @@ export default function Visualisations(props) {
     const emissionType = useSelector(state => state.filters.emissionType);
     const stackType = useSelector(state => state.filters.streamType);
     const routes = useSelector(state => state.filters.routes);
+    const { data: routeList,  isLoading: il, error: e } = useGetRoutesQuery(url);
 
     function getRenderedComponentFunction(windowId) {
         if (windows.windowRenderComponent === "Stream Graph") {
@@ -277,19 +280,9 @@ export default function Visualisations(props) {
      */
     useEffect(() => {
         async function fetchData() {            
-            // Fetch new data
-            let d1 = '2019-01-01', d2 = '2019-12-10';
-            let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
-            let res = await fetch(fetchURL);
-            const json = await res.json();
-            // Set data
-            dispatch(setStreamData(json));
-            // Turn off loader
-            dispatch(setLoading(false));
-            // Redraw existing visualisations
-            redrawGraphs(json);
+            await callApiAndSetData();
         }
-        async function setRoutes() {
+        async function callSetRouteApi() {
             let r2 = await fetch("http://localhost:5000/set_routes", {
                 method: "POST",
                 mode: 'cors',
@@ -309,7 +302,7 @@ export default function Visualisations(props) {
         if (reload === true) {
             // Turn on loader before fetch
             dispatch(setLoading(true));
-            setRoutes();
+            callSetRouteApi();
         }
     }, [routes, reload])
 
@@ -372,6 +365,13 @@ export default function Visualisations(props) {
     useEffect(() => {
         initGraphs();
     }, [windows])
+
+    // ??
+    useEffect(() => {
+        if (!(routeList === undefined)) {
+            dispatch(setRoutes(routeList))
+        }        
+    }, [routeList])
 
     return (
         <>

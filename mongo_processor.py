@@ -21,7 +21,7 @@ class Trips_Network(Resource):
     Called to get the routes initially
     ''' 
     def get_routes(self):
-        db = mongo_online["test"]["trips_2019"]
+        db = mongo_local["test"]["trips_2019"]
         col = db["trips_2019"]
 
         regex = re.compile("[a-zA-Z]")
@@ -50,7 +50,7 @@ class Trips_Network(Resource):
     '''
     def get_emissions_by_class_per_day(self, city, startDate, endDate, startTime, endTime, route_coll):
         #### Deployment Environment
-        db = mongo_online["test"]
+        db = mongo_local["test"]
         col = db["trips_2019"]
         
         route_set = set()
