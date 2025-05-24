@@ -97,21 +97,23 @@ function SideMenuFilters(props) {
     const [openFilters, setOpenFilters] = useState(filterContainers);
 
     function modifyFiltersOpen(title) {
+        console.log(openFilters)
+        console.log(title.target)
         filterContainers[title] = !filterContainers[title];
         setOpenFilters(filterContainers);
-        console.log(openFilters)
-        console.log(title)
     }
 
     return (
         <SideMenuContainer label={"Visualisation Filters"}>
-            <SectionLabel key={"label_engine-classes"}>
+            <SectionLabel 
+                key={"label_engine-classes"}
+                onClick={modifyFiltersOpen}
+            >
                 Engine Classes: <ButtonArrowToggle active={openFilters["Engine Classes"]} />
             </SectionLabel>
             <CheckboxContainerToggle 
                 id={"checkbox_engine-classes"}
                 active={openFilters["Engine Classes"]}
-                onClick={modifyFiltersOpen}
             >
                 {filters != undefined ? Object.keys(filters.class).map(property => (
                     <Checkbox

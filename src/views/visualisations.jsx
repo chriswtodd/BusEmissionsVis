@@ -366,7 +366,12 @@ export default function Visualisations(props) {
         initGraphs();
     }, [windows])
 
-    // ??
+    /** 
+     * Update the UI component in response to an API call
+     * 
+     * Can probably do better here, #24
+     * 
+     */
     useEffect(() => {
         if (!(routeList === undefined)) {
             dispatch(setRoutes(routeList))
