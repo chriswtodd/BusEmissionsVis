@@ -25,8 +25,8 @@ const Login = () => {
         var res = await login({ url: url, data: formData }).unwrap();
         console.log(res);
         // http cookies
-        Cookies.set("token", res?.token, {expires: 7, path: "/"});
-        Cookies.set("role", res?.role, {expires: 7, path: "/"});
+        Cookies.set("token", res?.token, {expires: 1/1440, path: "/"});
+        Cookies.set("role", res?.role, {expires: 1/1440, path: "/"});
         navigate("/visualisations");
     };
 
