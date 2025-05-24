@@ -9,7 +9,10 @@ import { store } from '../redux/store.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { addWindow, removeWindow } from '../redux/windowSlice.js';
 import { setStreamData } from '../redux/dataSlice.js';
-import { setLoading } from '../redux/envVarsSlice.js';
+import { setLoading } from '../redux/envVarsSlice';
+import { setRoutes, setReload } from '../redux/filterSlice';
+import { useGetRoutesQuery } from '../redux/query/getRoutesApi.tsx';
+// import { RouteFilterModel } from '../models/routeFilter';
 
 import styled from "styled-components";
 import SideMenuLeft from '../components/sideMenuLeft.jsx';
@@ -47,6 +50,7 @@ export default function Visualisations(props) {
     const url = useSelector(state => state.envVars.apiUrl);
     //Page
     const streamData = useSelector(state => state.data.streamData);
+    const reload = useSelector(state => state.filters.reload);
     let windows = useSelector(state => state.windows);
     //Filters
     const granularity = useSelector(state => state.filters.granularity);
@@ -55,6 +59,8 @@ export default function Visualisations(props) {
     const endTime = useSelector(state => state.filters.endTime);
     const emissionType = useSelector(state => state.filters.emissionType);
     const stackType = useSelector(state => state.filters.streamType);
+    const routes = useSelector(state => state.filters.routes);
+    const { data: routeList,  isLoading: il, error: e } = useGetRoutesQuery(url);
 
     function getRenderedComponentFunction(windowId) {
         if (windows.windowRenderComponent === "Stream Graph") {
@@ -242,6 +248,7 @@ export default function Visualisations(props) {
             windows.value.forEach(d => {
                 dispatch(removeWindow(d.id))
             })
+            
             // Add windows to draw
             let firstWindow = (
                 <WindowComponent key={"vis-window_0"}
@@ -268,10 +275,41 @@ export default function Visualisations(props) {
     }, [])
 
     /**
+     * Call useEffect for reloading when data is loaded due to the routes being changed.
+     * Perhaps we can do this with the other filters, or join setReload & setLoading?
+     */
+    useEffect(() => {
+        async function fetchData() {            
+            await callApiAndSetData();
+        }
+        async function callSetRouteApi() {
+            let r2 = await fetch("http://localhost:5000/set_routes", {
+                method: "POST",
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers : {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    routes: routes
+                })
+            }).then(() => {
+                dispatch(setReload(false));
+                fetchData();
+            })
+        }
+        if (reload === true) {
+            // Turn on loader before fetch
+            dispatch(setLoading(true));
+            callSetRouteApi();
+        }
+    }, [routes, reload])
+
+    /**
      * Call use effect to recall flask when certain filters 
      * change
      * 
-     * TODO: Add logic to stop unneccessary reloading
      */
     useEffect(() => {
         async function fetchData() {
@@ -290,6 +328,10 @@ export default function Visualisations(props) {
     }, [classes, emissionType, stackType, streamData])
 
 
+    /**
+     * Called to redraw the windows when added,
+     * template for adding windows dynamically #7
+     */
     useEffect(() => {
         //Data not loaded yet
         if (!Array.isArray(streamData)) return
@@ -323,6 +365,18 @@ export default function Visualisations(props) {
     useEffect(() => {
         initGraphs();
     }, [windows])
+
+    /** 
+     * Update the UI component in response to an API call
+     * 
+     * Can probably do better here, #24
+     * 
+     */
+    useEffect(() => {
+        if (!(routeList === undefined)) {
+            dispatch(setRoutes(routeList))
+        }        
+    }, [routeList])
 
     return (
         <>

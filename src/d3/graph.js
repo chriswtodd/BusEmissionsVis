@@ -293,9 +293,7 @@ export class D3Graph {
         selectors.forEach((selector) => {
             element = element.selectAll(selector);
         })
-        console.log(element);
         for (let style of Object.keys(styleObj)) {
-            console.log(style, styleObj[style]);
             element.style(style, styleObj[style]);
         }
     }

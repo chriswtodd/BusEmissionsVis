@@ -3,18 +3,20 @@
  * Github: chriswtodd
  */ 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-import { useDispatch } from 'react-redux';
 import { setPublicUrl, setApiUrl } from './redux/envVarsSlice.js';
+import { useSelector, useDispatch } from 'react-redux';
+import { setRoutes } from './redux/filterSlice';
 
 // Page components for router
 import Home from './views/home.jsx';
 import Visualisations from './views/visualisations.jsx';
 
 import logo from './components/GW_Logo.png';
+import { FaSdCard } from "react-icons/fa";
 const Logo = styled.img`
   height: 45px;
   border-right: 1px solid rgba(255, 255, 255, 0.3);
@@ -135,6 +137,8 @@ export default function App() {
   const [active, setActive] = useState(buttons[0]);
   dispatch(setPublicUrl())
   dispatch(setApiUrl())
+  // Cheeky hack to flip between dev and deployment
+  let url = useSelector(state => state.envVars.url)
   //Set body
   componentWillMount();
   return (
@@ -152,14 +156,13 @@ export default function App() {
             ))}
           </Header>
         </nav>
-        <Switch>
+        <Routes>
           {buttons.map((type) => (
-            <Route path={type.to} key={type.label} exact component={type.component} />
+            <Route path={type.to} key={type.label} exact element={<type.component />} />
           ))}
           
           <Route render={() => <h1>404: page not found</h1>} />
-
-        </Switch>
+        </Routes>
       </MainFlex>
     </Router>
   );
