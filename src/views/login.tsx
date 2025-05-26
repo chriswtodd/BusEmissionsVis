@@ -5,6 +5,42 @@ import { useLoginMutation } from "../react-query/createSessionApi.js";
 import { ILoginCredentials } from "../models/loginModel.tsx"
 import Cookies from "js-cookie";
 
+import styled from "styled-components";
+
+const PageContainer = styled.div`
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+`;
+
+const FormContainer = styled.div`
+  display: table-cell;
+  vertical-align: middle;
+`;
+
+const LoginForm = styled.form`
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+`;
+
+const Title = styled.div`
+    font-size: 2em;
+    text-align: center;
+`;
+
+const SubmitButton = styled.input`
+    height: 40px;
+    border-radius: 25px;
+    color: rgb(248, 248, 248);
+    background-color: rgba(0, 120, 138, 1);
+`;
+
 const Login = () => {
     const [login, { isLoading: il, error: e }] = useLoginMutation();
     const url = useSelector(state => state.envVars.apiUrl);
@@ -31,16 +67,18 @@ const Login = () => {
     };
 
     return (
-        <div className="container">
-            <div className="title">Login</div>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="email">Email: </label>
-                <input id="email" type="text" onChange={handleChange} />
-                <label htmlFor="password">Password:</label>
-                <input id="password" type="text" onChange={handleChange} />
-                <input type="submit" />      
-            </form>
-        </div>
+        <PageContainer>
+            <FormContainer>
+                <LoginForm onSubmit={handleSubmit}>
+                    <Title className="title">Login</Title>
+                    <label htmlFor="email">Email: </label>
+                    <input id="email" type="text" onChange={handleChange} />
+                    <label htmlFor="password">Password:</label>
+                    <input id="password" type="password" onChange={handleChange} />
+                    <SubmitButton type="submit" />      
+                </LoginForm>
+            </FormContainer>
+        </PageContainer>
     );
 };
 
