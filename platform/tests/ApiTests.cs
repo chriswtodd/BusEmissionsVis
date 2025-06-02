@@ -3,28 +3,22 @@ using System.Net.Http.Json;
 
 namespace platform.tests;
 
-internal sealed class Route
+public sealed class Emissions
 {
-    public required string _id { get; set; }
-    public required bool active { get; set; }
-}
-
-internal sealed class Emissions
-{
-    public required string avgDistance { get; set; }
-    public required string avgSpeed { get; set; }
-    public required string avgTime { get; set; }
-    public required string carCo2Equiv { get; set; }
-    public required string co { get; set; }
-    public required string co2 { get; set; }
+    public required double avgDistance { get; set; }
+    public required double avgSpeed { get; set; }
+    public required double avgTime { get; set; }
+    public required double carCo2Equiv { get; set; }
+    public required double co { get; set; }
+    public required double co2 { get; set; }
     public required DateTime date { get; set; }
     public required string engine_type { get; set; }
-    public required string fc { get; set; }
-    public required string hc { get; set; }
-    public required string nox { get; set; }
-    public required string paxKm { get; set; }
-    public required string pm { get; set; }
-    public required string trips { get; set; }
+    public required double fc { get; set; }
+    public required double hc { get; set; }
+    public required double nox { get; set; }
+    public required double paxKm { get; set; }
+    public required double pm { get; set; }
+    public required int trips { get; set; }
 }
 
 [TestClass]
@@ -41,91 +35,92 @@ public sealed class ApiTests
 
         Assert.IsTrue(response.IsSuccessStatusCode);
 
-        var routes = response.Content.ReadFromJsonAsAsyncEnumerable<Route>()
-            .ToBlockingEnumerable()
-            .ToArray();
+        var routesDict = await response.Content.ReadFromJsonAsync<Dictionary<string, Dictionary<string, bool>>>();
         var expectedRoutes = ApiTestsData.RoutesResponse;
 
-        Assert.AreEqual(routes.Length, expectedRoutes.Length);
-        for (var i = 0; i < routes.Length; i++)
+        var routes = routesDict["routes"];
+
+        Assert.AreEqual(routes.Keys.Count(), expectedRoutes.Keys.Count());
+        for (var i = 0; i < routes.Keys.Count(); i++)
         {
-            Assert.AreEqual(routes.ElementAt(i)._id, expectedRoutes.ElementAt(i)._id);
-            Assert.AreEqual(routes.ElementAt(i).active, expectedRoutes.ElementAt(i).active);
+            Assert.AreEqual(routes.Keys.ElementAt(i), expectedRoutes.Keys.ElementAt(i));
+            Assert.AreEqual(routes.Values.ElementAt(i), expectedRoutes.Values.ElementAt(i));
         }
 
         return;
     }
 
-    // [TestMethod]
-    // public void SetRoutes()
-    // {
-    // }
-
     [TestMethod]
-    public async Task GetDataByDayFullFleet()
+    public async Task SetRoutes()
     {
         var client = GetHttpClient();
 
-        var response = await client.GetAsync("/day/wellington/2019-01-01/2019-12-10/00:00/23");
+        var routesToSet = await client.GetAsync("/routes");
 
-        Assert.IsTrue(response.IsSuccessStatusCode);
+        Assert.IsTrue(routesToSet.IsSuccessStatusCode);
 
-        var emissionsByDay = response.Content.ReadFromJsonAsAsyncEnumerable<Emissions>()
-            .ToBlockingEnumerable()
-            .ToArray();
+        var response = await client.PostAsync("/set_routes", routesToSet.Content);
 
         return;
     }
 
-    // [TestMethod]
-    // public void GetDataByDayElectricFleet()
-    // {
-    // }
+    public static IEnumerable<object[]> TestData
+    {
+        get
+        {
+            return new[]
+            {
+                new object[] { "/day/wellington/2019-01-01/2019-12-10/00:00/23", ApiTestsData.GetDataByDayFullFleetResponse },
+                new object[] { "/day/wellington/2019-01-01/2019-12-10/12:00/23", ApiTestsData.GetDataByDayTripsBetweenMiddayAndMidnight },
+                new object[] { "/day/wellington/2019-01-01/2019-12-10/00:00/12", ApiTestsData.GetDataByDayTripsBetweenMidnightAndMidday },
+                new object[] { "/day/wellington/2019-01-01/2019-06-30/00:00/23", ApiTestsData.GetDataByDayDaysBetween1JanAnd30June },
+                new object[] { "/day/wellington/2019-04-10/2019-10-10/00:00/23", ApiTestsData.GetDataByDayDaysBetween10AprilAnd10August },
+                new object[] { "/day/wellington/2019-04-10/2019-10-10/10:00/15", ApiTestsData.GetDataByDayTripsBetweenTenAmAndThreePmDaysBetween10AprilAnd10August }
+            };
+        }
+    }
 
-    // [TestMethod]
-    // public void GetDataByDayElectricAndEuro6Fleet()
-    // {
-    // }
 
-    // [TestMethod]
-    // public void GetDataByDayEuro3AndEuro4AndEuro5AndEuro6Fleet()
-    // {
-    // }
+    [TestMethod]
+    [DynamicData(nameof(TestData))]
+    public async Task GetDataByDayFullFleet(string url, Emissions[] expected)
+    {
+        var client = GetHttpClient();
 
-    // [TestMethod]
-    // public void GetDataByDayEuro6Fleet()
-    // {
-    // }
+        var response = await client.GetAsync(url);
 
-    // [TestMethod]
-    // public void GetDataByDayTripsBetweenMiddayAndMidnightFullFleet()
-    // {
-    // }
+        Assert.IsTrue(response.IsSuccessStatusCode);
 
-    // [TestMethod]
-    // public void GetDataByDayTripsBetweenMidnightAndMiddayFullFleet()
-    // {
-    // }
+        var apiResponse = response.Content.ReadFromJsonAsAsyncEnumerable<Emissions>()
+            .ToBlockingEnumerable()
+            .ToArray();
 
-    // [TestMethod]
-    // public void GetDataByDayTripsBetweenTenAmAndThreePmFullFleet()
-    // {
-    // }
+        AssertEmissionSetIsEqual(expected, apiResponse);
 
-    // [TestMethod]
-    // public void GetDataByDayDaysBetween1JanAnd30JuneFullFleet()
-    // {
-    // }
+        return;
+    }
 
-    // [TestMethod]
-    // public void GetDataByDayDaysBetween10AprilAnd10AugustFullFleet()
-    // {
-    // }
-
-    // [TestMethod]
-    // public void GetDataByDayTripsBetweenTenAmAndThreePmDaysBetween10AprilAnd10AugustEuro6AndElectricFleet()
-    // {
-    // }
+    private void AssertEmissionSetIsEqual(Emissions[] emissions, Emissions[] expectedEmissions)
+    { 
+        Assert.AreEqual(emissions.Length, expectedEmissions.Length);
+        for (var i = 0; i < emissions.Length; i++)
+        {
+            Assert.AreEqual(emissions.ElementAt(i).avgDistance, expectedEmissions.ElementAt(i).avgDistance);
+            Assert.AreEqual(emissions.ElementAt(i).avgSpeed, expectedEmissions.ElementAt(i).avgSpeed);
+            Assert.AreEqual(emissions.ElementAt(i).avgTime, expectedEmissions.ElementAt(i).avgTime);
+            Assert.AreEqual(emissions.ElementAt(i).carCo2Equiv, expectedEmissions.ElementAt(i).carCo2Equiv);
+            Assert.AreEqual(emissions.ElementAt(i).co, expectedEmissions.ElementAt(i).co);
+            Assert.AreEqual(emissions.ElementAt(i).co2, expectedEmissions.ElementAt(i).co2);
+            Assert.AreEqual(emissions.ElementAt(i).date, expectedEmissions.ElementAt(i).date);
+            Assert.AreEqual(emissions.ElementAt(i).engine_type, expectedEmissions.ElementAt(i).engine_type);
+            Assert.AreEqual(emissions.ElementAt(i).fc, expectedEmissions.ElementAt(i).fc);
+            Assert.AreEqual(emissions.ElementAt(i).hc, expectedEmissions.ElementAt(i).hc);
+            Assert.AreEqual(emissions.ElementAt(i).nox, expectedEmissions.ElementAt(i).nox);
+            Assert.AreEqual(emissions.ElementAt(i).paxKm, expectedEmissions.ElementAt(i).paxKm);
+            Assert.AreEqual(emissions.ElementAt(i).pm, expectedEmissions.ElementAt(i).pm);
+            Assert.AreEqual(emissions.ElementAt(i).trips, expectedEmissions.ElementAt(i).trips);
+        }
+    }
 
     private static HttpClient GetHttpClient()
     {

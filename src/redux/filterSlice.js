@@ -68,9 +68,7 @@ export const filterSlice = createSlice({
             state.streamType = payload.payload;
         },
         setRoutes: (state, payload) => {
-            payload.payload.map(d => {
-                state.routes[d._id] = true;
-            });
+            state.routes = payload.payload.routes;
         },
         toggleRoute: (state, payload) => {
             state.routes[payload.payload] = !state.routes[payload.payload];
