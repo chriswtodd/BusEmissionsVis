@@ -68,7 +68,6 @@ export const filterSlice = createSlice({
             state.streamType = payload.payload;
         },
         setRoutes: (state, payload) => {
-            console.log(payload.payload)
             state.routes = payload.payload.routes;
         },
         toggleRoute: (state, payload) => {
