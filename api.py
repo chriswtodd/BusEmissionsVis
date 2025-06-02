@@ -1,10 +1,20 @@
+from datetime import datetime, date
 from flask import Flask, jsonify, request
 from flask_restful import Api
 from flask_cors import CORS
 from mongo_processor import Trips_Network
 
+from flask.json.provider import DefaultJSONProvider
+
+class UpdatedJSONProvider(DefaultJSONProvider):
+    def default(self, o):
+        if isinstance(o, date) or isinstance(o, datetime):
+            return o.isoformat()
+        return super().default(o)
+
 # DEV
 app = Flask(__name__)
+app.json = UpdatedJSONProvider(app)
 
 # DEPLOYMENT ENV
 # app = Flask(__name__, static_folder='./build', static_url_path='/')
@@ -26,8 +36,7 @@ route_col = []
 def routes():
     # Get the routes from MongoAtlas,
     # set routes for successive requests
-    route_col = metlink_trips.get_routes()
-    return jsonify(route_col)
+    return jsonify(metlink_trips.get_routes())
 
 @app.route('/set_routes', methods=["POST"])
 def set_routes():

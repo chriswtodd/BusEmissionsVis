@@ -24,8 +24,6 @@ class Trips_Network(Resource):
         db = mongo_local["test"]["trips_2019"]
         col = db["trips_2019"]
 
-        regex = re.compile("[a-zA-Z]")
-
         result = db.aggregate([
             {"$match" : {
                 "_id" : {"$exists" : True}
@@ -42,7 +40,16 @@ class Trips_Network(Resource):
         ]
         , allowDiskUse=True)
 
-        return list(result)
+        route_list = list(result)
+        route_dict = dict()
+
+        for item in route_list:
+            route_dict[item["_id"]] = True
+
+        return_dict = dict()
+        return_dict["routes"] = route_dict
+
+        return  return_dict
 
     '''
     Called by api.py to return data for the Stream Graph &
@@ -115,6 +122,7 @@ class Trips_Network(Resource):
             {"$project" : {
                 "_id" : 0
             }},
+            {"$sort": { "date": -1, "engine_type": -1 }},
 
        ]
        , allowDiskUse=True)
