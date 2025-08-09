@@ -33,7 +33,7 @@ public sealed class RouteTests
         Assert.IsTrue(response.IsSuccessStatusCode);
 
         var routesDict = await response.Content.ReadFromJsonAsync<Dictionary<string, Dictionary<string, bool>>>();
-        var expectedRoutes = ApiTestsData.RoutesResponse;
+        var expectedRoutes = RoutesTestData.Data;
 
         var routes = routesDict["routes"];
 
@@ -47,7 +47,7 @@ public sealed class RouteTests
         return;
     }
 
-    // [TestMethod]
+    [TestMethod]
     public async Task SetRoutes()
     {
         // Arrange

@@ -8,15 +8,12 @@ namespace Server.Controllers;
 [Route("[controller]")]
 public class RoutesController : ControllerBase
 {
-    private readonly ILogger<RoutesController> _logger;
     private readonly IRoutesService _routesService;
 
     public RoutesController(
-        ILogger<RoutesController> logger,
         IRoutesService routesService
     )
     {
-        _logger = logger;
         _routesService = routesService;
     }
 
@@ -32,8 +29,6 @@ public class RoutesController : ControllerBase
         }
         catch
         {
-            // log
-            // _logger.Log(e);
             return Problem();
         }
     }

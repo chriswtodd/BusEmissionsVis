@@ -12,22 +12,19 @@ namespace Server.Controllers;
 [Route("[controller]")]
 public class EmissionsController : ControllerBase
 {
-    private readonly ILogger<EmissionsController> _logger;
     private readonly IProvider<MongoClient> _provider;
     private readonly IRoutesService _routesService;
 
     public EmissionsController(
-        ILogger<EmissionsController> logger,
         IProvider<MongoClient> provider,
         IRoutesService routesService
     )
     {
-        _logger = logger;
         _provider = provider;
         _routesService = routesService;
     }
 
-    // https://localhost:7076/emissions?city=wellington&startdate=2019-04-10&enddate=2019-10-10&starttime=10:00&endtime=15:00
+    // /emissions?city=wellington&startdate=2019-04-10&enddate=2019-10-10&starttime=10:00&endtime=15:00
     [HttpGet(Name = "GetEmissions")]
     public ActionResult<IEnumerable<Emissions>> Get([FromQuery] EmissionsGetRequest emissionsGetRequest)
     {
