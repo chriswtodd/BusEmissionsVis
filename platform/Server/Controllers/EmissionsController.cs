@@ -72,8 +72,6 @@ public class EmissionsController : ControllerBase
         }
         catch (Exception e)
         {
-            // log
-            // _logger.Log(e);
             return Problem(e.Message);
         }
     }
