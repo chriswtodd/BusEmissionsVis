@@ -59,7 +59,9 @@ public sealed class RouteTests
 
         Assert.IsTrue(routesToSet.IsSuccessStatusCode);
 
-        var response = await client.PostAsync("/set_routes", routesToSet.Content);
+        var response = await client.PutAsync("/routes", routesToSet.Content);
+
+        Assert.IsTrue(response.IsSuccessStatusCode);
 
         return;
     }

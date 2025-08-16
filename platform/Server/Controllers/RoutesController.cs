@@ -33,10 +33,10 @@ public class RoutesController : ControllerBase
         }
     }
 
-    [HttpPut(Name = "SetRoutes")]
-    public IActionResult Put(RoutesPutRequest routesPostRequest)
+    [HttpPut(Name = "UpdateRoutes")]
+    public IActionResult Put(RoutesPutRequest routesPutRequest)
     {
-        _routesService.Routes = routesPostRequest.Routes;
+        _routesService.Routes = routesPutRequest.Routes;
 
         return NoContent();
     }

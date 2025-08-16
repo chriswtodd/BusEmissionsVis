@@ -6,7 +6,7 @@ namespace Migration.Models;
 public class WellingtonEmissionsDecimalHolder
 {
     [BsonElement("distance")]
-    public decimal distance { get; set; }
+    public decimal Distance { get; set; }
     [BsonElement("FC")]
     public decimal Fc { get; set; }
     [BsonElement("CO")]
@@ -21,6 +21,6 @@ public class WellingtonEmissionsDecimalHolder
     public decimal Co2 { get; set; }
     [BsonElement("car_co2_equiv")]
     public decimal CarCo2Equivalent { get; set; }
-    [BsonElement("paxKm")]
+    [BsonElement("pax_km")]
     public decimal PaxKm { get; set; }
 }

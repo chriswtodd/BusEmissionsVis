@@ -4,14 +4,22 @@
  */ 
 
 export function insertItem(array, action) {
-    let newArray = array.slice()
-    newArray.splice(action.index, 0, action.item)
-    return newArray
+    let newArray = array.slice();
+    newArray.splice(action.index, 0, action.item);
+    return newArray;
 }
 
+export function insertItems(array, actions) {
+  let newArray = array.slice();
+  for (var action in actions)
+  {
+    newArray = insertItem(newArray, action);
+  }
+  return newArray;
+}
 
 export function removeItem(array, action) {
-    return array.filter((item, index) => index !== action.index)
+    return array.filter((item, index) => index !== action.index);
 }
 
 export function updateObjectInArray(array, action) {

@@ -11,7 +11,9 @@ import { addWindow, removeWindow } from '../redux/windowSlice.js';
 import { setStreamData } from '../redux/dataSlice.js';
 import { setLoading } from '../redux/envVarsSlice';
 import { setRoutes, setReload } from '../redux/filterSlice';
-import { useGetRoutesQuery } from '../redux/query/getRoutesApi.tsx';
+// import { useGetRoutesQuery } from '../redux/query/routesApi.js';
+import { useGetEmissionsQuery, useGetRoutesQuery } from '../redux/query/emissionsApi.js';
+import { emissionsApi } from '../redux/query/emissionsApi.js';
 // import { RouteFilterModel } from '../models/routeFilter';
 
 import styled from "styled-components";
@@ -26,6 +28,8 @@ import { streamTooltipFactoryMixin } from "../d3/tooltipMixin.js";
 
 import { processStreamData } from "../models/streamModel.js";
 import { processLineData } from "../models/lineModel.js";
+
+import { DefaultStartTime, DefaultEndTime } from '../common/Constants'
 
 let modelData = require('../models/modelData.ts')
 
@@ -49,7 +53,6 @@ export default function Visualisations(props) {
     //App
     const url = useSelector(state => state.envVars.apiUrl);
     //Page
-    const streamData = useSelector(state => state.data.streamData);
     const reload = useSelector(state => state.filters.reload);
     let windows = useSelector(state => state.windows);
     //Filters
@@ -61,6 +64,16 @@ export default function Visualisations(props) {
     const stackType = useSelector(state => state.filters.streamType);
     const routes = useSelector(state => state.filters.routes);
     const { data: routeList,  isLoading: il, error: e } = useGetRoutesQuery(url);
+    const { data: emissionsData,  isFetching: emissionsDataLoading, error: emissionsError } = useGetEmissionsQuery({
+        baseUrl: url,
+        model: {
+            city: "wellington",
+            startDate: '2019-01-01',
+            endDate: '2019-12-10',
+            startTime: startTime,
+            endTime: endTime
+        }
+    });
 
     function getRenderedComponentFunction(windowId) {
         if (windows.windowRenderComponent === "Stream Graph") {
@@ -95,11 +108,29 @@ export default function Visualisations(props) {
      * Define the type of graph to create on initialisaion
      */
     function initGraphs() {
-        if (windows.value.Length <= 0) 
+        if (windows.value.length <= 0) 
         {
-            return;
+            let firstWindow = (
+                <WindowComponent key={"vis-window_0"}
+                    id={"vis-window_0"}
+                    // use to delete graph component and redraw
+                    selectedComponent={store.getState().windows.windowRenderComponent}
+                    renderedComponent={getRenderedComponentFunction("vis-window_0")}
+                >
+                </WindowComponent>
+            )
+            let overview = (
+                <WindowComponent key={"overview_window"}
+                    id={"overview_window"}
+                    selectedComponent={store.getState().windows.windowRenderComponent}
+                    renderedComponent={getRenderedComponentFunction("overview_window")}
+                />
+            )
+    
+            dispatch(addWindow(JSON.stringify(firstWindow)));
+            dispatch(addWindow(JSON.stringify(overview)));
         }
-        windows.value.forEach(d => initGraph(JSON.parse(d.windowComponent).key, streamData))
+        windows.value.forEach(d => initGraph(JSON.parse(d.windowComponent).key, emissionsData))
     }
     
     function decodeEmissionType(emissionType) {
@@ -124,7 +155,7 @@ export default function Visualisations(props) {
      * @param {string} windowId the id of the window to draw the graph on
      */
     function initGraph(windowId, data) {
-        if (windowId != undefined) {
+        if (windowId != undefined && data != undefined) {
             let vis = getRenderedComponentFunction(windowId);
             // Update the index keys for the graph based
             // on the filters
@@ -144,7 +175,8 @@ export default function Visualisations(props) {
             else if (vis.graphType === "streamChart")
             {
                 vis.decodeStackType(stackType);
-                vis.setData(processStreamData(data));
+                var d = processStreamData(data);
+                vis.setData(d);
             }
 
             // the tooltip and its bars work off the data in the stream chart
@@ -179,192 +211,31 @@ export default function Visualisations(props) {
         }
     }
 
-    /**
-     * Redraw the graphs when data changes
-     * 
-     * @param {JSON} newData data from API/State store
-     */
-    function redrawGraphs(newData) {
-        let graphToDraw = store.getState().windows.windowRenderComponent
-        if (graphToDraw === "Stream Graph")
-            windows.value.forEach(d => renderStreamGraph(JSON.parse(d.windowComponent).key, newData))
-        if (graphToDraw === "Line Chart")
-            windows.value.forEach(d => renderLineChart(JSON.parse(d.windowComponent).key, newData))
-    }
-
-    /**
-     * Redraw the stream graph with new data
-     */
-    function renderStreamGraph(windowId, newData) {
-        let vis = getRenderedComponentFunction(windowId);
-        vis.setData(newData);
-        vis.setData(processStreamData(newData));
-        vis.drawYAxis(0,decodeEmissionType(emissionType));
-        vis.enter();
-        vis.render();
-        if (window.props.id != "overview_window") {
-            vis.renderTotal();
-        }
-    }
-
-    /**
-     * Redraw the line chart with new data
-     */
-    function renderLineChart(windowId, newData) {
-        let vis = getRenderedComponentFunction(windowId);
-        vis.setData(newData);
-        vis.setLineData(processLineData(newData));
-        vis.drawYAxis(0,decodeEmissionType(emissionType));
-        vis.enter();
-        vis.render();
-        if (window.props.id != "overview_window") {
-            vis.renderTotal();
-        }
-    }
-
     function createTitleForWindow() {
         let start = "", end = "";
         if (stackType === "Normalized" && windows.windowRenderComponent === "Stream Graph") { start = "Normalized " }
-        if (startTime != "00:00" || endTime != "23:59") { end = " between " + startTime + " and " + endTime }
+        if (startTime != DefaultStartTime || endTime != DefaultEndTime) { end = " between " + startTime + " and " + endTime }
         return start + windows.windowRenderComponent + " of " + emissionType + " by class per " + granularity + end
     }
 
-    async function callApiAndSetData() {
-        // Fetch base set of data
-        let d1 = '2019-01-01', d2 = '2019-12-10';
-        let fetchURL = encodeURI(`${url}/${granularity}/wellington/${d1}/${d2}/${startTime}/${endTime}`);
-        let res = await fetch(fetchURL);
-        const json = await res.json();
-        // Set to global draw data
-        dispatch(setStreamData(json));
-        // Turn off loader
-        dispatch(setLoading(false));
-    }
-
-    // Call use effect only once to fetch data required for visualisations
-    useEffect(() => {
-        async function fetchData() {
-            await callApiAndSetData();
-            windows.value.forEach(d => {
-                dispatch(removeWindow(d.id))
-            })
-            
-            // Add windows to draw
-            let firstWindow = (
-                <WindowComponent key={"vis-window_0"}
-                    id={"vis-window_0"}
-                    // use to delete graph component and redraw
-                    selectedComponent={store.getState().windows.windowRenderComponent}
-                    renderedComponent={getRenderedComponentFunction("vis-window_0")}
-                >
-                </WindowComponent>
-            )
-            let overview = (
-                <WindowComponent key={"overview_window"}
-                    id={"overview_window"}
-                    selectedComponent={store.getState().windows.windowRenderComponent}
-                    renderedComponent={getRenderedComponentFunction("overview_window")}
-                />
-            )
-            // Set state with windows
-            dispatch(addWindow(JSON.stringify(firstWindow)));
-            dispatch(addWindow(JSON.stringify(overview)));
-        }
-
-        fetchData();
-    }, [])
-
     /**
-     * Call useEffect for reloading when data is loaded due to the routes being changed.
-     * Perhaps we can do this with the other filters, or join setReload & setLoading?
-     */
-    useEffect(() => {
-        async function fetchData() {            
-            await callApiAndSetData();
-        }
-        async function callSetRouteApi() {
-            let r2 = await fetch("http://localhost:5000/set_routes", {
-                method: "POST",
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
-                headers : {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    routes: routes
-                })
-            }).then(() => {
-                dispatch(setReload(false));
-                fetchData();
-            })
-        }
-        if (reload === true) {
-            // Turn on loader before fetch
-            dispatch(setLoading(true));
-            callSetRouteApi();
-        }
-    }, [routes, reload])
-
-    /**
-     * Call use effect to recall flask when certain filters 
+     * Call use effect to recall when certain filters 
      * change
      * 
      */
     useEffect(() => {
-        async function fetchData() {
-            await callApiAndSetData();
-        }
-        // Turn on loader before fetch
-        dispatch(setLoading(true));
-        fetchData();
+        dispatch(emissionsApi.util.invalidateTags(['Emissions']));
     }, [granularity, startTime, endTime])
 
     /**
      * Call use effect to rerender window when filters change
      */
     useEffect(() => {
+        if (emissionsData != undefined) { 
+            dispatch(setLoading(false));
+        }
         initGraphs();
-    }, [classes, emissionType, stackType, streamData])
-
-
-    /**
-     * Called to redraw the windows when added,
-     * template for adding windows dynamically #7
-     */
-    useEffect(() => {
-        //Data not loaded yet
-        if (!Array.isArray(streamData)) return
-        windows.value.forEach(d => {
-            dispatch(removeWindow(d.id))
-        })
-        // Add windows to draw
-        let firstWindow = (
-            <WindowComponent key={"vis-window_0"}
-                id={"vis-window_0"}
-                // use to delete graph component and redraw
-                selectedComponent={store.getState().windows.windowRenderComponent}
-            >
-            </WindowComponent>
-        )
-        let overview = (
-            <WindowComponent key={"overview_window"}
-                id={"overview_window"}
-                selectedComponent={store.getState().windows.windowRenderComponent}
-            />
-        )
-        // Set state with windows
-        dispatch(addWindow(JSON.stringify(firstWindow)));
-        dispatch(addWindow(JSON.stringify(overview)));
-    }, [windows.windowRenderComponent])
-
-    /** 
-     * Call use effect to rerender components in window when windows state changes
-     * 
-     */ 
-    useEffect(() => {
-        initGraphs();
-    }, [windows])
+    }, [classes, emissionType, stackType, emissionsData, windows.windowRenderComponent])
 
     /** 
      * Update the UI component in response to an API call
@@ -375,7 +246,7 @@ export default function Visualisations(props) {
     useEffect(() => {
         if (!(routeList === undefined)) {
             dispatch(setRoutes(routeList))
-        }        
+        }
     }, [routeList])
 
     return (
@@ -384,8 +255,8 @@ export default function Visualisations(props) {
                 {/* Side menu left */}
                 {/* Visualisation selection options */}
                 <SideMenuLeft />
-                {/* Loading bar */}
-                <LoadingBar loading={true} />
+                {/* Loading spinner */}
+                <LoadingBar loading={emissionsDataLoading} />
                 
                 {/* Visualisation container */}
                 <PageContainerVertical>

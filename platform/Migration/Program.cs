@@ -24,10 +24,12 @@ internal class Program
         var decimalMigrator = serviceProvider.GetRequiredService<IMongoDbDoubleToDecimal128Migrator>();
         var departureMigrator = serviceProvider.GetRequiredService<IMongoDbDepartureMigrator>();
 
-        dateMigrator.Run();
-
         var tasks = new List<Task>
         {
+            Task.Run(() =>
+            {
+                dateMigrator.Run();
+            }),
             Task.Run(() =>
             {
                 departureMigrator.Run();

@@ -3,8 +3,8 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace Migration.Models;
 
 [BsonIgnoreExtraElements]
-public class WellingtonEmissionsDateHolder
+public class WellingtonEmissionsDateHolder<T>
 {
     [BsonElement("date")]
-    public DateTime date { get; set; }
+    public T date { get; set; }
 }
