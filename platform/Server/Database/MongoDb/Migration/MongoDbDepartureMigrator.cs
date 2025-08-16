@@ -29,9 +29,9 @@ public class MongoDbDepartureMigrator : MongoDbMigratorBase, IMongoDbDepartureMi
         var pipeline = new EmptyPipelineDefinition<WellingtonEmissionsDepartureHolder>()
             .Set(x => new WellingtonEmissionsDepartureHolder
             {
-                departure = "00:00:00"
+                Departure = "00:00:00"
             });
 
-        collection.UpdateMany(Builders<WellingtonEmissionsDepartureHolder>.Filter.Where(x => x.departure == "24:00:00"), pipeline);
+        collection.UpdateMany(Builders<WellingtonEmissionsDepartureHolder>.Filter.Where(x => x.Departure == "24:00:00"), pipeline);
     }
 }

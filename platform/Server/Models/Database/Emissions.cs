@@ -13,7 +13,7 @@ public sealed class Emissions
     public required decimal fc { get; set; }
     public required decimal hc { get; set; }
     public required decimal nox { get; set; }
-    public required Nullable<double> paxKm { get; set; }
+    public required double paxKm { get; set; }
     public required decimal pm { get; set; }
     public required int trips { get; set; }
 }

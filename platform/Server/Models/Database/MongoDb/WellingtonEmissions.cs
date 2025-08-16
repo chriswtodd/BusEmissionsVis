@@ -15,7 +15,7 @@ public class WellingtonEmissions
     [BsonSerializer(typeof(CustomTimeOnlySerializer))]
     public TimeOnly Departure { get; set; }
     [BsonElement("engine_type")]
-    public required string EngineType { get; set; }
+    public string? EngineType { get; set; }
     [BsonElement("speed")]
     public int Speed { get; set; }
     [BsonElement("distance")]
@@ -36,6 +36,6 @@ public class WellingtonEmissions
     public decimal Co2 { get; set; }
     [BsonElement("car_co2_equiv")]
     public decimal CarCo2Equivalent { get; set; }
-    [BsonElement("PaxKm")]
+    [BsonElement("pax_km")]
     public decimal PaxKm { get; set; }
 }

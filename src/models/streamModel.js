@@ -28,10 +28,10 @@ export function processStreamData(data) {
     let final = [];
     let reducedDates = Array.from(new Set(drawData.map(d => d.date)));
     reducedDates.sort((a, b) => {
-        if (new Date(a).getTime() > new Date(b).getTime()) {
+        if (a > b) {
             return 1;
         }
-        if (new Date(a).getTime() < new Date(b).getTime()) {
+        if (a < b) {
             return -1;
         }
         return 0;
