@@ -26,10 +26,10 @@ public partial class Program
         var app = builder.Build();
 
         app.UseFactoryActivatedMiddleware();
-        app.UseCors(_devOnly);
 
         if (app.Environment.IsDevelopment())
         {
+            app.UseCors(_devOnly);
             app.MapOpenApi();
         }
 
@@ -42,7 +42,7 @@ public partial class Program
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        services.AddTransient<AccessControlAllowOriginHeaderMiddleware>();
+        services.AddTransient<AccessControlAllowMiddleware>();
 
         services.AddControllers();
         services.AddOpenApi();

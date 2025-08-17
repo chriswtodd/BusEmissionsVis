@@ -1,12 +1,13 @@
-public class AccessControlAllowOriginHeaderMiddleware : IMiddleware
+public class AccessControlAllowMiddleware : IMiddleware
 {
     private readonly IWebHostEnvironment _env;
 
     /// <summary>
-    /// Adds the access control allow origin header. Currently only for local development.
+    /// Adds the access control allow XXX headers relevant for CORs requests. 
+    /// Currently only for local development.
     /// </summary>
     /// <param name="env"></param>
-    public AccessControlAllowOriginHeaderMiddleware(IWebHostEnvironment env)
+    public AccessControlAllowMiddleware(IWebHostEnvironment env)
     {
         _env = env;
     }
