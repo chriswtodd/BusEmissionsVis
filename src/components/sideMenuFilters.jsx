@@ -5,14 +5,17 @@ import { IoIosArrowForward } from 'react-icons/io';
 import { useSelector, useDispatch, connect } from 'react-redux';
 
 import { setClasses, setReqGranularity, 
-    setStartTime, setEndTime, setEmissionType, setStreamType, toggleRoute, setReload } from '../redux/filterSlice.js';
+    setStartTime, setEndTime, setEmissionType, setStreamType, toggleRoute } from '../redux/filterSlice.js';
 
 import { EngineClasses, EmissionType, Granularity, TripsBetween, StreamType, Routes } from '../models/filters.ts'
-// import TimePicker from './materialUi/TimePicker.jsx';
 
 import RadioButtonGroup from "./radioButtonGroup.tsx";
 import SideMenuContainer from "./sideMenuContainer.jsx";
 import Checkbox from "./html/checkbox.jsx";
+
+import { useUpdateRoutesMutation } from '../redux/query/emissionsApi.js';
+
+import { DefaultStartTime, DefaultEndTime } from '../common/Constants'
 
 let modelData = require('../models/modelData.ts')
 const styles = require("../styles.js")
@@ -74,7 +77,8 @@ const ButtonArrowToggle = styled(ButtonArrow)`
 
 function SideMenuFilters(props) {
     const dispatch = useDispatch();
-    const filters = useSelector(state => state.filters)
+    const url = useSelector(state => state.envVars.apiUrl);
+    const filters = useSelector(state => state.filters);
 
     let filterContainers = {};
     filterContainers[EngineClasses.Key] = false;
@@ -88,6 +92,7 @@ function SideMenuFilters(props) {
     const [emissionTypeRadio, setEmissionTypeRadio] = useState("CO2");
     const [streamTypeRadio, setStreamTypeRadio] = useState("Zero Offset");
     const [openFilters, setOpenFilters] = useState(filterContainers);
+    const [updateRoutes, { isLoading }] = useUpdateRoutesMutation();
 
     function modifyFiltersOpen(event) {
         var title = event.target.getAttribute("for");
@@ -95,6 +100,15 @@ function SideMenuFilters(props) {
         f[title] = !f[title]
         setOpenFilters(f);
     }
+
+    const handleUpdateRoutes = () => {
+        updateRoutes({
+            baseUrl: url, 
+            model: JSON.stringify({
+                routes: filters.routes
+            })
+        });
+    };
 
     return (
         <SideMenuContainer label={"Visualisation Filters"}>
@@ -198,8 +212,9 @@ function SideMenuFilters(props) {
                         id="trips-between_startTime"
                         name="trips-between_startTime"
                         value={filters.startTime}
-                        min="00:00"
-                        max="23:59"
+                        min={DefaultStartTime}
+                        max={DefaultEndTime}
+                        step="1"
                         onChange={(e) => {
                             dispatch(setStartTime(e.target.value))
                         }}
@@ -209,8 +224,9 @@ function SideMenuFilters(props) {
                         id="trips-between_endTime"
                         name="trips-between_endTime"
                         value={filters.endTime}
-                        min="00:01"
-                        max="23:59"
+                        min={DefaultStartTime}
+                        max={DefaultEndTime}
+                        step="1"
                         onChange={(e) => {
                             dispatch(setEndTime(e.target.value))
                         }}
@@ -262,9 +278,7 @@ function SideMenuFilters(props) {
                 active={openFilters[Routes.Key]}
             >
             <button 
-                onClick={() => {
-                    dispatch(setReload(true))
-                }}
+                onClick={handleUpdateRoutes}
                 style={{"width": "85%","backgroundColor": "#67e037","borderRadius":"25px"}}> 
                 Load New Data 
             </button>

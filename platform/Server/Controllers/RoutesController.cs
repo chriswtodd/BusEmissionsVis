@@ -18,13 +18,13 @@ public class RoutesController : ControllerBase
     }
 
     [HttpGet(Name = "GetRoutes")]
-    public ActionResult<IDictionary<string, IDictionary<string, bool>>> Get()
+    public ActionResult<RoutesGetResponse> Get()
     {
         try
         {
-            return Ok(new Dictionary<string, IDictionary<string, bool>>
+            return Ok(new RoutesGetResponse
             {
-                { "routes", _routesService.Routes }
+                Routes = _routesService.Routes
             });
         }
         catch
@@ -33,10 +33,10 @@ public class RoutesController : ControllerBase
         }
     }
 
-    [HttpPut(Name = "SetRoutes")]
-    public IActionResult Put(RoutesPutRequest routesPostRequest)
+    [HttpPut(Name = "UpdateRoutes")]
+    public IActionResult Put(RoutesPutRequest routesPutRequest)
     {
-        _routesService.Routes = routesPostRequest.Routes;
+        _routesService.Routes = routesPutRequest.Routes;
 
         return NoContent();
     }

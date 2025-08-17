@@ -6,5 +6,5 @@ namespace Migration.Models;
 public class WellingtonEmissionsDepartureHolder
 {
     [BsonElement("departure")]
-    public string departure { get; set; }
+    public string Departure { get; set; }
 }

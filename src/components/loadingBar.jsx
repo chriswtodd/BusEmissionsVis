@@ -54,13 +54,12 @@ const LoadingContainer = styled.div`
     flex-direction: column;
 `;
 
-export default function LoadingBar() {
-    let loadingState = useSelector(state => state.envVars.loading)
+export default function LoadingBar(props) {
     const { containerProps, indicatorEl } = useLoading({
-        loading: loadingState,
+        loading: props.loading,
         loaderProps: {
-            // Any props here would be spread on to the indicator element.
-            style: { 
+            style: {
+                font: 'rgba(0,120,138,100)', 
                 color: 'rgba(0,120,138,100)', 
                 padding: '10px',
                 position: 'absolute',
@@ -76,9 +75,11 @@ export default function LoadingBar() {
     return (
         // <LoadingWrapper>
         //     <LoadingContainer>
-                <section {...containerProps}>
-                    {indicatorEl} {/* renders only while loading */}
-                </section>
+        <>
+            <section {...containerProps}>
+                {indicatorEl} {/* renders only while loading */}
+            </section>
+        </>
         //         {/* <LoadingBarContainer>
         //             <LoadingBarProgress>
         //             </LoadingBarProgress>

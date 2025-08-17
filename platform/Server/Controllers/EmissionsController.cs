@@ -24,7 +24,6 @@ public class EmissionsController : ControllerBase
         _routesService = routesService;
     }
 
-    // /emissions?city=wellington&startdate=2019-04-10&enddate=2019-10-10&starttime=10:00&endtime=15:00
     [HttpGet(Name = "GetEmissions")]
     public ActionResult<IEnumerable<Emissions>> Get([FromQuery] EmissionsGetRequest emissionsGetRequest)
     {
@@ -36,6 +35,7 @@ public class EmissionsController : ControllerBase
 
             var routesList = _routesService.Routes
                 .ToList()
+                .Where(routePair => routePair.Value)
                 .Select(routePair => routePair.Key);
 
             var pipeline = new EmptyPipelineDefinition<WellingtonEmissions>()
@@ -53,14 +53,14 @@ public class EmissionsController : ControllerBase
                         avgSpeed = x.Average(y => Mql.Convert(y.Speed, new ConvertOptions<decimal>())),
                         avgDistance = x.Average(y => y.Distance),
                         avgTime = x.Average(y => Mql.Convert(y.Time, new ConvertOptions<decimal>())) / 60, //
-                        fc = x.Average(y => y.Fc),
-                        co = x.Average(y => y.Co),
-                        hc = x.Average(y => y.Hc),
-                        pm = x.Average(y => y.Pm),
-                        nox = x.Average(y => y.Nox),
-                        co2 = x.Average(y => y.Co2),
-                        carCo2Equiv = x.Average(y => y.CarCo2Equivalent),
-                        paxKm = x.Average(y => Mql.Convert(y.PaxKm, new ConvertOptions<double>())),
+                        fc = x.Sum(y => y.Fc),
+                        co = x.Sum(y => y.Co),
+                        hc = x.Sum(y => y.Hc),
+                        pm = x.Sum(y => y.Pm),
+                        nox = x.Sum(y => y.Nox),
+                        co2 = x.Sum(y => y.Co2),
+                        carCo2Equiv = x.Sum(y => y.CarCo2Equivalent),
+                        paxKm = x.Sum(y => Mql.Convert(y.PaxKm, new ConvertOptions<double>())),
                     }
                 )
                 .Sort(Builders<Emissions>.Sort.Descending(x => x.date).Descending(x => x.engine_type));
@@ -72,8 +72,6 @@ public class EmissionsController : ControllerBase
         }
         catch (Exception e)
         {
-            // log
-            // _logger.Log(e);
             return Problem(e.Message);
         }
     }

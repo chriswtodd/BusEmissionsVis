@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Server.Models.Api;
 using System.Net.Http.Json;
 
 namespace Platform.Tests.Integration.Server;
@@ -23,7 +24,6 @@ public sealed class RouteTests
     [TestMethod]
     public async Task RoutesAsync()
     {
-        // Arrange
         var client = _factory?.CreateClient();
 
         Assert.IsNotNull(client);
@@ -31,11 +31,11 @@ public sealed class RouteTests
         var response = await client.GetAsync("/routes");
 
         Assert.IsTrue(response.IsSuccessStatusCode);
+        var routesResponse = await response.Content.ReadFromJsonAsync<RoutesGetResponse>();
+        Assert.IsNotNull(routesResponse);
 
-        var routesDict = await response.Content.ReadFromJsonAsync<Dictionary<string, Dictionary<string, bool>>>();
         var expectedRoutes = RoutesTestData.Data;
-
-        var routes = routesDict["routes"];
+        var routes = routesResponse.Routes;
 
         Assert.AreEqual(routes.Keys.Count(), expectedRoutes.Keys.Count());
         for (var i = 0; i < routes.Keys.Count(); i++)
@@ -43,24 +43,43 @@ public sealed class RouteTests
             Assert.AreEqual(routes.Keys.ElementAt(i), expectedRoutes.Keys.ElementAt(i));
             Assert.AreEqual(routes.Values.ElementAt(i), expectedRoutes.Values.ElementAt(i));
         }
-
-        return;
     }
 
     [TestMethod]
     public async Task SetRoutes()
     {
-        // Arrange
         var client = _factory?.CreateClient();
 
         Assert.IsNotNull(client);
 
-        var routesToSet = await client.GetAsync("/routes");
+        var routesGetResponse = await client.GetAsync("/routes");
 
-        Assert.IsTrue(routesToSet.IsSuccessStatusCode);
+        Assert.IsTrue(routesGetResponse.IsSuccessStatusCode);
+        var routesToSet = await routesGetResponse
+            .Content
+            .ReadFromJsonAsync<RoutesGetResponse>();
+        Assert.IsNotNull(routesToSet);
 
-        var response = await client.PostAsync("/set_routes", routesToSet.Content);
+        routesToSet.Routes["1"] = false;
+        routesToSet.Routes["2"] = false;
+        routesToSet.Routes["3"] = false;
+        routesToSet.Routes["7"] = false;
+        var routesPutResponse = await client.PutAsJsonAsync("/routes", routesToSet);
 
-        return;
+        Assert.IsTrue(routesPutResponse.IsSuccessStatusCode);
+
+        var routesGetResponseAfterUpdate = await client.GetAsync("/routes");
+
+        Assert.IsTrue(routesGetResponseAfterUpdate.IsSuccessStatusCode);
+        var routesAfterUpdate = await routesGetResponseAfterUpdate
+            .Content
+            .ReadFromJsonAsync<RoutesGetResponse>();
+        Assert.IsNotNull(routesAfterUpdate);
+
+        Assert.AreEqual(routesAfterUpdate.Routes.Count(), routesToSet.Routes.Count());
+        for (var i = 0; i < routesToSet.Routes.Count(); i++)
+        {
+            Assert.AreEqual(routesToSet.Routes.ElementAt(i), routesAfterUpdate.Routes.ElementAt(i));
+        }
     }
 }
