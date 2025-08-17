@@ -5,17 +5,15 @@ import { IoIosArrowForward } from 'react-icons/io';
 import { useSelector, useDispatch, connect } from 'react-redux';
 
 import { setClasses, setReqGranularity, 
-    setStartTime, setEndTime, setEmissionType, setStreamType, toggleRoute, setReload } from '../redux/filterSlice.js';
+    setStartTime, setEndTime, setEmissionType, setStreamType, toggleRoute } from '../redux/filterSlice.js';
 
 import { EngineClasses, EmissionType, Granularity, TripsBetween, StreamType, Routes } from '../models/filters.ts'
-// import TimePicker from './materialUi/TimePicker.jsx';
 
 import RadioButtonGroup from "./radioButtonGroup.tsx";
 import SideMenuContainer from "./sideMenuContainer.jsx";
 import Checkbox from "./html/checkbox.jsx";
 
-// import { useUpdateRoutesMutation } from '../redux/query/routesApi.tsx';
-import { emissionsApi, useUpdateRoutesMutation } from '../redux/query/emissionsApi.js';
+import { useUpdateRoutesMutation } from '../redux/query/emissionsApi.js';
 
 import { DefaultStartTime, DefaultEndTime } from '../common/Constants'
 

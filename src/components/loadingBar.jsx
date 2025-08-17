@@ -55,7 +55,6 @@ const LoadingContainer = styled.div`
 `;
 
 export default function LoadingBar(props) {
-    let loadingState = useSelector(state => state.envVars.loading)
     const { containerProps, indicatorEl } = useLoading({
         loading: props.loading,
         loaderProps: {

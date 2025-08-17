@@ -7,14 +7,11 @@ import React, { useEffect } from 'react';
 
 import { store } from '../redux/store.js';
 import { useSelector, useDispatch } from 'react-redux';
-import { addWindow, removeWindow } from '../redux/windowSlice.js';
-import { setStreamData } from '../redux/dataSlice.js';
+import { addWindow } from '../redux/windowSlice.js';
 import { setLoading } from '../redux/envVarsSlice';
-import { setRoutes, setReload } from '../redux/filterSlice';
-// import { useGetRoutesQuery } from '../redux/query/routesApi.js';
+import { setRoutes } from '../redux/filterSlice';
 import { useGetEmissionsQuery, useGetRoutesQuery } from '../redux/query/emissionsApi.js';
 import { emissionsApi } from '../redux/query/emissionsApi.js';
-// import { RouteFilterModel } from '../models/routeFilter';
 
 import styled from "styled-components";
 import SideMenuLeft from '../components/sideMenuLeft.jsx';
@@ -168,6 +165,11 @@ export default function Visualisations(props) {
             let visKeys = Object.entries(modelData.EngineTypes).map(k => k[0]);
             vis.setColorScheme(colours);
             vis.setKeys(visKeys);
+            var streamData = processStreamData(data);
+            // the tooltip and its bars work off the data in the stream chart
+            // both are fine for this purpose
+            vis.setTooltipData(streamData);
+
             if (vis.graphType === "lineChart")
             {
                 vis.setData(processLineData(data));
@@ -175,13 +177,8 @@ export default function Visualisations(props) {
             else if (vis.graphType === "streamChart")
             {
                 vis.decodeStackType(stackType);
-                var d = processStreamData(data);
-                vis.setData(d);
+                vis.setData(streamData);
             }
-
-            // the tooltip and its bars work off the data in the stream chart
-            // both are fine for this purpose
-            vis.setTooltipData(processStreamData(data));
 
             //Set visualisation xaxis incase it needs to be redrawn
             vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Date"));
