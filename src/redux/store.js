@@ -10,7 +10,7 @@ import windowsReducer from '../redux/windowSlice.js';
 import { streamDataReducer } from '../redux/dataSlice.js';
 import { filterReducer } from '../redux/filterSlice';
 import { envVarReducer } from './envVarsSlice.js';
-import { getRoutesApi } from '../redux/query/getRoutesApi';
+import { emissionsApi } from './query/emissionsApi.js';
 
 export const store = configureStore({
   reducer: {
@@ -18,9 +18,10 @@ export const store = configureStore({
     windows: windowsReducer,
     data: streamDataReducer,
     filters: filterReducer,
-    [getRoutesApi.reducerPath]: getRoutesApi.reducer,
+    [emissionsApi.reducerPath]: emissionsApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(getRoutesApi.middleware)
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware()
+  .concat(emissionsApi.middleware)
 })
 
 setupListeners(store.dispatch)

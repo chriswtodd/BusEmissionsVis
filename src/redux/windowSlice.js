@@ -4,7 +4,7 @@
  */ 
 
 import { createSlice, createReducer } from '@reduxjs/toolkit';
-import { insertItem, removeItem } from '../redux/helpers.js';
+import { insertItem, insertItems, removeItem } from '../redux/helpers.js';
 
 export const windowSlice = createSlice({
     name: 'windows',
@@ -34,6 +34,6 @@ export const windowSlice = createSlice({
     }
 })
 
-export const { addWindow, removeWindow, setWindowRenderComponent } = windowSlice.actions;
+export const { addWindow, addWindows, removeWindow, setWindowRenderComponent } = windowSlice.actions;
 
 export default windowSlice.reducer

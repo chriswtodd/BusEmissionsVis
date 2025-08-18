@@ -2,15 +2,16 @@
  * @author Chris Todd, chriswilltodd@gmail.com
  * Github: chriswtodd
  */ 
-
 import { createSlice } from '@reduxjs/toolkit';
+
+import { DefaultStartTime, DefaultEndTime } from '../common/Constants'
 
 export const filterSlice = createSlice({
     name: 'data',
     initialState: {
         granularity: "day",
-        startTime: "00:00",
-        endTime: "23:59",
+        startTime: DefaultStartTime,
+        endTime: DefaultEndTime,
         class: {
           "PRE-EURO" : false,
           "EURO1" : false,
