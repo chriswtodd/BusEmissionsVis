@@ -6,12 +6,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
-import windowsReducer from '../redux/windowSlice.js';
-import { streamDataReducer } from '../redux/dataSlice.js';
-import { filterReducer } from '../redux/filterSlice';
+import windowsReducer from './windowSlice.js';
+import { streamDataReducer } from './dataSlice.js';
+import { filterReducer } from './filterSlice';
+import { authReducer } from './authSlice.ts';
 import { envVarReducer } from './envVarsSlice.js';
-import { emissionsApi } from './query/emissionsApi.js';
-import { loginApi } from '../react-query/createSessionApi.tsx';
+import { emissionsApi } from './query/emissionsApi.ts';
+import { loginApi } from './query/loginApi.ts';
+import { registerApi } from './query/registerApi.ts';
 
 export const store = configureStore({
   reducer: {
@@ -19,12 +21,15 @@ export const store = configureStore({
     windows: windowsReducer,
     data: streamDataReducer,
     filters: filterReducer,
+    auth: authReducer,
     [emissionsApi.reducerPath]: emissionsApi.reducer,
     [loginApi.reducerPath]: loginApi.reducer,
+    [registerApi.reducerPath]: registerApi.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
     .concat(emissionsApi.middleware)
     .concat(loginApi.middleware)
+    .concat(registerApi.middleware)
 })
 
 setupListeners(store.dispatch)

@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import { useLoginMutation } from "../redux/query/loginApi.js";
-import { ILoginCredentials } from "../models/loginModel.tsx";
-import { setAccessToken, setTokenType, setExpiresIn } from "../redux/authSlice.ts";
+import { useRegisterMutation } from "../redux/query/registerApi.js";
+import { ILoginCredentials } from "../models/loginModel.ts";
 import LoadingButton from "../components/loadingButton.jsx";
-import Cookies from "js-cookie";
 
 import styled from "styled-components";
 
@@ -68,13 +66,14 @@ const RegisterAnchor = styled.button`
 
 const Login = () => {
     let dispatch = useDispatch();
-    const [login, { isLoading: il, error: e }] = useLoginMutation();
+    const [register, { isLoading: il, error: e }] = useRegisterMutation();
     const url = useSelector(state => state.envVars.apiUrl);
 
     const [formData, setFormData] = useState<ILoginCredentials>({
         email: "",
         password: "",
     });
+
     const navigate = useNavigate();
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -84,30 +83,20 @@ const Login = () => {
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        var res = await login({ url: url, data: formData }).unwrap();
-
-        // dispatch(setAccessToken(res.accessToken));
-        // dispatch(setExpiresIn(res.expiresIn));
-        // dispatch(setTokenType(res.tokenType));
-
-        navigate("/visualisations");
+        await register({ url: url, data: formData }).unwrap();
+        navigate("/login");
     };
-
-    const handleClick = () => {
-        navigate("/register");
-    }
 
     return (
         <PageContainer>
             <FormContainer>
-                <Title className="title">Sign in to your account</Title>
+                <Title className="title">Create an account</Title>
                 <LoginForm onSubmit={handleSubmit}>
                     <label htmlFor="email">Email</label>
                     <LoginInput id="email" name="email" type="text" onChange={handleChange} />
                     <label htmlFor="password">Password</label>
-                    <LoginInput id="password" name="password" type="password" onChange={handleChange} />       
-                    {il ? <LoadingButton /> : <SubmitButton type="submit" value="SIGN IN" /> } 
-                    <RegisterLabel>New to BEVFERLE? <RegisterAnchor onClick={handleClick}>Register</RegisterAnchor></RegisterLabel>
+                    <LoginInput id="password" name="password" type="password" onChange={handleChange} />
+                    {il ? <LoadingButton /> : <SubmitButton type="submit" value="CREATE" /> } 
                 </LoginForm>
             </FormContainer>
         </PageContainer>

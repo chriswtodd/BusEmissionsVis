@@ -60,9 +60,17 @@ export default function Visualisations(props) {
     const emissionType = useSelector(state => state.filters.emissionType);
     const stackType = useSelector(state => state.filters.streamType);
     const routes = useSelector(state => state.filters.routes);
-    const { data: routeList,  isLoading: il, error: e } = useGetRoutesQuery(url);
+    const token = useSelector(state => state.auth.accessToken);
+    const tokenType = useSelector(state => state.auth.tokenType);
+    const { data: routeList,  isLoading: il, error: e } = useGetRoutesQuery({
+        baseUrl: url,
+        accessToken: token,
+        tokenType: tokenType,
+    });
     const { data: emissionsData,  isFetching: emissionsDataLoading, error: emissionsError } = useGetEmissionsQuery({
         baseUrl: url,
+        accessToken: token,
+        tokenType: tokenType,
         model: {
             city: "wellington",
             startDate: '2019-01-01',
@@ -71,6 +79,8 @@ export default function Visualisations(props) {
             endTime: endTime
         }
     });
+    console.log(emissionsDataLoading)
+    console.log(emissionsError)
 
     function getRenderedComponentFunction(windowId) {
         if (windows.windowRenderComponent === "Stream Graph") {
@@ -152,6 +162,7 @@ export default function Visualisations(props) {
      * @param {string} windowId the id of the window to draw the graph on
      */
     function initGraph(windowId, data) {
+        console.log(data)
         if (windowId != undefined && data != undefined) {
             let vis = getRenderedComponentFunction(windowId);
             // Update the index keys for the graph based

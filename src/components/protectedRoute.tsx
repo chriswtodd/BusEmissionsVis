@@ -3,11 +3,11 @@ import { Navigate } from 'react-router';
 import { useAuth } from '../components/authProvider.tsx';
 
 const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const { user } = useAuth();
+    const { accessToken } = useAuth();
 
     return (
         <React.Suspense fallback={<div>404: This bus cannot be found!</div>} >
-            {user !== null ? children : <Navigate to="/login" /> }
+            {accessToken !== null ? children : <Navigate to="/login" /> }
         </React.Suspense>
     );
   };

@@ -87,7 +87,7 @@ nunit-*.xml
 [Bb]enchmarkDotNet*/
 
 # Configuration files
-appSettings.Production*
+appSettings.*
 
 # VSCode
 .vscode/

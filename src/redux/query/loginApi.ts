@@ -1,17 +1,23 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ILoggedInData, ILoginCredentials } from '../models/loginModel.tsx';
+import { ILoggedInData, ILoginCredentials } from '../../models/loginModel.js';
 
 export const loginApi = createApi({
-  reducerPath: '',
+  reducerPath: 'loginReducer',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: "http://",
+    baseUrl: "",
   }),
   endpoints: (builder) => ({
     login: builder.mutation<ILoggedInData, {url: string, data: ILoginCredentials}>({
       query: ({ url, data }) => ({
         url: `${url}/login`,
-        method: "POST",
-        data
+        method: 'POST',
+        params: {
+          useCookies: true
+        },
+        body: data,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
     }),
   }),

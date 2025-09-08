@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using Server.Models;
@@ -10,6 +11,7 @@ namespace Server.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class EmissionsController : ControllerBase
 {
     private readonly IProvider<MongoClient> _provider;

@@ -6,12 +6,15 @@ using System.Net.Http.Json;
 [TestClass]
 public sealed class EmissionsTests
 {
+    private static HttpClient? _client;
     private static WebApplicationFactory<Program>? _factory;
 
     [ClassInitialize]
-    public static void AssemblyInitialize(TestContext _)
+    public static async Task AssemblyInitialize(TestContext _)
     {
         _factory = new WebApplicationFactory<Program>();
+        _client = _factory.CreateClient();
+        Assert.IsTrue(await ServerTestHelpers.RegisterNewUserOnServer(_client));
     }
 
     [ClassCleanup(ClassCleanupBehavior.EndOfClass)]
@@ -59,12 +62,13 @@ public sealed class EmissionsTests
 
     public async Task GetDataByDayFromUrl(string url, Emissions[] expected)
     {
-        // Arrange
-        var client = _factory?.CreateClient();
+        Assert.IsNotNull(_client);
 
-        Assert.IsNotNull(client);
+        var headers = await ServerTestHelpers.LoginToServer(_client);
 
-        var response = await client.GetAsync(url);
+        Assert.IsNotNull(headers);
+
+        var response = await _client.GetAsync(url);
 
         Assert.IsTrue(response.IsSuccessStatusCode);
 

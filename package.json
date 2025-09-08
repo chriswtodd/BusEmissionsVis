@@ -4,6 +4,9 @@
     "private": true,
     "dependencies": {
         "@agney/react-loading": "^0.1.2",
+        "@fortawesome/fontawesome-svg-core": "^7.0.1",
+        "@fortawesome/free-solid-svg-icons": "^7.0.1",
+        "@fortawesome/react-fontawesome": "^3.0.2",
         "@reduxjs/toolkit": "^2.8.2",
         "d3": "^7.9.0",
         "dotenv": "^16.5.0",

@@ -1,3 +1,5 @@
+namespace Server.Database.Middleware;
+
 public static class MiddlewareExtensions
 {
 

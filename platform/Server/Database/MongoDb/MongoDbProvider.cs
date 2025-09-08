@@ -11,6 +11,6 @@ public class MongoDbProvider : IProvider<MongoClient>
 
     public MongoClient Resolve()
     {
-        return new MongoClient(_configuration.GetSection("DatabaseSettings")["MongoLocal"]);
+        return new MongoClient(_configuration.GetSection("DatabaseSettings")["MongoDbConnectionUrl"]);
     }
 }

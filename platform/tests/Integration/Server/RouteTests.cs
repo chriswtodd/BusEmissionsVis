@@ -7,12 +7,15 @@ namespace Platform.Tests.Integration.Server;
 [TestClass]
 public sealed class RouteTests
 {
+    private static HttpClient? _client;
     private static WebApplicationFactory<Program>? _factory;
 
     [ClassInitialize]
-    public static void AssemblyInitialize(TestContext _)
+    public static async Task AssemblyInitializeAsync(TestContext _)
     {
         _factory = new WebApplicationFactory<Program>();
+        _client = _factory.CreateClient();
+        Assert.IsTrue(await ServerTestHelpers.RegisterNewUserOnServer(_client));
     }
 
     [ClassCleanup(ClassCleanupBehavior.EndOfClass)]
@@ -24,11 +27,13 @@ public sealed class RouteTests
     [TestMethod]
     public async Task RoutesAsync()
     {
-        var client = _factory?.CreateClient();
+        Assert.IsNotNull(_client);
 
-        Assert.IsNotNull(client);
+        var headers = await ServerTestHelpers.LoginToServer(_client);
 
-        var response = await client.GetAsync("/routes");
+        Assert.IsNotNull(headers);
+
+        var response = await _client.GetAsync("/routes");
 
         Assert.IsTrue(response.IsSuccessStatusCode);
         var routesResponse = await response.Content.ReadFromJsonAsync<RoutesGetResponse>();
@@ -48,11 +53,13 @@ public sealed class RouteTests
     [TestMethod]
     public async Task SetRoutes()
     {
-        var client = _factory?.CreateClient();
+        Assert.IsNotNull(_client);
 
-        Assert.IsNotNull(client);
+        var headers = await ServerTestHelpers.LoginToServer(_client);
 
-        var routesGetResponse = await client.GetAsync("/routes");
+        Assert.IsNotNull(headers);
+
+        var routesGetResponse = await _client.GetAsync("/routes");
 
         Assert.IsTrue(routesGetResponse.IsSuccessStatusCode);
         var routesToSet = await routesGetResponse
@@ -64,11 +71,11 @@ public sealed class RouteTests
         routesToSet.Routes["2"] = false;
         routesToSet.Routes["3"] = false;
         routesToSet.Routes["7"] = false;
-        var routesPutResponse = await client.PutAsJsonAsync("/routes", routesToSet);
+        var routesPutResponse = await _client.PutAsJsonAsync("/routes", routesToSet);
 
         Assert.IsTrue(routesPutResponse.IsSuccessStatusCode);
 
-        var routesGetResponseAfterUpdate = await client.GetAsync("/routes");
+        var routesGetResponseAfterUpdate = await _client.GetAsync("/routes");
 
         Assert.IsTrue(routesGetResponseAfterUpdate.IsSuccessStatusCode);
         var routesAfterUpdate = await routesGetResponseAfterUpdate

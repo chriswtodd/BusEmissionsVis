@@ -79,6 +79,8 @@ function SideMenuFilters(props) {
     const dispatch = useDispatch();
     const url = useSelector(state => state.envVars.apiUrl);
     const filters = useSelector(state => state.filters);
+    const token = useSelector(state => state.auth.accessToken);
+    const tokenType = useSelector(state => state.auth.tokenType);
 
     let filterContainers = {};
     filterContainers[EngineClasses.Key] = false;
@@ -103,7 +105,9 @@ function SideMenuFilters(props) {
 
     const handleUpdateRoutes = () => {
         updateRoutes({
-            baseUrl: url, 
+            baseUrl: url,
+            accessToken: token,
+            tokenType: tokenType,
             model: JSON.stringify({
                 routes: filters.routes
             })
