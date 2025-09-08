@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Models.Api;
 using Server.Services;
@@ -6,6 +7,7 @@ namespace Server.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class RoutesController : ControllerBase
 {
     private readonly IRoutesService _routesService;

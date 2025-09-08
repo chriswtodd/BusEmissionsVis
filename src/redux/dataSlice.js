@@ -1,8 +1,3 @@
-/**
- * @author Chris Todd, chriswilltodd@gmail.com
- * Github: chriswtodd
- */ 
-
 import { createSlice } from '@reduxjs/toolkit';
 
 export const streamDataSlice = createSlice({

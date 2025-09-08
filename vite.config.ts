@@ -7,5 +7,15 @@ export default defineConfig({
   plugins: [react(), commonjs()],
   build: {
     commonjsOptions: { transformMixedEsModules: true } // Change
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://localhost:7076',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    }
   }
 })

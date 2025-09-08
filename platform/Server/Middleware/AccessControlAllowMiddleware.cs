@@ -1,3 +1,5 @@
+namespace Server.Database.Middleware;
+
 public class AccessControlAllowMiddleware : IMiddleware
 {
     private readonly IWebHostEnvironment _env;

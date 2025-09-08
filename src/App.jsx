@@ -11,12 +11,18 @@ import { setPublicUrl, setApiUrl } from './redux/envVarsSlice.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { setRoutes } from './redux/filterSlice';
 
+import ProtectedRoute from './components/protectedRoute.tsx';
+
 // Page components for router
 import Home from './views/home.jsx';
 import Visualisations from './views/visualisations.jsx';
+import Login from './views/login.tsx';
+import Register from './views/register.tsx';
+
+import AuthProvider, { useAuth } from './components/authProvider.tsx';
 
 import logo from './components/GW_Logo.png';
-import { FaSdCard } from "react-icons/fa";
+
 const Logo = styled.img`
   height: 45px;
   border-right: 1px solid rgba(255, 255, 255, 0.3);
@@ -26,17 +32,12 @@ const Logo = styled.img`
 
 let styles = require('./styles.js');
 
-const buttons = [
+const authenticatedButtons = [
   {
     "label" : "Home", 
     "to": "/",
     "component" : Home
   },
-  // {
-  //   "label": "Tutorial - User Interface",
-  //   "to": "/tut1",
-  //   "component" : ""
-  // },
   // {
   //   "label" : "Tutorial - Visualisations",
   //   "to": "/tut2",
@@ -52,6 +53,19 @@ const buttons = [
   //   "to": "/tut1",
   //   "component" : ""
   // }
+]
+
+const nonAuthenticatedButtons = [
+  {
+    "label" : "Register", 
+    "to": "/register",
+    "component" : Register
+  },
+  {
+    "label" : "Login", 
+    "to": "/login",
+    "component" : Login
+  },
 ]
   
 const Button = styled.button`
@@ -134,11 +148,30 @@ const MainFlex = styled.main`
 
 export default function App() {
   let dispatch = useDispatch();
-  const [active, setActive] = useState(buttons[0]);
+  const [active, setActive] = useState(nonAuthenticatedButtons[0]);
   dispatch(setPublicUrl())
   dispatch(setApiUrl())
-  // Cheeky hack to flip between dev and deployment
-  let url = useSelector(state => state.envVars.url)
+  const { user } = useAuth();
+  console.log(user !== null)
+
+  const LoginButton = () => (
+    <LinkUnstyled to={"/login"} key={"login"} >
+      <ButtonToggle active={(active === "login").toString()} onClick={() => setActive("login")}>
+        Login
+      </ButtonToggle>
+    </LinkUnstyled>
+  )
+
+  const LogoutButton = () => (
+    <LinkUnstyled to={"/logout"} key={"logout"} >
+      <ButtonToggle active={(active === "logout").toString()} onClick={() => setActive("logout")}>
+        Logout
+      </ButtonToggle>
+    </LinkUnstyled>
+  )
+  
+  let allButtons = authenticatedButtons.concat(nonAuthenticatedButtons);
+
   //Set body
   componentWillMount();
   return (
@@ -147,22 +180,31 @@ export default function App() {
         <nav>
           <Header id='header' key='header' >
             <Logo src={logo} />
-            {buttons.map((type) => (
-              <LinkUnstyled to={type.to} key={type.label} >
-                <ButtonToggle active={(active === type.label).toString()} onClick={() => setActive(type.label)}>
-                  {type.label}
-                </ButtonToggle>
-              </LinkUnstyled>
-            ))}
+              {/* add all buttons to nav menu */}
+              {allButtons.map((type) => (
+                <LinkUnstyled to={type.to} key={type.label} >
+                  <ButtonToggle active={(active === type.label).toString()} onClick={() => setActive(type.label)}>
+                    {type.label}
+                  </ButtonToggle>
+                </LinkUnstyled>
+              ))}
+              {user === null ? <LoginButton /> : <LogoutButton /> }
           </Header>
         </nav>
-        <Routes>
-          {buttons.map((type) => (
-            <Route path={type.to} key={type.label} exact element={<type.component />} />
-          ))}
-          
-          <Route render={() => <h1>404: page not found</h1>} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            {authenticatedButtons.map((type) => (
+              <Route path={type.to} key={type.label} exact element={<ProtectedRoute><type.component /></ProtectedRoute>} />
+            ))}
+
+            {nonAuthenticatedButtons.map((type) => (
+              <Route path={type.to} key={type.label} exact element={<type.component />} />
+            ))}
+                
+            <Route render={() => <h1>404: page not found</h1>} />
+
+          </Routes>
+        </AuthProvider>
       </MainFlex>
     </Router>
   );

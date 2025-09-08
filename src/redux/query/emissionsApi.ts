@@ -6,15 +6,17 @@ import { RoutesModel } from '../../models/routeModel.js';
 export const emissionsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getEmissions: builder.query<Emissions[], IApiModel<EmissionsQuery>>({
-      query: (apiModel) => ({
-            url: `${apiModel.baseUrl}/emissions`,
-            params: apiModel.model
+      query: (model) => ({
+            url: `${model.baseUrl}/emissions`,
+            params: model.model,
         }),
         providesTags: ['Emissions']
     }),
-    getRoutes: builder.query<RoutesModel, string>({
-      query: (baseUrl) => `${baseUrl}/routes`,
-      providesTags: ['Routes']
+    getRoutes: builder.query<RoutesModel, IApiModel<string>>({
+      query: (model) => ({
+        url: `${model.baseUrl}/routes`,
+      }),
+      providesTags: ['Routes'],
     }),
     updateRoutes: builder.mutation<void, IApiModel<RoutesModel>>({
       query: (update) => ({

@@ -17,7 +17,7 @@ export const envVarsSlice = createSlice({
             state.publicUrl = import.meta.env.VITE_APP_PUBLIC_DEV_URL;
         },
         setApiUrl: (state) => {
-            state.apiUrl = import.meta.env.VITE_APP_API_DEV_URL;
+            state.apiUrl = '/api';
         },
         setLoading: (state, payload) => {
             state.loading = payload.payload;

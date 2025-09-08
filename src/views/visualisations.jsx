@@ -60,9 +60,17 @@ export default function Visualisations(props) {
     const emissionType = useSelector(state => state.filters.emissionType);
     const stackType = useSelector(state => state.filters.streamType);
     const routes = useSelector(state => state.filters.routes);
-    const { data: routeList,  isLoading: il, error: e } = useGetRoutesQuery(url);
+    const token = useSelector(state => state.auth.accessToken);
+    const tokenType = useSelector(state => state.auth.tokenType);
+    const { data: routeList,  isLoading: il, error: e } = useGetRoutesQuery({
+        baseUrl: url,
+        accessToken: token,
+        tokenType: tokenType,
+    });
     const { data: emissionsData,  isFetching: emissionsDataLoading, error: emissionsError } = useGetEmissionsQuery({
         baseUrl: url,
+        accessToken: token,
+        tokenType: tokenType,
         model: {
             city: "wellington",
             startDate: '2019-01-01',
