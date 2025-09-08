@@ -79,8 +79,6 @@ export default function Visualisations(props) {
             endTime: endTime
         }
     });
-    console.log(emissionsDataLoading)
-    console.log(emissionsError)
 
     function getRenderedComponentFunction(windowId) {
         if (windows.windowRenderComponent === "Stream Graph") {
@@ -162,7 +160,6 @@ export default function Visualisations(props) {
      * @param {string} windowId the id of the window to draw the graph on
      */
     function initGraph(windowId, data) {
-        console.log(data)
         if (windowId != undefined && data != undefined) {
             let vis = getRenderedComponentFunction(windowId);
             // Update the index keys for the graph based

@@ -9,18 +9,12 @@ export const emissionsApi = baseApi.injectEndpoints({
       query: (model) => ({
             url: `${model.baseUrl}/emissions`,
             params: model.model,
-            // headers: {
-            //   'Authorization': `${model.tokenType} ${model.accessToken}`,
-            // },
         }),
         providesTags: ['Emissions']
     }),
     getRoutes: builder.query<RoutesModel, IApiModel<string>>({
       query: (model) => ({
         url: `${model.baseUrl}/routes`,
-        // headers: {
-        //   'Authorization': `${model.tokenType} ${model.accessToken}`,
-        // },
       }),
       providesTags: ['Routes'],
     }),
@@ -31,7 +25,6 @@ export const emissionsApi = baseApi.injectEndpoints({
           body: update.model,
           headers: {
             'Content-Type': 'application/json',
-            // 'Authorization': `${update.tokenType} ${update.accessToken}`,
           },
       }),
       invalidatesTags: ['Emissions']

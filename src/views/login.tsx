@@ -81,15 +81,9 @@ const Login = () => {
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
-    // Handle form submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        var res = await login({ url: url, data: formData }).unwrap();
-
-        // dispatch(setAccessToken(res.accessToken));
-        // dispatch(setExpiresIn(res.expiresIn));
-        // dispatch(setTokenType(res.tokenType));
-
+        await login({ url: url, data: formData }).unwrap();
         navigate("/visualisations");
     };
 

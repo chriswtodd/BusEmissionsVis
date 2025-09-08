@@ -29,12 +29,7 @@ public static class ServerTestHelpers
         var cookies = cookiesHeader.Select(CreateCookie).ToList();
         return cookies;
     }
-
-    // public static bool LogoutOfServer()
-    // {
-
-    // }
-
+    
     private static Cookie CreateCookie(string cookieString)
     {
         var properties = cookieString.Split(';', StringSplitOptions.TrimEntries);
