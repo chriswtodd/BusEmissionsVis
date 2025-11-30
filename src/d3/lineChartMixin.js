@@ -4,10 +4,11 @@
  */ 
 
 import * as d3 from "d3";
+import { GraphType } from './constants'
 const styles = require("../styles.js")
 
 export let lineChartMixin = {
-    graphType: "lineChart",
+    graphType: GraphType.LINE,
     drawnLines: [],
     setColorScheme(colorScheme) { this.colorScheme = colorScheme; },
     setKeys(keys)               { this.keys = keys; },
