@@ -16,7 +16,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode}) => {
     const [token, setToken] = useState(Cookies.get("refreshToken") || '');
 
     const authenticationInformation = useSelector(state => state.auth);
-    console.log(authenticationInformation)
 
     return (
         <AuthContext.Provider value={{ accessToken: authenticationInformation.accessToken, token }}>

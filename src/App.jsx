@@ -143,23 +143,6 @@ export default function App() {
   dispatch(setPublicUrl())
   dispatch(setApiUrl())
   const { user } = useAuth();
-  console.log(user === undefined);
-
-  const LoginButton = () => (
-    <LinkUnstyled to={"/login"} key={"login"} >
-      <ButtonToggle active={(active === "login").toString()} onClick={() => setActive("login")}>
-        Login
-      </ButtonToggle>
-    </LinkUnstyled>
-  )
-
-  const LogoutButton = () => (
-    <LinkUnstyled to={"/logout"} key={"logout"} >
-      <ButtonToggle active={(active === "logout").toString()} onClick={() => setActive("logout")}>
-        Logout
-      </ButtonToggle>
-    </LinkUnstyled>
-  )
   
   let allButtons = authenticatedButtons.concat(nonAuthenticatedButtons);
 
@@ -171,7 +154,6 @@ export default function App() {
   {
     allButtons = allButtons.filter(button => button.label !== "Login" && button.label !== "Register")
   }
-  console.log(allButtons)
   //Set body
   componentWillMount();
   return (
