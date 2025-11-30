@@ -16,6 +16,7 @@ function RadioButtonGroup(options: { [key:string]: string },
         Object.entries(options.options).map((k) => {
           return <div 
             key={k[0]}
+            style={styles}
           >
             <label>
               <input

@@ -21,13 +21,12 @@ import LoadingBar from '../components/loadingBar.jsx';
 import * as d3Graph from '../d3/graph.js';
 import * as d3StreamGraph from '../d3/streamGraphMixin.js';
 import * as d3LineChart from '../d3/lineChartMixin.js';
-import { GraphType as d3GraphType } from '../d3/constants.ts'
 import { streamTooltipFactoryMixin } from "../d3/tooltipMixin.js";
 
 import { processStreamData } from "../models/streamModel.js";
 import { processLineData } from "../models/lineModel.js";
 
-import { DefaultStartTime, DefaultEndTime, GraphType } from '../common/constants.ts'
+import { DefaultStartTime, DefaultEndTime } from '../common/Constants'
 
 let modelData = require('../models/modelData.ts')
 
@@ -51,6 +50,7 @@ export default function Visualisations(props) {
     //App
     const url = useSelector(state => state.envVars.apiUrl);
     //Page
+    const reload = useSelector(state => state.filters.reload);
     let windows = useSelector(state => state.windows);
     //Filters
     const granularity = useSelector(state => state.filters.granularity);
@@ -59,6 +59,7 @@ export default function Visualisations(props) {
     const endTime = useSelector(state => state.filters.endTime);
     const emissionType = useSelector(state => state.filters.emissionType);
     const stackType = useSelector(state => state.filters.streamType);
+    const routes = useSelector(state => state.filters.routes);
     const token = useSelector(state => state.auth.accessToken);
     const tokenType = useSelector(state => state.auth.tokenType);
     const { data: routeList,  isLoading: il, error: e } = useGetRoutesQuery({
@@ -80,10 +81,16 @@ export default function Visualisations(props) {
     });
 
     function getRenderedComponentFunction(windowId) {
-        if (windows.windowRenderComponent === GraphType.STREAM) {
-            return createGraph(windowId, d3Graph.axisDateMixin,d3Graph.axisContinuousMixin, d3StreamGraph.streamGraphMixin,streamTooltipFactoryMixin)
-        } else if (windows.windowRenderComponent === GraphType.LINE) {
-            return createGraph(windowId, d3Graph.axisDateMixin,d3Graph.axisContinuousMixin, d3LineChart.lineChartMixin,streamTooltipFactoryMixin)
+        if (windows.windowRenderComponent === "Stream Graph") {
+            if (windowId != "overview_window") {
+                return createGraph(windowId, d3Graph.axisDateMixin,d3Graph.axisContinuousMixin, d3StreamGraph.streamGraphMixin,streamTooltipFactoryMixin)
+            }
+            return createGraph(windowId, d3Graph.axisDateMixin, d3Graph.axisContinuousMixin, d3StreamGraph.streamGraphMixin);
+        } else if (windows.windowRenderComponent === "Line Chart") {
+            if (windowId != "overview_window") {
+                return createGraph(windowId, d3Graph.axisDateMixin,d3Graph.axisContinuousMixin, d3LineChart.lineChartMixin,streamTooltipFactoryMixin)
+            }
+            return createGraph(windowId, d3Graph.axisDateMixin, d3Graph.axisContinuousMixin, d3LineChart.lineChartMixin);
         }
         return {};
     }
@@ -117,8 +124,16 @@ export default function Visualisations(props) {
                 >
                 </WindowComponent>
             )
+            let overview = (
+                <WindowComponent key={"overview_window"}
+                    id={"overview_window"}
+                    selectedComponent={store.getState().windows.windowRenderComponent}
+                    renderedComponent={getRenderedComponentFunction("overview_window")}
+                />
+            )
     
             dispatch(addWindow(JSON.stringify(firstWindow)));
+            dispatch(addWindow(JSON.stringify(overview)));
         }
         windows.value.forEach(d => initGraph(JSON.parse(d.windowComponent).key, emissionsData))
     }
@@ -139,28 +154,6 @@ export default function Visualisations(props) {
         }
     }
 
-    function redrawGraphs(windowId)
-    {
-        if (vis.graphType == d3GraphType.STREAM)
-        {
-            let vis = getRenderedComponentFunction(windowId);
-            vis.setData(emissionsData);
-            vis.setData(processStreamData(emissionsData));
-            vis.drawYAxis(0,decodeEmissionType(emissionType));
-            vis.enter();
-            vis.render();
-        }
-        else if (vis.graphType == d3GraphType.LINE)
-        {
-            let vis = getRenderedComponentFunction(windowId);
-            vis.setData(emissionsData);
-            vis.setLineData(processLineData(emissionsData));
-            vis.drawYAxis(0,decodeEmissionType(emissionType));
-            vis.enter();
-            vis.render();
-        }
-    }
-
     /**
      * Takes a window component and creates the graph within it
      * 
@@ -169,65 +162,42 @@ export default function Visualisations(props) {
     function initGraph(windowId, data) {
         if (windowId != undefined && data != undefined) {
             let vis = getRenderedComponentFunction(windowId);
-            // if (window?.windowComponent !== undefined)
-            // {
-            //     if (vis.graphType == d3GraphType.STREAM)
-            //     {
-            //         let vis = getRenderedComponentFunction(windowId);
-            //         vis.setData(data);
-            //         vis.setData(processStreamData(data));
-            //         vis.drawYAxis(0,decodeEmissionType(emissionType));
-            //         vis.enter();
-            //         vis.render();
-            //     }
-            //     else if (vis.graphType == d3GraphType.LINE)
-            //     {
-            //         let vis = getRenderedComponentFunction(windowId);
-            //         vis.setData(data);
-            //         vis.setLineData(processLineData(data));
-            //         vis.drawYAxis(0,decodeEmissionType(emissionType));
-            //         vis.enter();
-            //         vis.render();
-            //     }
-            // }
-            // else
-            // {
-                // Update the index keys for the graph based
-                // on the filters
-                let keys = Object.keys(classes).filter(key => {
-                    return classes[key];
-                })
+            // Update the index keys for the graph based
+            // on the filters
+            let keys = Object.keys(classes).filter(key => {
+                return classes[key];
+            })
 
-                vis.init();
-                let colours = modelData.EngineColours;
-                let visKeys = Object.entries(modelData.EngineTypes).map(k => k[0]);
-                vis.setColorScheme(colours);
-                vis.setKeys(visKeys);
-                var streamData = processStreamData(data);
-                // the tooltip and its bars work off the data in the stream chart
-                // both are fine for this purpose
-                vis.setTooltipData(streamData);
+            vis.init();
+            let colours = modelData.EngineColours;
+            let visKeys = Object.entries(modelData.EngineTypes).map(k => k[0]);
+            vis.setColorScheme(colours);
+            vis.setKeys(visKeys);
+            var streamData = processStreamData(data);
+            // the tooltip and its bars work off the data in the stream chart
+            // both are fine for this purpose
+            vis.setTooltipData(streamData);
 
-                if (vis.graphType === d3GraphType.STREAM)
-                {
-                    vis.decodeStackType(stackType);
-                    vis.setData(streamData);
-                }
-                else if (vis.graphType === d3GraphType.LINE)
-                {
-                    vis.setData(processLineData(data));
-                }
+            if (vis.graphType === "lineChart")
+            {
+                vis.setData(processLineData(data));
+            }
+            else if (vis.graphType === "streamChart")
+            {
+                vis.decodeStackType(stackType);
+                vis.setData(streamData);
+            }
 
-                //Set visualisation xaxis incase it needs to be redrawn
-                vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Date"));
-                vis.drawXAxis(0, decodeEmissionType(emissionType));
-        
-                vis.setYAxis(vis.createYAxis([undefined, undefined], decodeEmissionType(emissionType)));
-                vis.drawYAxis(0, decodeEmissionType(emissionType));
+            //Set visualisation xaxis incase it needs to be redrawn
+            vis.setXAxis(vis.createXAxis([new Date(2019, 0, 1), new Date(2019, 11, 10)], "Date"));
+            vis.drawXAxis(0, decodeEmissionType(emissionType));
+    
+            vis.setYAxis(vis.createYAxis([undefined, undefined], decodeEmissionType(emissionType)));
+            vis.drawYAxis(0, decodeEmissionType(emissionType));
 
-                vis.enter();
-                vis.render();
-
+            vis.enter();
+            vis.render();
+            if (windowId != "overview_window") {
                 // Create the tooltip
                 vis.setTooltipKeys(keys);
                 vis.addTooltipToSvg("tt-main", emissionType, vis.tooltipData);
@@ -235,18 +205,20 @@ export default function Visualisations(props) {
                 vis.createBars(vis.tooltipData);
                 // Draw Total
                 vis.renderTotal();
-                vis.setInitialised(true);
-                console.log(vis, vis.getInitialised())
-                var window = windows.value.filter(w =>  JSON.parse(w.windowComponent).key === windowId);
-                console.log(windows.value[0].windowComponent,windowId,window)
-                window.renderedComponent = vis;
-            // }
+            } else {
+                // TO BE FIXED : WINDOW UPDATE
+                // console.log(store.getState().windows.value[0].windowComponent)
+
+                // let w1 = getRenderedComponentFunction(JSON.parse(store.getState().windows.value[0].windowComponent).key);
+                // let w2 = getRenderedComponentFunction(JSON.parse(store.getState().windows.value[1].windowComponent).key);
+                // w2.addBrushAndZoom(vis, w2);
+            }
         }
     }
 
     function createTitleForWindow() {
         let start = "", end = "";
-        if (stackType === "Normalized" && windows.windowRenderComponent === GraphType.STREAM) { start = "Normalized " }
+        if (stackType === "Normalized" && windows.windowRenderComponent === "Stream Graph") { start = "Normalized " }
         if (startTime != DefaultStartTime || endTime != DefaultEndTime) { end = " between " + startTime + " and " + endTime }
         return start + windows.windowRenderComponent + " of " + emissionType + " by class per " + granularity + end
     }

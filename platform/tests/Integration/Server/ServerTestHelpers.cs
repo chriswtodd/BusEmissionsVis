@@ -29,12 +29,6 @@ public static class ServerTestHelpers
         var cookies = cookiesHeader.Select(CreateCookie).ToList();
         return cookies;
     }
-
-    public static async Task<HttpResponseMessage> LogoutOfServer(HttpClient client, string user = Constants.DefaultTestUserEmail)
-    { 
-        var response = await client.PostAsJsonAsync("/logout", new { Email = user });
-        return response;
-    }
     
     private static Cookie CreateCookie(string cookieString)
     {

@@ -12,27 +12,25 @@ let styles = require('../styles.js')
 
 const Container = styled.div`
     flex: 1 1 auto;
-    border: 1px rgba(0,0,0,0.4) solid;
-    border-radius: 3px;
-    box-shadow: -6px 7px 4px 0px ${styles.window_background_colour};
-    width: 97%;
+    border: 2px rgba(0,0,0,0.4) solid;
+    box-shadow: 0px 0px 2px 3px ${styles.window_background_colour};
+    width: 100%;
     display: flex;
     flex-direction: column;
-	margin: 1%;
+	margin: 0;
 	padding: 0;
-	z-index: 99;
+	zIndex: 99;
 	background: #fefefe;
 `;
 
 const Header = styled.div`
     display: flex;
+    background-color: ${styles.window_background_colour};
     width: 100%;
     height: ${styles.window_header_height};
     cursor: all-scroll;
     color: ${styles.text_colour_neg};
     align-items: center;
-    padding-top: 10px;
-    padding-left: 10px;
 `;
 
 const HeaderText = styled.span`

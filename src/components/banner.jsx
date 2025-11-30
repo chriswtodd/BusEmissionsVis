@@ -48,7 +48,7 @@ const BannerSubtitle = styled.div`
 const BannerImg = styled.img`
     height: calc(90% - 80px);
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
-    border-radius: 5px;
+    border-radius: 15px;
 `;
 
 const BannerButton = styled.button`
