@@ -5,12 +5,13 @@
 
 import { createSlice, createReducer } from '@reduxjs/toolkit';
 import { insertItem, insertItems, removeItem } from '../redux/helpers.js';
+import { GraphType } from '../common/constants.js'
 
 export const windowSlice = createSlice({
     name: 'windows',
     initialState: {
         value: [],
-        windowRenderComponent: "Stream Graph",
+        windowRenderComponent: GraphType.STREAM,
         selectedWindow: "vis-window_0",
     },
     reducers: {

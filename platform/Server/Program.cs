@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Database.Middleware;
 
@@ -48,6 +49,19 @@ public partial class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+
+        app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
+            [FromBody] object empty) =>
+        {
+            if (empty != null)
+            {
+                await signInManager.SignOutAsync();
+                return Results.Ok();
+            }
+            return Results.Unauthorized();
+        })
+        .WithOpenApi()
+        .RequireAuthorization();
 
         app.Run();
     }

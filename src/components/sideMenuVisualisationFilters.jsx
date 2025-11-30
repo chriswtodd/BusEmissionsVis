@@ -15,12 +15,13 @@ import Checkbox from "./html/checkbox.jsx";
 
 import { useUpdateRoutesMutation } from '../redux/query/emissionsApi.js';
 
-import { DefaultStartTime, DefaultEndTime } from '../common/Constants'
+import { DefaultStartTime, DefaultEndTime, GraphType } from '../common/constants.js'
 
 let modelData = require('../models/modelData.ts')
 const styles = require("../styles.js")
 
 const Container = styled.div`
+    background: rgba(255, 255, 255, 1);
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
@@ -29,6 +30,11 @@ const Container = styled.div`
     display: none;
     opacity: 0;
     transition: all ease 0.2s;
+    border-bottom: 1px solid ${styles.background_colour};
+    &:last-child {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
 `;
 
 const TimePickerContainer = styled.div`
@@ -41,25 +47,33 @@ const TimePickerContainer = styled.div`
 
 const SectionLabel = styled.div`
     display: flex;
-    color: ${styles.text_colour_neg}
-    border-bottom: 1px solid ${styles.background_colour}
+    color: ${styles.text_colour_neg};
+    border-bottom: 1px solid ${styles.background_colour};
     padding: 5px;
-    margin: 5px;
     width: 100%;
     opacity: 100;
     transition: all ease 0.2s;
     justify-content: space-between;
     display: flex;
     opacity: 1;
+    background: rgba(255, 255, 255, 1);
+    &:hover {
+        background: rgba(255, 255, 255, 0.164);
+        color: ${styles.text_colour};
+    }
+    &:last-child {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
 `;
 
 const CollapsableContainer = styled(Container)`
   ${({ active }) =>
     active &&
     `
-    height: auto;
-    display: flex;
-    opacity: 1;
+        height: auto;
+        display: flex;
+        opacity: 1;
   `}
 `;
 
@@ -75,7 +89,7 @@ const ButtonArrowToggle = styled(ButtonArrow)`
   `}
 `;
 
-function SideMenuFilters(props) {
+function SideMenuVisualisationFilters(props) {
     const dispatch = useDispatch();
     const url = useSelector(state => state.envVars.apiUrl);
     const filters = useSelector(state => state.filters);
@@ -307,10 +321,10 @@ function SideMenuFilters(props) {
 const mapStateToProps = (state) => {
     {
         return {
-            streamTypeViewed: state.windows.windowRenderComponent === "Stream Graph",
+            streamTypeViewed: state.windows.windowRenderComponent === GraphType.STREAM,
             routes: state.filters.routes,
             reload: state.filters.reload,
         }
     }
 }
-export default connect(mapStateToProps)(SideMenuFilters);
+export default connect(mapStateToProps)(SideMenuVisualisationFilters);
