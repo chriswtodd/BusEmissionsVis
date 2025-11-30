@@ -9,6 +9,7 @@ import styled from "styled-components";
 
 const PageContainer = styled.div`
     display: table;
+    position: absolute;
     top: 0;
     left: 0;
     height: 100%;

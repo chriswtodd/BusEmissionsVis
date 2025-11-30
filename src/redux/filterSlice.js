@@ -4,7 +4,7 @@
  */ 
 import { createSlice } from '@reduxjs/toolkit';
 
-import { DefaultStartTime, DefaultEndTime } from '../common/constants'
+import { DefaultStartTime, DefaultEndTime } from '../common/Constants'
 
 export const filterSlice = createSlice({
     name: 'data',

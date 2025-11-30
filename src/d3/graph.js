@@ -175,7 +175,6 @@ export class D3Graph {
         };
         this.zoomable = false;
         this.graphType = "undefined";
-        this.initialised = false;
     }
 
     getContainer() {
@@ -227,14 +226,6 @@ export class D3Graph {
             .select(".focus")
             .append("g")
             .attr("id", "plot")
-    }
-
-    getInitialised() {
-        return this.initialised;
-    }
-
-    setInitialised(initialised) {
-        this.initialised = initialised;
     }
 
     init() {

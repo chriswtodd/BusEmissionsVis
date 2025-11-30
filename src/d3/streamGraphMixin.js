@@ -4,11 +4,10 @@
  */ 
 
 import * as d3 from "d3";
-import { GraphType } from './constants'
 const styles = require("../styles.js")
 
 export let streamGraphMixin = {
-    graphType: GraphType.STREAM,
+    graphType: "streamChart",
     area: d3.area(),
     setColorScheme(colorScheme) { this.colorScheme = colorScheme; },
     setKeys(keys)               { this.keys = keys; },
