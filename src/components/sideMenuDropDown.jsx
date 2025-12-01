@@ -24,6 +24,11 @@ const Container = styled.div`
     opacity: 0;
     transition: ease all 250ms;
     cursor: default;
+    border: 1px solid;
+  &:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
 `;
 
 //Set button to change colour on active change
@@ -146,14 +151,9 @@ const mapStateToProps = (state) => {
 let Pop = connect(mapStateToProps)(PopulateItems);
 
 export default class SideMenuDropDown extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
         <ContainerToggle 
-          open={this.props.open === this.props.type.label}
           key={"div_container-toggle"}
         >
             <SectionSeparator id={"label_select-a-visualisation"} key={"label_select-a-visualisation"}>
@@ -162,9 +162,9 @@ export default class SideMenuDropDown extends React.Component {
             <Pop
               id={"item-populator"}
               key={"item-populator"}
-              open={this.props.open} 
-              active={this.props.active.toString()} 
-              setActive={this.props.setActive} 
+              // open={this.props.open} 
+              // active={this.props.active.toString()} 
+              // setActive={this.props.setActive} 
             />
         </ContainerToggle>
     )

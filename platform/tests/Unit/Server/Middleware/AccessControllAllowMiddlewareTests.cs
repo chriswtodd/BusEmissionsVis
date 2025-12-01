@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Moq;
+using Server.Database.Middleware;
 
 [TestClass]
 public sealed class AccessControllAllowMiddlewareTests

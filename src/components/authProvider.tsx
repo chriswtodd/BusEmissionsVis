@@ -15,11 +15,10 @@ const AuthContext = createContext<ProviderProps>({
 const AuthProvider = ({ children }: { children: React.ReactNode}) => {
     const [token, setToken] = useState(Cookies.get("refreshToken") || '');
 
-    const accessToken = useSelector(state => state);
-    console.log(accessToken)
+    const authenticationInformation = useSelector(state => state.auth);
 
     return (
-        <AuthContext.Provider value={{ accessToken, token }}>
+        <AuthContext.Provider value={{ accessToken: authenticationInformation.accessToken, token }}>
             { children }
         </AuthContext.Provider>
     )

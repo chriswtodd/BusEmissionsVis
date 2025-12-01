@@ -5,8 +5,8 @@
 
 import React, { useState } from 'react';
 import styled from "styled-components";
-import ButtonFactory from "./sideMenuButton.jsx";
-import SideMenuFilter from "./sideMenuFilters.jsx"
+import SideMenuVisualisation from "./sideMenuVisualisation.jsx";
+import SideMenuVisualisationFilters from "./sideMenuVisualisationFilters.jsx"
 
 import { FaDatabase, FaEye, FaTools, FaCog } from 'react-icons/fa';
 
@@ -25,54 +25,6 @@ const MenuContainer = styled.div`
     overflow-x: hidden;
 `;
 
-const MenuContainerToggle = styled(MenuContainer)`
-    ${({closed}) =>
-        closed &&
-        `
-        opacity: 0 !important;
-        width: 0%;
-        transition: width 0.5 linear;
-        `
-    }
-`;
-
-export const buttons = [
-    {
-        "label": "Visualisation",
-        "entries": [
-            {
-                "label": "Stream Graph",
-                "onClick": function() {
-
-                }
-            }, 
-            {
-                "label": "Line Chart",
-                "onClick": function() {}
-            }, 
-            // {
-            //     "label": "Heat Chart",
-            //     "onClick": function() {}
-            // }, 
-            // {
-            //     "label": "Bubble Chart"
-            // }
-        ]
-    },
-    // {
-    //     "label": "Data",
-    //     //Represents buttons within this menu
-    //     "entries": [{"label": "Wellington"}, {"label": "Auckland"}, {"label": "Custom"}]
-    // },
-    // {
-    //     "label": "Visualisation Tools",
-    //     "entries": []
-    // },
-    // {
-    //     "label": "Visualisation Options",
-    //     "entries": []
-    // },
-]
 const DB = styled(FaDatabase)`
 transform: translate(calc(100% - 10px), 0);
 `;
@@ -87,21 +39,11 @@ transform: translate(calc(100% - 10px), 0);
 `;
 
 export default function SideMenuLeft() {
-    const [active, setActive] = useState("Visualisation");
-
     return (
         <>
-            <MenuContainer>                
-                {buttons.map((type) => (
-                    <ButtonFactory 
-                        key={type.label}
-                        active={active}
-                        type={type} 
-                        setActive={setActive}
-                    >
-                    </ButtonFactory>
-                ))}
-                <SideMenuFilter />
+            <MenuContainer  style={{margin: "20px", gap: "20px"}}>                
+                <SideMenuVisualisation />
+                <SideMenuVisualisationFilters />
             </MenuContainer>
         </>
     )

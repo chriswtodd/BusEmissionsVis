@@ -21,15 +21,6 @@ import Register from './views/register.tsx';
 
 import AuthProvider, { useAuth } from './components/authProvider.tsx';
 
-import logo from './components/GW_Logo.png';
-
-const Logo = styled.img`
-  height: 45px;
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
-  padding-left: 40px;
-  padding-right: 105px;
-`;
-
 let styles = require('./styles.js');
 
 const authenticatedButtons = [
@@ -48,11 +39,11 @@ const authenticatedButtons = [
     "to": "/visualisations",
     "component" : Visualisations
   },
-  // {
-  //   "label" : "User Study",
-  //   "to": "/tut1",
-  //   "component" : ""
-  // }
+  {
+    "label" : "Logout",
+    "to": "/logout",
+    "component" : ""
+  }
 ]
 
 const nonAuthenticatedButtons = [
@@ -72,7 +63,7 @@ const Button = styled.button`
   font: 400 18px Roboto;
   zIndex: 1000;
   color: ${styles.text_colour};
-  background: ${styles.background_colour}
+  background: ${styles.background_colour};
   padding: 0 0.6em;
   height: 100%;
   display: flex;
@@ -127,7 +118,7 @@ const Header = styled.div`
   position: relative;
   box-shadow: var(--container-shadow);
   background: transparent url(./imgs/banner.jpg);
-  background-color: ${styles.background_colour}
+  background-color: ${styles.background_colour};
   grid-column-start: 1;
   grid-column-end: 3;
   display: flex;
@@ -152,26 +143,17 @@ export default function App() {
   dispatch(setPublicUrl())
   dispatch(setApiUrl())
   const { user } = useAuth();
-  console.log(user !== null)
-
-  const LoginButton = () => (
-    <LinkUnstyled to={"/login"} key={"login"} >
-      <ButtonToggle active={(active === "login").toString()} onClick={() => setActive("login")}>
-        Login
-      </ButtonToggle>
-    </LinkUnstyled>
-  )
-
-  const LogoutButton = () => (
-    <LinkUnstyled to={"/logout"} key={"logout"} >
-      <ButtonToggle active={(active === "logout").toString()} onClick={() => setActive("logout")}>
-        Logout
-      </ButtonToggle>
-    </LinkUnstyled>
-  )
   
   let allButtons = authenticatedButtons.concat(nonAuthenticatedButtons);
 
+  if (user === undefined)
+  {
+    allButtons = allButtons.filter(button => button.label !== "Logout")
+  } 
+  else 
+  {
+    allButtons = allButtons.filter(button => button.label !== "Login" && button.label !== "Register")
+  }
   //Set body
   componentWillMount();
   return (
@@ -179,7 +161,6 @@ export default function App() {
       <MainFlex>
         <nav>
           <Header id='header' key='header' >
-            <Logo src={logo} />
               {/* add all buttons to nav menu */}
               {allButtons.map((type) => (
                 <LinkUnstyled to={type.to} key={type.label} >
@@ -188,7 +169,6 @@ export default function App() {
                   </ButtonToggle>
                 </LinkUnstyled>
               ))}
-              {user === null ? <LoginButton /> : <LogoutButton /> }
           </Header>
         </nav>
         <AuthProvider>

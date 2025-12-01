@@ -20,6 +20,18 @@ export const loginApi = createApi({
         },
       })
     }),
+    logout: builder.mutation<void, {url: string, data: ILoginCredentials}>({
+      query: ({ url }) => ({
+        url: `${url}/logout`,
+        method: 'POST',
+        params: {
+          useCookies: true
+        },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+    }),
   }),
 })
 
