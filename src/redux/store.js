@@ -13,6 +13,7 @@ import { authReducer } from './authSlice.ts';
 import { envVarReducer } from './envVarsSlice.js';
 import { emissionsApi } from './query/emissionsApi.ts';
 import { loginApi } from './query/loginApi.ts';
+import { notificationReducer } from './notificationSlice.ts';
 import { registerApi } from './query/registerApi.ts';
 
 export const store = configureStore({
@@ -22,6 +23,7 @@ export const store = configureStore({
     data: streamDataReducer,
     filters: filterReducer,
     auth: authReducer,
+    notification: notificationReducer,
     [emissionsApi.reducerPath]: emissionsApi.reducer,
     [loginApi.reducerPath]: loginApi.reducer,
     [registerApi.reducerPath]: registerApi.reducer,

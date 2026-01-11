@@ -7,7 +7,7 @@ import React from 'react';
 import styled from "styled-components";
 import { useSelector } from 'react-redux';
 
-let styles = require('../styles.js');
+let styles = require('../../styles.js');
 
 const ActionsContainer = styled.div`
     display: flex;

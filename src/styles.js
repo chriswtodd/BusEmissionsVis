@@ -2,6 +2,7 @@ let styles = {
     background_colour: "rgba(0, 120, 138, 1);",
     text_colour: "rgb(248, 248, 248);",
     text_colour_neg: "rgb(50, 50, 50);",
+    text_colour_neg_light: "rgb(50, 50, 50, 0.8);",
 
     banner_background: `linear-gradient(to left, rgba(0, 120, 138, 0.9), rgba(0, 120, 138, 0.8))`,
     body : {
@@ -24,9 +25,12 @@ let styles = {
     window_header_height: "40px",
     window_background_colour: "rgba(0,0,0,0.2)",
     ttBackground: "linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(250,250,250,1) 88%, rgba(248,248,248,1) 100%)",
+    
     convertToInt(styleString) {
         return parseInt(styleString.split("p")[0]);
-    }
+    },
+
+    container_border: "1px solid #dadce0",
 };
 
 module.exports = styles;

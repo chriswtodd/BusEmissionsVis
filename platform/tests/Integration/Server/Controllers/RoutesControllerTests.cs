@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Server.Models.Api;
 using System.Net.Http.Json;
+using Tests.Integration.Overrides;
 
 namespace Platform.Tests.Integration.Server;
 
@@ -8,14 +9,13 @@ namespace Platform.Tests.Integration.Server;
 public sealed class RouteTests
 {
     private static HttpClient? _client;
-    private static WebApplicationFactory<Program>? _factory;
+    private static GoogleAuthWebApplicationFactory<Program>? _factory;
 
     [ClassInitialize]
     public static async Task AssemblyInitializeAsync(TestContext _)
     {
-        _factory = new WebApplicationFactory<Program>();
+        _factory = new GoogleAuthWebApplicationFactory<Program>();
         _client = _factory.CreateClient();
-        Assert.IsTrue(await ServerTestHelpers.RegisterNewUserOnServer(_client));
     }
 
     [ClassCleanup(ClassCleanupBehavior.EndOfClass)]
@@ -28,10 +28,6 @@ public sealed class RouteTests
     public async Task RoutesAsync()
     {
         Assert.IsNotNull(_client);
-
-        var headers = await ServerTestHelpers.LoginToServer(_client);
-
-        Assert.IsNotNull(headers);
 
         var response = await _client.GetAsync("/routes");
 
@@ -54,10 +50,6 @@ public sealed class RouteTests
     public async Task SetRoutes()
     {
         Assert.IsNotNull(_client);
-
-        var headers = await ServerTestHelpers.LoginToServer(_client);
-
-        Assert.IsNotNull(headers);
 
         var routesGetResponse = await _client.GetAsync("/routes");
 
