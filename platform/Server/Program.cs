@@ -1,7 +1,10 @@
+using Google.Apis.Auth.AspNetCore3;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Server.Database.Middleware;
 
 public partial class Program
@@ -27,21 +30,23 @@ public partial class Program
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
 
-        ConfigureIdentityServices(builder.Services);
-        ConfigureServices(builder.Services);
+        ConfigureIdentityServices(builder);
+        ConfigureServices(builder.Services, env);
 
         var app = builder.Build();
 
         app.UseFactoryActivatedMiddleware();
-
-        app.MapIdentityApi<IdentityUser>();
 
         if (app.Environment.IsDevelopment())
         {
             app.UseCors(_devOnly);
             app.MapOpenApi();
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(o =>
+            {
+                o.OAuthClientId(builder.Configuration["Authentication:Google:ClientId"]);
+                o.OAuthUsePkce();
+            });
             app.UseCookiePolicy();
         }
 
@@ -50,43 +55,79 @@ public partial class Program
         app.UseAuthorization();
         app.MapControllers();
 
-        app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
-            [FromBody] object empty) =>
-        {
-            if (empty != null)
-            {
-                await signInManager.SignOutAsync();
-                return Results.Ok();
-            }
-            return Results.Unauthorized();
-        })
-        .WithOpenApi()
-        .RequireAuthorization();
-
         app.Run();
     }
 
-    private static void ConfigureIdentityServices(IServiceCollection services)
+    private static void ConfigureIdentityServices(WebApplicationBuilder builder)
     {
-        services.AddDbContext<ApplicationDbContext>(
+        builder.Services.AddDbContext<ApplicationDbContext>(
             options => options.UseInMemoryDatabase("AppDb"));
-        services.Configure<CookiePolicyOptions>(options =>
+        builder.Services.Configure<CookiePolicyOptions>(options =>
         {
             options.Secure = CookieSecurePolicy.SameAsRequest;
             options.HttpOnly = HttpOnlyPolicy.Always;
         });
-        services.AddAuthorization();
-        services.AddIdentityApiEndpoints<IdentityUser>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+        builder.Services.AddAuthorization();
+
+        builder.Services
+            .AddAuthentication(options =>
+            {
+                options.DefaultChallengeScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+                options.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddGoogleOpenIdConnect(
+                authenticationScheme: GoogleOpenIdConnectDefaults.AuthenticationScheme,
+                displayName: "Google",
+                configureOptions: options =>
+                {
+                    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+            });
     }
 
-    private static void ConfigureServices(IServiceCollection services)
+    private static void ConfigureServices(IServiceCollection services, IHostEnvironment env)
     {
         services.AddTransient<AccessControlAllowMiddleware>();
 
         services.AddControllers();
         services.AddOpenApi();
-        services.AddSwaggerGen();
+        if (env.IsDevelopment())
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition("GoogleOauth", new OpenApiSecurityScheme
+                {
+                    Description = "Google OAuth 2.0 authorization",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        Implicit = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri("https://accounts.google.com/o/oauth2/v2/auth"),
+                            Scopes = new Dictionary<string, string>
+                            {
+                                { "openid profile email", "Access to your profile and email" }
+                            }
+                        }
+                    }
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "GoogleOauth" }
+                        },
+                        new[] { "openid profile email" }
+                    }
+                });
+            });
+        }
 
         CompositionRoot.InitializeContainer(services, new AssemblyContainingHint());
     }

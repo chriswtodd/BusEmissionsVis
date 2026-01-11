@@ -69,7 +69,7 @@ export default function SideMenuVisualistion (props) {
     <SideMenuContainer label={"Visualisations"} >
       <CollapsableContainer 
         id={"checkbox_visualisation-types"}
-        active={active}
+        active={active.toString()}
       >
         <RadioButtonGroup
           options={{[GraphType.LINE]: GraphType.LINE, [GraphType.STREAM]: GraphType.STREAM}}

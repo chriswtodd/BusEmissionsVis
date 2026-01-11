@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ILoggedInData, ILoginCredentials } from '../../models/loginModel.js';
+import { IAuthGoogleUserInfo, IAuthWho } from '../../models/loginModel.js';
 
 export const loginApi = createApi({
   reducerPath: 'loginReducer',
@@ -7,32 +7,19 @@ export const loginApi = createApi({
     baseUrl: "",
   }),
   endpoints: (builder) => ({
-    login: builder.mutation<ILoggedInData, {url: string, data: ILoginCredentials}>({
-      query: ({ url, data }) => ({
-        url: `${url}/login`,
-        method: 'POST',
-        params: {
-          useCookies: true
-        },
-        body: data,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    userInfo: builder.mutation<IAuthGoogleUserInfo, { url: string }>({
+      query: ({ url }) => ({
+        url: `${url}/api/auth/userInfo`,
+        method: 'GET',
       })
     }),
-    logout: builder.mutation<void, {url: string, data: ILoginCredentials}>({
+    who: builder.query<IAuthWho, { url: string }>({
       query: ({ url }) => ({
-        url: `${url}/logout`,
-        method: 'POST',
-        params: {
-          useCookies: true
-        },
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        url: `${url}/api/auth/who`,
+        method: 'GET',
       })
     }),
   }),
 })
 
-export const { useLoginMutation } = loginApi
+export const {  useUserInfoMutation, useWhoQuery } = loginApi

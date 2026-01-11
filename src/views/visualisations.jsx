@@ -50,6 +50,7 @@ export default function Visualisations(props) {
     let dispatch = useDispatch();
     //App
     const url = useSelector(state => state.envVars.apiUrl);
+    const currentUserInfo = useSelector(state => state.auth.userInfo);
     //Page
     let windows = useSelector(state => state.windows);
     //Filters
@@ -236,9 +237,7 @@ export default function Visualisations(props) {
                 // Draw Total
                 vis.renderTotal();
                 vis.setInitialised(true);
-                console.log(vis, vis.getInitialised())
                 var window = windows.value.filter(w =>  JSON.parse(w.windowComponent).key === windowId);
-                console.log(windows.value[0].windowComponent,windowId,window)
                 window.renderedComponent = vis;
             // }
         }
@@ -292,23 +291,28 @@ export default function Visualisations(props) {
                 <LoadingBar loading={emissionsDataLoading} />
                 
                 {/* Visualisation container */}
-                <PageContainerVertical>
-                    {useSelector(state => state.windows)
-                        .value
-                        .map(window => {
-                            const component = JSON.parse(window.windowComponent)
-                            const r = (
-                            <WindowComponent 
-                                key={component.props.id}
-                                id={component.props.id}
-                                renderedComponent={getRenderedComponentFunction(component.props.id)}
-                                selectedComponent={component.props.selectedComponent}
-                                title={createTitleForWindow()}
-                            />)
-                            return r;
-                        })
+                {currentUserInfo ? 
+                    <PageContainerVertical>
+                        {useSelector(state => state.windows)
+                            .value
+                            .map(window => {
+                                const component = JSON.parse(window.windowComponent)
+                                const r = (
+                                <WindowComponent 
+                                    key={component.props.id}
+                                    id={component.props.id}
+                                    renderedComponent={getRenderedComponentFunction(component.props.id)}
+                                    selectedComponent={component.props.selectedComponent}
+                                    title={createTitleForWindow()}
+                                />)
+                                return r;
+                            })
+                    }
+                    </PageContainerVertical>
+                    :
+                    <div>You are not logged in, so you have a limited view of this page.</div>
                 }
-                </PageContainerVertical>
+                
                 {/*  */}
                 {/*  */}
             </PageContainer>

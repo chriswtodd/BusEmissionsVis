@@ -7,10 +7,9 @@ import React from 'react';
 import styled from "styled-components";
 import { useSelector } from 'react-redux';
 
-let styles = require('../styles.js');
+let styles = require('../../styles.js');
 
 const BannerContainer = styled.div`
-    font: 400 18px Roboto;
     zIndex: 1000;
     color: ${styles.text_colour};
     background-image: ${styles.banner_background};

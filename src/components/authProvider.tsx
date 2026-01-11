@@ -1,24 +1,20 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
 import { useSelector } from 'react-redux';
-import Cookies from "js-cookie";
+import { IAuth } from '../models/loginModel';
 
 interface ProviderProps {
-    accessToken:  string | null,
-    token:  string | null
+    authInfo:  IAuth | null
 }
 
 const AuthContext = createContext<ProviderProps>({
-    accessToken: null,
-    token: null
+    authInfo: null,
 })
 
 const AuthProvider = ({ children }: { children: React.ReactNode}) => {
-    const [token, setToken] = useState(Cookies.get("refreshToken") || '');
-
-    const authenticationInformation = useSelector(state => state.auth);
+    const authInfo = useSelector(state => state.auth);
 
     return (
-        <AuthContext.Provider value={{ accessToken: authenticationInformation.accessToken, token }}>
+        <AuthContext.Provider value={{ authInfo: authInfo }}>
             { children }
         </AuthContext.Provider>
     )

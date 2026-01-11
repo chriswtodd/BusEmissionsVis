@@ -2,19 +2,19 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Platform.Tests.Integration.Data;
 using Server.Models.Database;
 using System.Net.Http.Json;
+using Tests.Integration.Overrides;
 
 [TestClass]
 public sealed class EmissionsTests
 {
     private static HttpClient? _client;
-    private static WebApplicationFactory<Program>? _factory;
+    private static GoogleAuthWebApplicationFactory<Program>? _factory;
 
     [ClassInitialize]
-    public static async Task AssemblyInitialize(TestContext _)
+    public static void AssemblyInitialize(TestContext _)
     {
-        _factory = new WebApplicationFactory<Program>();
+        _factory = new GoogleAuthWebApplicationFactory<Program>();
         _client = _factory.CreateClient();
-        Assert.IsTrue(await ServerTestHelpers.RegisterNewUserOnServer(_client));
     }
 
     [ClassCleanup(ClassCleanupBehavior.EndOfClass)]
@@ -64,10 +64,6 @@ public sealed class EmissionsTests
     {
         Assert.IsNotNull(_client);
 
-        var headers = await ServerTestHelpers.LoginToServer(_client);
-
-        Assert.IsNotNull(headers);
-
         var response = await _client.GetAsync(url);
 
         Assert.IsTrue(response.IsSuccessStatusCode);
@@ -112,8 +108,6 @@ public sealed class EmissionsTests
             for (var i = 0; i < expectedEmissions.Length; i++)
             {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                // Console.WriteLine($"EmissionsType: {emissions.ElementAt(i).engine_type} Date: {emissions.ElementAt(i).date} Trips: {emissions.ElementAt(i).trips}");
-                // Console.WriteLine($"EmissionsType: {expectedEmissions.ElementAt(i).engine_type} Date: {expectedEmissions.ElementAt(i).date}  Trips: {emissions.ElementAt(i).trips}");
                 Assert.IsNotNull(emissions.ElementAt(i));
                 Assert.AreEqual(expectedEmissions.ElementAt(i).date, emissions.ElementAt(i).date);
                 Assert.AreEqual(expectedEmissions.ElementAt(i).engine_type, emissions.ElementAt(i).engine_type);

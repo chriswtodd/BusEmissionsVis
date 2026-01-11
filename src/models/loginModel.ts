@@ -1,19 +1,26 @@
-export interface IResgisterCredentials
+export interface IAuthUserInfo
 {
+  name: string,
   email: string,
-  password: string
+  givenName: string,
+  surname: string
 }
 
-export interface ILoginCredentials 
+export interface IAuth
 {
-  email: string,
-  password: string
+  userInfo: IAuthUserInfo
 }
 
-export interface ILoggedInData
+export interface IAuthGoogleUserInfo extends IAuthUserInfo
 {
-  tokenType: string,
-  refreshToken: string,
-  expiresIn: number,
-  accessToken: string,
+  nameIdentifier: string,
+  emailVerified: boolean,
+  picture: string,
+}
+
+
+export interface IAuthWho
+{
+  username: string,
+  isAuthenticated: boolean
 }
