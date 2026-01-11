@@ -5,8 +5,8 @@ namespace Server.Models.Api;
 /// <summary>
 /// Respoonse model for the who api call
 /// 
-/// You should check <cref="WhoGetResponse.IsAuthenticated" /> before using username anywhere 
-/// that is not null tolerant
+/// You should check <see cref="Server.Models.Api.WhoGetResponse.IsAuthenticated" /> 
+/// before using username anywhere that is not null tolerant
 /// </summary>
 public class WhoGetResponse
 {
