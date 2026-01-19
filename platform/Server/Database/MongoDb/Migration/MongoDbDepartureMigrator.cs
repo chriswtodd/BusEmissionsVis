@@ -24,7 +24,7 @@ public class MongoDbDepartureMigrator : MongoDbMigratorBase, IMongoDbDepartureMi
         using var client = Provider.Resolve();
 
         var collection = client.GetDatabase("test")
-            .GetCollection<WellingtonEmissionsDepartureHolder>(DatabaseTables.Trips);
+            .GetCollection<WellingtonEmissionsDepartureHolder>(DatabaseTables.Emissions.Trips);
 
         var pipeline = new EmptyPipelineDefinition<WellingtonEmissionsDepartureHolder>()
             .Set(x => new WellingtonEmissionsDepartureHolder

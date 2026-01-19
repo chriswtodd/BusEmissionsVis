@@ -19,8 +19,8 @@ public class RoutesReader : IReader<IDictionary<string, bool>>
     public IDictionary<string, bool> Read()
     {
         using var client = _provider.Resolve();
-        var collection = client.GetDatabase("test")
-            .GetCollection<WellingtonEmissions>(DatabaseTables.Trips);
+        var collection = client.GetDatabase(Databases.Emissions)
+            .GetCollection<WellingtonEmissions>(DatabaseTables.Emissions.Trips);
 
         var pipeline = new EmptyPipelineDefinition<WellingtonEmissions>()
             .Match(x => true)

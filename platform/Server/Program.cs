@@ -1,34 +1,24 @@
 using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Server.Common;
 using Server.Database.Middleware;
 
 public partial class Program
 {
     private static void Main(string[] args)
     {
-        var _devOnly = "_devOnly";
-
         var builder = WebApplication.CreateBuilder(args);
-
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy(name: _devOnly,
-                policy =>
-                {
-                    policy.WithOrigins("localhost:5173");
-                });
-        });
 
         IHostEnvironment env = builder.Environment;
 
+        ConfigureCorsPolicy(builder);
+
         builder.Configuration
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", false, true);
 
         ConfigureIdentityServices(builder);
         ConfigureServices(builder.Services, env);
@@ -39,7 +29,7 @@ public partial class Program
 
         if (app.Environment.IsDevelopment())
         {
-            app.UseCors(_devOnly);
+            app.UseCors(Constants.Cors.CurrentPolicy);
             app.MapOpenApi();
             app.UseSwagger();
             app.UseSwaggerUI(o =>
@@ -47,8 +37,8 @@ public partial class Program
                 o.OAuthClientId(builder.Configuration["Authentication:Google:ClientId"]);
                 o.OAuthUsePkce();
             });
-            app.UseCookiePolicy();
         }
+        ConfigureCookiePolicy(app);
 
         app.UseHttpsRedirection();
         app.UseAuthentication();
@@ -56,6 +46,43 @@ public partial class Program
         app.MapControllers();
 
         app.Run();
+    }
+
+    private static void ConfigureCorsPolicy(WebApplicationBuilder builder)
+    {
+        if (builder.Configuration["Urls:BaseUrl"] is not null)
+        {
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: Constants.Cors.CurrentPolicy,
+                    policy =>
+                    {
+                        policy.WithOrigins(builder.Configuration["Urls:BaseUrl"]);
+                    });
+            });
+            return;
+        }
+        throw new ArgumentNullException(nameof(builder));
+    }
+
+    private static void ConfigureCookiePolicy(WebApplication app)
+    {
+        var cookiePolicy = new CookiePolicyOptions
+        { 
+            Secure = CookieSecurePolicy.Always,
+            HttpOnly = HttpOnlyPolicy.Always,
+            MinimumSameSitePolicy = SameSiteMode.None,
+
+        };
+
+        if (app.Environment.IsProduction())
+        {
+            cookiePolicy.Secure = CookieSecurePolicy.Always;
+            cookiePolicy.HttpOnly = HttpOnlyPolicy.Always;
+            cookiePolicy.MinimumSameSitePolicy = SameSiteMode.None;
+        }
+
+        app.UseCookiePolicy(cookiePolicy);
     }
 
     private static void ConfigureIdentityServices(WebApplicationBuilder builder)
@@ -84,7 +111,9 @@ public partial class Program
                 {
                     options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
                     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-            });
+                    options.CorrelationCookie.SameSite = SameSiteMode.None;
+                    options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+                });
     }
 
     private static void ConfigureServices(IServiceCollection services, IHostEnvironment env)

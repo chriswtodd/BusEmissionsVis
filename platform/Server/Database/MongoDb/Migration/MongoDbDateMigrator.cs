@@ -25,7 +25,7 @@ public class MongoDbDateMigrator : MongoDbMigratorBase, IMongoDbDateMigrator
         using var client = Provider.Resolve();
 
         var collection = client.GetDatabase("test")
-            .GetCollection<WellingtonEmissionsInitial>(DatabaseTables.Trips);
+            .GetCollection<WellingtonEmissionsInitial>(DatabaseTables.Emissions.Trips);
 
         var pipelineTempDateHolder = new EmptyPipelineDefinition<WellingtonEmissionsInitial>()
             .Set(x => new WellingtonEmissionsDateHolder<DateTime>

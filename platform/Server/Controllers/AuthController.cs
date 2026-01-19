@@ -64,7 +64,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Get logged in user information, if any. Can be called unauthorized. <see cref="IsAuthenticated" /> 
+    /// Get logged in user information, if any. Can be called unauthorized.
     /// </summary>
     [HttpGet("who")]
     public IActionResult Who()
