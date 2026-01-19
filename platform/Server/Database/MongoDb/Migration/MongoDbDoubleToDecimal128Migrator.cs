@@ -24,7 +24,7 @@ public class MongoDbDoubleToDecimal128Migrator : MongoDbMigratorBase, IMongoDbDo
         using var client = Provider.Resolve();
 
         var collection = client.GetDatabase("test")
-            .GetCollection<WellingtonEmissionsDecimalHolder>(DatabaseTables.Trips);
+            .GetCollection<WellingtonEmissionsDecimalHolder>(DatabaseTables.Emissions.Trips);
 
         var pipeline = new EmptyPipelineDefinition<WellingtonEmissionsDecimalHolder>()
             .Set(x => new WellingtonEmissions

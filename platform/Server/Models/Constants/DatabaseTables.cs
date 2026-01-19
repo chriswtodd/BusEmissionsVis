@@ -1,6 +1,14 @@
 namespace Server.Models.Constants;
 
+public static class Databases
+{
+    public const string Emissions = "emissions";
+}
+
 public static class DatabaseTables
 {
-    public static string Trips = "trips_date_test";
+    public static class Emissions
+    { 
+        public const string Trips = "trips";
+    }
 }
