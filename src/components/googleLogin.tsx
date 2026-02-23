@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { useUserInfoMutation, useWhoQuery } from "../redux/query/loginApi.js";
+import { useLoginGoogleMutation, useLogoutMutation, useUserInfoMutation, useWhoQuery } from "../redux/query/loginApi.js";
 import { setUserInfo } from "../redux/authSlice.js";
 import { useSelector, useDispatch } from "react-redux";
+import { setVisible, setMessage } from '../redux/notificationSlice.js';
 
 import styled from "styled-components";
 
@@ -110,10 +111,16 @@ const EmailContainer = styled.div`
 export function GoogleLogin() {
     const dispatch = useDispatch();
 
-    const url = useSelector(state => state.envVars.apiUrl);
-    const currentUserInfo = useSelector(state => state.auth.userInfo);
+    const urlObject = new URL(window.location.href);
+    const pathname = encodeURI(urlObject.pathname);
 
-    const {data: who, isFetching: wl, error: we } = useWhoQuery({ url: url });
+    const url = useSelector(state => state.envVars.publicUrl);
+    const apiPrefix = useSelector(state => state.envVars.apiPrefix);
+    const apiUrl = `${url}${apiPrefix}`;
+    const currentUserInfo = useSelector(state => state.auth.userInfo);
+    
+    const [logout, { isFetching: lol, error: loe } ] = useLogoutMutation();
+    const {data: who, isFetching: wl, error: we } = useWhoQuery({ url: apiUrl });
     const [userInfo, { isLoading: ul, error: ue }] = useUserInfoMutation();
 
     useEffect(() => {
@@ -122,7 +129,7 @@ export function GoogleLogin() {
             const enabled = !wl && !we && who !== undefined ? who.isAuthenticated : false;
             if (enabled)
             {
-                const r = await userInfo({ url: url }).unwrap();
+                const r = await userInfo({ url: apiUrl }).unwrap();
                 dispatch(setUserInfo(r));
             }
         }
@@ -130,18 +137,19 @@ export function GoogleLogin() {
         updateUser();
     }, [who, wl, we])
 
-    const handleSignIn = () => 
+    const handleSignIn = async () => 
     {
-        const urlObject = new URL(window.location.href);
-        const pathname = encodeURI(urlObject.pathname);
-        window.location.href = `https://localhost:7076/api/auth/google?callback=${pathname}`;
+        window.location.href = `${apiUrl}/auth/google?callback=${pathname}`;
     }
 
-    const handleSignOut = () => {
+    const handleSignOut = async () => {
         dispatch(setUserInfo(null))
-        const urlObject = new URL(window.location.href);
-        const pathname = encodeURI(urlObject.pathname);
-        window.location.href = `https://localhost:7076/api/auth/logout?callback=${pathname}`;
+        await logout({ url: apiUrl, callback: pathname }); 
+        if (loe)
+        {
+            dispatch(setVisible(true));
+            dispatch(setMessage("Logout call failed"));
+        }
     }
 
     return (
