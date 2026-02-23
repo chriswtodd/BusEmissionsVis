@@ -14,7 +14,6 @@ import { envVarReducer } from './envVarsSlice.js';
 import { emissionsApi } from './query/emissionsApi.ts';
 import { loginApi } from './query/loginApi.ts';
 import { notificationReducer } from './notificationSlice.ts';
-import { registerApi } from './query/registerApi.ts';
 
 export const store = configureStore({
   reducer: {
@@ -26,12 +25,10 @@ export const store = configureStore({
     notification: notificationReducer,
     [emissionsApi.reducerPath]: emissionsApi.reducer,
     [loginApi.reducerPath]: loginApi.reducer,
-    [registerApi.reducerPath]: registerApi.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
     .concat(emissionsApi.middleware)
     .concat(loginApi.middleware)
-    .concat(registerApi.middleware)
 })
 
 setupListeners(store.dispatch)

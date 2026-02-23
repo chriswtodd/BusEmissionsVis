@@ -49,7 +49,9 @@ export default function Visualisations(props) {
     // useSelector still prefered over store.getState
     let dispatch = useDispatch();
     //App
-    const url = useSelector(state => state.envVars.apiUrl);
+    const url = useSelector(state => state.envVars.publicUrl);
+    const apiPrefix = useSelector(state => state.envVars.apiPrefix);
+    const apiUrl = `${url}${apiPrefix}`;
     const currentUserInfo = useSelector(state => state.auth.userInfo);
     //Page
     let windows = useSelector(state => state.windows);
@@ -63,12 +65,12 @@ export default function Visualisations(props) {
     const token = useSelector(state => state.auth.accessToken);
     const tokenType = useSelector(state => state.auth.tokenType);
     const { data: routeList,  isLoading: il, error: e } = useGetRoutesQuery({
-        baseUrl: url,
+        baseUrl: apiUrl,
         accessToken: token,
         tokenType: tokenType,
     });
     const { data: emissionsData,  isFetching: emissionsDataLoading, error: emissionsError } = useGetEmissionsQuery({
-        baseUrl: url,
+        baseUrl: apiUrl,
         accessToken: token,
         tokenType: tokenType,
         model: {
