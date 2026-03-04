@@ -5,8 +5,6 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 
-console.log(import.meta.env)
-
 export const envVarsSlice = createSlice({
     name: 'env',
     initialState: {

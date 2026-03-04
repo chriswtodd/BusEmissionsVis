@@ -137,7 +137,7 @@ export function GoogleLogin() {
         updateUser();
     }, [who, wl, we])
 
-    const handleSignIn = async () => 
+    const handleSignIn = () =>
     {
         window.location.href = `${apiUrl}/auth/google?callback=${pathname}`;
     }
