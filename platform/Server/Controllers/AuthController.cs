@@ -38,7 +38,7 @@ public class AuthController : ControllerBase
     /// Logout action.
     /// Does nothing if the user is not logged in.
     /// </summary>
-    [HttpGet("logout")]
+    [HttpPost("logout")]
     public async Task<IActionResult> Logout([FromQuery] AuthLogoutRequest request)
     {
         if (User.Identity.IsAuthenticated)

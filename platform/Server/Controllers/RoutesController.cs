@@ -6,7 +6,7 @@ using Server.Services;
 namespace Server.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [Authorize]
 public class RoutesController : ControllerBase
 {

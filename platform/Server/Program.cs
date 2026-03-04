@@ -1,8 +1,11 @@
 using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using Server.Common;
 using Server.Database.Middleware;
 
@@ -13,6 +16,11 @@ public partial class Program
         var builder = WebApplication.CreateBuilder(args);
 
         IHostEnvironment env = builder.Environment;
+
+        builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
+        {
+            loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
+        });
 
         ConfigureCorsPolicy(builder);
 
@@ -25,11 +33,19 @@ public partial class Program
 
         var app = builder.Build();
 
+        if (app.Environment.IsProduction())
+        { 
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+        }
+
         app.UseFactoryActivatedMiddleware();
+        app.UseCors(Constants.Cors.CurrentPolicy);
 
         if (app.Environment.IsDevelopment())
         {
-            app.UseCors(Constants.Cors.CurrentPolicy);
             app.MapOpenApi();
             app.UseSwagger();
             app.UseSwaggerUI(o =>
@@ -40,7 +56,14 @@ public partial class Program
         }
         ConfigureCookiePolicy(app);
 
-        app.UseHttpsRedirection();
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseHttpsRedirection();
+            app.UseHsts();
+        }
+
+        app.UseHttpLogging();
+
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
@@ -95,6 +118,17 @@ public partial class Program
             options.HttpOnly = HttpOnlyPolicy.Always;
         });
         builder.Services.AddAuthorization();
+
+        builder.Services.AddHttpLogging(options =>
+        {
+            options.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders |
+                                    HttpLoggingFields.ResponsePropertiesAndHeaders;
+
+            options.RequestHeaders.Add("*");
+            options.ResponseHeaders.Add("*");
+
+            options.CombineLogs = true;
+        });
 
         builder.Services
             .AddAuthentication(options =>

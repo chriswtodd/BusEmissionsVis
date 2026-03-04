@@ -9,15 +9,15 @@ export const envVarsSlice = createSlice({
     name: 'env',
     initialState: {
         publicUrl: {},
-        apiUrl: {},
+        apiPrefix: {},
         loading: true,
     },
     reducers: {
         setPublicUrl: (state) => {
-            state.publicUrl = import.meta.env.VITE_APP_PUBLIC_DEV_URL;
+            state.publicUrl = import.meta.env.VITE_APP_API_URL;
         },
-        setApiUrl: (state) => {
-            state.apiUrl = '/api';
+        setApiPrefix: (state) => {
+            state.apiPrefix = '/api';
         },
         setLoading: (state, payload) => {
             state.loading = payload.payload;
@@ -25,5 +25,5 @@ export const envVarsSlice = createSlice({
     }
 })
 
-export const { setApiUrl, setPublicUrl, setLoading } = envVarsSlice.actions;
+export const { setPublicUrl, setApiPrefix, setLoading } = envVarsSlice.actions;
 export const envVarReducer = envVarsSlice.reducer;
