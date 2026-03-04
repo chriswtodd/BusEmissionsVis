@@ -17,14 +17,10 @@ public partial class Program
 
         IHostEnvironment env = builder.Environment;
 
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
-
-        Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(configuration)
-            .CreateLogger();
+        builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
+        {
+            loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
+        });
 
         ConfigureCorsPolicy(builder);
 

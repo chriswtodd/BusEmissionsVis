@@ -17,7 +17,7 @@ const string uiDirectory = "C:\\built\\bevferle\\ui";
 const string apiDirectory = "C:\\built\\bevferle\\api";
 
 string rootNetworkDrive = $"{config["staging:rootNetworkDrive"]}";
-string appDir = $"\"{rootNetworkDrive}{config["staging:appDir"]}\"";
+string appDir = $"\"{rootNetworkDrive}{config["staging:appDir"]}\\\"";
 string configDir = $"{config["staging:configDir"]}";
 string backupDir = $"{config["staging:backupDir"]}";
 string rootBevferleBuildDirectory = $"{appDir}{config["staging:buildDir"]}";
@@ -26,8 +26,11 @@ string pem = $"{rootNetworkDrive}{config["aws:ec2:pem"]}";
 const string serviceFileLocation = "/etc/systemd/system/";
 const string nginxSitesEnabled = "/etc/nginx/sites-enabled/";
 
+UpdateDirectoryPermissions(rootSourceDirectory);
+DeleteDirectoryIfExists(rootSourceDirectory);
+
 await Run(
-    "Cloning Repository",
+    "Cloning repository",
     "git",
     $"clone https://github.com/chriswtodd/BusEmissionsVis.git {rootSourceDirectory}"
 );
@@ -49,32 +52,32 @@ CreateDirectoryIfNotExists($"{backupDir}\\{version}-config");
 
 await Run(
     "Backing up previous files: Built Application",
-    "scp",
-    $"{rootBuildDirectory} {backupDir}\\{version}\\"
+    "robocopy",
+    $"{rootBuildDirectory} {backupDir}\\{version}\\ /E"
 );
 
 await Run(
     "Backing up previous files: Config",
-    "scp",
-    $"{configDir} {backupDir}\\{version}-config\\"
+    "robocopy",
+    $"{configDir} {backupDir}\\{version}-config\\ /E"
 );
 
 await Run(
     "Copying UI configuration files to config dir",
-    "scp",
-    $"{appDir}\\.env.* {configDir}"
+    "robocopy",
+    $"{appDir} {configDir} *.local"
 );
 
 await Run(
     "Copying API configuration files to config dir",
-    "scp",
-    $"{appDir}\\platform\\server\\appsettings* {configDir}\\platform\\server\\"
+    "robocopy",
+    $"{appDir}\\platform\\Server\\ {configDir}\\platform\\server\\ appsettings*"
 );
 
 await Run(
     "Copying all configuration files to repo",
-    "scp",
-    $"{configDir} {rootSourceDirectory}"
+    "robocopy",
+    $"{configDir} {rootSourceDirectory} /E"
 );
 
 await Run(
@@ -185,6 +188,24 @@ void CreateDirectoryIfNotExists(string directory)
     if (!Directory.Exists(directory))
     {
         Directory.CreateDirectory(directory);
+    }
+}
+
+void DeleteDirectoryIfExists(string directory)
+{
+    Console.WriteLine($"Deleting directory {directory}");
+    if (Directory.Exists(directory))
+    {
+        Directory.Delete(directory, true);
+    }
+}
+
+void UpdateDirectoryPermissions(string directory)
+{ 
+    var dir = new DirectoryInfo(directory) { Attributes = FileAttributes.Normal };
+    foreach (var info in dir.GetFileSystemInfos("*", SearchOption.AllDirectories))
+    {
+        info.Attributes = FileAttributes.Normal;
     }
 }
 
