@@ -63,6 +63,7 @@ public partial class Program
         }
 
         app.UseHttpLogging();
+        app.UseSerilogRequestLogging(); 
 
         app.UseAuthentication();
         app.UseAuthorization();
