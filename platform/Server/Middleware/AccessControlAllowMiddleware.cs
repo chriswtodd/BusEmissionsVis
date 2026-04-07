@@ -23,6 +23,11 @@ public class AccessControlAllowMiddleware : IMiddleware
             context.Response.Headers.Append("Access-Control-Allow-Methods", "*");
         }
 
+        if (_env.IsProduction())
+        {
+            context.Response.Headers.Append("Access-Control-Allow-Origin", "https://bevferle.xyz");
+        }
+
         await next(context);
     }
 }
