@@ -48,7 +48,7 @@ public sealed class AuthControllerTests
             ? values.FirstOrDefault()
             : null;
         Assert.IsNotNull(location);
-        Assert.AreEqual($"{_configuration?.GetSection("Urls")["BaseUrl"]}{callback}", location);
+        Assert.AreEqual($"{_configuration?.GetSection("Login")["RedirectUrl"]}{callback}", location);
     }
 
     [TestMethod]
@@ -64,7 +64,7 @@ public sealed class AuthControllerTests
             ? values.FirstOrDefault()
             : null;
         Assert.IsNotNull(location);
-        Assert.AreEqual($"{_configuration?.GetSection("Urls")["BaseUrl"]}{callback}", location);
+        Assert.AreEqual($"{_configuration?.GetSection("Login")["RedirectUrl"]}{callback}", location);
     }
 
     [TestMethod]
