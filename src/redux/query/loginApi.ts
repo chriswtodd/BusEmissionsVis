@@ -5,6 +5,7 @@ export const loginApi = createApi({
   reducerPath: 'loginReducer',
   baseQuery: fetchBaseQuery({ 
     baseUrl: "",
+    credentials: 'include',
   }),
   endpoints: (builder) => ({
     loginGoogle: builder.mutation<IAuthGoogleUserInfo, { url: string, callback: string }>({
