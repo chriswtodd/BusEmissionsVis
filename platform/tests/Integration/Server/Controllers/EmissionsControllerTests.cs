@@ -27,37 +27,37 @@ public sealed class EmissionsTests
     [TestMethod]
     public async Task RunDataByDayFullFleetResponse()
     {
-        await GetDataByDayFromUrl("/emissions?city=wellington&startdate=2019-01-01&enddate=2019-12-10&starttime=00:00:00&endtime=23:59:59", DataByDayFullFleetResponse.Data);
+        await GetDataByDayFromUrl("/api/emissions?city=wellington&startdate=2019-01-01&enddate=2019-12-10&starttime=00:00:00&endtime=23:59:59", DataByDayFullFleetResponse.Data);
     }
 
     [TestMethod]
     public async Task RunDataByDayTripsBetweenMiddayAndMidnight()
     {
-        await GetDataByDayFromUrl("/emissions?city=wellington&startdate=2019-01-01&enddate=2019-12-10&starttime=12:00:00&endtime=23:59:59", DataByDayTripsBetweenMiddayAndMidnight.Data);
+        await GetDataByDayFromUrl("/api/emissions?city=wellington&startdate=2019-01-01&enddate=2019-12-10&starttime=12:00:00&endtime=23:59:59", DataByDayTripsBetweenMiddayAndMidnight.Data);
     }
 
     [TestMethod]
     public async Task RunDataByDayTripsBetweenMidnightAndMidday()
     {
-        await GetDataByDayFromUrl("/emissions?city=wellington&startdate=2019-01-01&enddate=2019-12-10&starttime=00:00:00&endtime=23:59:59", DataByDayFullFleetResponse.Data);
+        await GetDataByDayFromUrl("/api/emissions?city=wellington&startdate=2019-01-01&enddate=2019-12-10&starttime=00:00:00&endtime=23:59:59", DataByDayFullFleetResponse.Data);
     }
 
     [TestMethod]
     public async Task RunDataByDayDaysBetween1JanAnd30June()
     {
-        await GetDataByDayFromUrl("/emissions?city=wellington&startdate=2019-01-01&enddate=2019-06-30&starttime=00:00:00&endtime=23:59:59", DataByDayDaysBetween1JanAnd30June.Data);
+        await GetDataByDayFromUrl("/api/emissions?city=wellington&startdate=2019-01-01&enddate=2019-06-30&starttime=00:00:00&endtime=23:59:59", DataByDayDaysBetween1JanAnd30June.Data);
     }
 
     [TestMethod]
     public async Task RunDataByDayDaysBetween10AprilAnd10August()
     {
-        await GetDataByDayFromUrl("/emissions?city=wellington&startdate=2019-04-10&enddate=2019-10-10&starttime=00:00:00&endtime=23:59:59", DataByDayDaysBetween10AprilAnd10August.Data);
+        await GetDataByDayFromUrl("/api/emissions?city=wellington&startdate=2019-04-10&enddate=2019-10-10&starttime=00:00:00&endtime=23:59:59", DataByDayDaysBetween10AprilAnd10August.Data);
     }
 
     [TestMethod]
     public async Task GetDataByDayTripsBetweenTenAmAndThreePmDaysBetween10AprilAnd10August()
     {
-        await GetDataByDayFromUrl("/emissions?city=wellington&startdate=2019-04-10&enddate=2019-10-10&starttime=10:00:00&endtime=15:00:00", DataByDayTripsBetweenTenAmAndThreePmDaysBetween10AprilAnd10August.Data);
+        await GetDataByDayFromUrl("/api/emissions?city=wellington&startdate=2019-04-10&enddate=2019-10-10&starttime=10:00:00&endtime=15:00:00", DataByDayTripsBetweenTenAmAndThreePmDaysBetween10AprilAnd10August.Data);
     }
 
     public async Task GetDataByDayFromUrl(string url, Emissions[] expected)

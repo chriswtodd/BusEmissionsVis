@@ -29,7 +29,7 @@ public sealed class RouteTests
     {
         Assert.IsNotNull(_client);
 
-        var response = await _client.GetAsync("/routes");
+        var response = await _client.GetAsync("/api/routes");
 
         Assert.IsTrue(response.IsSuccessStatusCode);
         var routesResponse = await response.Content.ReadFromJsonAsync<RoutesGetResponse>();
@@ -51,7 +51,7 @@ public sealed class RouteTests
     {
         Assert.IsNotNull(_client);
 
-        var routesGetResponse = await _client.GetAsync("/routes");
+        var routesGetResponse = await _client.GetAsync("/api/routes");
 
         Assert.IsTrue(routesGetResponse.IsSuccessStatusCode);
         var routesToSet = await routesGetResponse
@@ -63,11 +63,11 @@ public sealed class RouteTests
         routesToSet.Routes["2"] = false;
         routesToSet.Routes["3"] = false;
         routesToSet.Routes["7"] = false;
-        var routesPutResponse = await _client.PutAsJsonAsync("/routes", routesToSet);
+        var routesPutResponse = await _client.PutAsJsonAsync("/api/routes", routesToSet);
 
         Assert.IsTrue(routesPutResponse.IsSuccessStatusCode);
 
-        var routesGetResponseAfterUpdate = await _client.GetAsync("/routes");
+        var routesGetResponseAfterUpdate = await _client.GetAsync("/api/routes");
 
         Assert.IsTrue(routesGetResponseAfterUpdate.IsSuccessStatusCode);
         var routesAfterUpdate = await routesGetResponseAfterUpdate

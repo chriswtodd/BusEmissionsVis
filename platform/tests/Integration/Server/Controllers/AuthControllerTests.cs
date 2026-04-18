@@ -57,7 +57,7 @@ public sealed class AuthControllerTests
         var callback = "/somestring";
         Assert.IsNotNull(_client);
 
-        var response = await _client.GetAsync($"/api/auth/logout?callback={callback}");
+        var response = await _client.PostAsync($"/api/auth/logout?callback={callback}", null);
 
         Assert.AreEqual(HttpStatusCode.Found, response.StatusCode);
         var location = response.Headers.TryGetValues("Location", out var values)

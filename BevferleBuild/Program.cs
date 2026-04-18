@@ -12,7 +12,7 @@ var builder = new ConfigurationBuilder()
 IConfiguration config = builder.Build();
 
 // hardcode potential command line args
-const string branch = "\"#71\"";
+const string branch = "main";
 
 const string rootSourceDirectory = "C:\\git\\bevferle";
 const string rootBuildDirectory = "C:\\built\\bevferle";
