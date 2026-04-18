@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
     {
         try
         {
-            return Redirect(request.CreateRedirectUrl(_configuration.GetSection("Urls")["BaseUrl"]));
+            return Redirect(request.CreateRedirectUrl(_configuration.GetSection("Login")["RedirectUrl"]));
         }
         catch
         {
@@ -44,7 +44,7 @@ public class AuthController : ControllerBase
         if (User.Identity.IsAuthenticated)
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Redirect(request.CreateRedirectUrl(_configuration.GetSection("Urls")["BaseUrl"]));
+            return Redirect(request.CreateRedirectUrl(_configuration.GetSection("Login")["RedirectUrl"]));
         }
         return Ok();
     }

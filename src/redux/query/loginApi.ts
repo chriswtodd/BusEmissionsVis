@@ -4,7 +4,7 @@ import { IAuthGoogleUserInfo, IAuthWho } from '../../models/loginModel.js';
 export const loginApi = createApi({
   reducerPath: 'loginReducer',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: "",
+    baseUrl: ""
   }),
   endpoints: (builder) => ({
     loginGoogle: builder.mutation<IAuthGoogleUserInfo, { url: string, callback: string }>({

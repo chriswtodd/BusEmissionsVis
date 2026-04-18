@@ -11,11 +11,15 @@ var builder = new ConfigurationBuilder()
 
 IConfiguration config = builder.Build();
 
+// hardcode potential command line args
+const string branch = "main";
+
 const string rootSourceDirectory = "C:\\git\\bevferle";
 const string rootBuildDirectory = "C:\\built\\bevferle";
 const string uiDirectory = "C:\\built\\bevferle\\ui";
 const string apiDirectory = "C:\\built\\bevferle\\api";
 
+// constants from settings
 string rootNetworkDrive = $"{config["staging:rootNetworkDrive"]}";
 string appDir = $"\"{rootNetworkDrive}{config["staging:appDir"]}\\\"";
 string configDir = $"{config["staging:configDir"]}";
@@ -23,8 +27,10 @@ string backupDir = $"{config["staging:backupDir"]}";
 string rootBevferleBuildDirectory = $"{appDir}{config["staging:buildDir"]}";
 string connectionString = $"{config["aws:ec2:user"]}@{config["aws:ec2:host"]}:";
 string pem = $"{rootNetworkDrive}{config["aws:ec2:pem"]}";
+
+// 
 const string serviceFileLocation = "/etc/systemd/system/";
-const string nginxSitesEnabled = "/etc/nginx/sites-enabled/";
+const string nginxSitesInstall = "/etc/nginx/conf.d/";
 
 UpdateDirectoryPermissions(rootSourceDirectory);
 DeleteDirectoryIfExists(rootSourceDirectory);
@@ -33,6 +39,12 @@ await Run(
     "Cloning repository",
     "git",
     $"clone https://github.com/chriswtodd/BusEmissionsVis.git {rootSourceDirectory}"
+);
+
+await Run(
+    "Checking out branch",
+    "git",
+    $"-C {rootSourceDirectory} checkout {branch}"
 );
 
 var version = await Run(
@@ -55,6 +67,8 @@ await Run(
     "robocopy",
     $"{rootBuildDirectory} {backupDir}\\{version}\\ /E"
 );
+
+DeleteDirectoryIfExists($"{rootBuildDirectory}");
 
 await Run(
     "Backing up previous files: Config",
@@ -108,8 +122,8 @@ using (var client = new SshClient(config["aws:ec2:host"], config["aws:ec2:user"]
     RunSshCommand($"sudo rm -rf {config["aws:ec2:destination"]}", client);
     RunSshCommand($"sudo mkdir -p {config["aws:ec2:destination"]}", client);
     RunSshCommand($"sudo setfacl -m u:ec2-user:rwx {config["aws:ec2:destination"]}", client);
+    RunSshCommand($"sudo setfacl -m u:ec2-user:rwx {nginxSitesInstall}", client);
     RunSshCommand($"sudo setfacl -m u:ec2-user:rwx {serviceFileLocation}", client);
-    RunSshCommand($"sudo setfacl -m u:ec2-user:rwx {nginxSitesEnabled}", client);
     client.Disconnect();
 }
 
@@ -128,7 +142,7 @@ await Run(
 await Run(
     "Configuring nginx for service",
     @"scp",
-    $"-i \"{pem}\" {rootBevferleBuildDirectory}bevferle-server.conf\" {connectionString}/etc/nginx/sites-available"
+    $"-i \"{pem}\" {rootBevferleBuildDirectory}bevferle-server.conf\" {connectionString}{nginxSitesInstall}"
 );
 
 using (var client = new SshClient(config["aws:ec2:host"], config["aws:ec2:user"], new PrivateKeyFile(pem)))
@@ -139,11 +153,8 @@ using (var client = new SshClient(config["aws:ec2:host"], config["aws:ec2:user"]
     RunSshCommand($"sudo systemctl enable bevferle-server.service", client);
     RunSshCommand($"sudo systemctl start bevferle-server.service", client);
     RunSshCommand($"sudo systemctl status bevferle-server.service", client);
-    RunSshCommand($"sudo ln -s /etc/nginx/sites-available/dotnetapp {nginxSitesEnabled}", client);
     RunSshCommand($"sudo nginx -t", client);
     RunSshCommand($"sudo systemctl restart nginx", client);
-    RunSshCommand($"sudo ufw allow 'Nginx Full'", client);
-    RunSshCommand($"sudo ufw enable", client);
 }
 
 async Task<string> Run(string displayMessage, string fileName, string args)

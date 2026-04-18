@@ -49,20 +49,23 @@ public sealed class AccessControllAllowMiddlewareTests
 
         await underTest.InvokeAsync(context, (HttpContext context) => Task.CompletedTask);
 
-        Assert.IsFalse(context
+        Assert.IsTrue(context
             .Response
             .Headers
             .TryGetValue("Access-Control-Allow-Headers", out var allowHeaders)
         );
-        Assert.IsFalse(context
+        Assert.IsTrue(context
             .Response
             .Headers
             .TryGetValue("Access-Control-Allow-Origin", out var allowOrigin)
         );
-        Assert.IsFalse(context
+        Assert.IsTrue(context
             .Response
             .Headers
             .TryGetValue("Access-Control-Allow-Methods", out var allowMethods)
         );
+        Assert.AreEqual(allowHeaders.ToString(), "*");
+        Assert.AreEqual(allowOrigin.ToString(), "https://bevferle.xyz");
+        Assert.AreEqual(allowMethods.ToString(), "GET, POST, PUT, DELETE");
     }
 }
